@@ -1,0 +1,180 @@
+
+
+
+/* Zona de login  *//* Zona de login  *//* Zona de login  *//* Zona de login  *//* Zona de login  *//* Zona de login  *//* Zona de login  */
+/* Zona de login  *//* Zona de login  */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  body {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 1.5s ease-in;
+  }
+  
+  .login-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    width: 400px;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .login-container:hover {
+    transform: translateY(-5px);
+  }
+  
+  .logo {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .logo i {
+    font-size: 50px;
+    color: #4CAF50;
+    margin-bottom: 15px;
+    animation: pulseIcon 2s ease-in-out infinite; /* Nombre único para la animación */
+  }
+  
+  .logo h1 {
+    color: #2d3436;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    outline: none;
+  }
+  
+  .form-group label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus ~ label,
+  .form-group input:valid ~ label {
+    top: -10px;
+    left: 15px;
+    font-size: 12px;
+    background: white;
+    padding: 0 5px;
+    color: #4CAF50;
+  }
+  
+  button {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  button:hover {
+    background: #45a049;
+    transform: scale(1.05);
+  }
+  
+  .links {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .links a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .links a:hover {
+    color: #4CAF50;
+    transform: translateX(5px);
+  }
+  
+  /* Animaciones */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes pulseIcon { /* Renombrada para evitar conflicto */
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(-5deg); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+    .login-container {
+        width: 90%;
+        padding: 25px;
+        margin: 0 15px;
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Agrícola - FIC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./assets/css/mainl.css">
+</head>
+<body>
+    <div class="login-container">
+        <header class="logo">
+            <i class="fas fa-tractor"></i>
+            <h2>Monitoreo Agricola FIC</h2>
+        </header>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" required>
+                <label for="username">Usuario</label>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="password" required>
+                <label for="password">Contraseña</label>
+            </div>
+            
+            <button type="submit">
+                <span class="button-text">Ingresar</span>
+                <div class="loader"></div>
+            </button>
+            
+            <div class="links">
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+
+            </div>
+        </form>
+    </div>
+
+    <script src="./assets/js/auth.js"></script>
+</body>
+</html>
