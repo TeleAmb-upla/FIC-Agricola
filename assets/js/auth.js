@@ -24,6 +24,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     if(isValid) {
         window.location.href = "mapa.html";
     } else {
-        alert("Credenciales incorrectas\nPrueba con:\nUsuario: agricultor\nContraseña: FIC2025");
+        alert("Credenciales incorrectas\nPrueba con:\nUsuario: Fic\nContraseña: Fic");
     }
 });
