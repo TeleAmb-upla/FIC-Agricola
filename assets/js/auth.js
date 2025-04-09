@@ -9,7 +9,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     
     // Credenciales válidas (¡Modifícalas!)
     const validCredentials = [
-        { user: "admin", pass: "admin1234" }
+        { user: "Fic", pass: "Fic" }
     ];
     
     const username = document.getElementById('username').value;
