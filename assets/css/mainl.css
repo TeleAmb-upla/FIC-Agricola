@@ -11,9 +11,9 @@
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
   }
-  
+
   body {
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/img/img_login.avif'); 
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../img/img_login.avif'); 
     background-size: cover;
     background-position: center;
     height: 100vh;
