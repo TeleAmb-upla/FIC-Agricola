@@ -1,105 +1,63 @@
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Explorador Agrícola</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <link rel="stylesheet" href="./assets/css/style.css">
-
-
-    </head>
-    <body>
-        <!-- Panel Lateral -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador Agrícola - TeleAmb</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <!-- Panel Lateral -->
+    <div class="sidebar">
+        <!-- Encabezado con Logo -->
         <div class="sidebar-header">
-            <img src="./assets/img/TeleAmb.png" class="logo-map">
-            <h2>Explorador Agrícola</h2>
-                <!-- Panel Lateral Indices -->
-            <div class="control-group">
-                <div class="section-title">Indices</div>
-                <select>
-                    <option>NDVI</option>
-                    <option>NDWI</option>
-                    <option>otro</option>
-                </select>
-            </div>
-        <!-- Panel Rango tempora -->
-            <div class="control-group">
-                <div class="section-title">Rango Temporal</div>
-                <div class="data-card">
-                    <div class="metric-label">Periodo de análisis</div>
-                    <input type="date">
-                    <span>a</span>
-                    <input type="date">
-                </div>
-            </div>
+            <img src="./assets/img/TeleAmb.png" alt="Logo TeleAmb" class="logo-map">
+            <h1 class="app-title">Explorador Agrícola</h1>
+        </div>
 
-        <!-- Panel Rango anual -->
-            <div class="control-group">
-                <div class="section-title">Anual</div>
-                <select>
-                    <option>2023</option>
-                    <option>2024</option>
-                    <option>2025</option>
-                </select>
-            </div>
+        <!-- Sección de Controles Principales -->
+        <div class="control-group">
+            <div class="section-title">Indices espectrales</div>
+            <select id="layerSelector" class="control-input">
+                <option value="ndvi">NDVI</option>
+                <option value="ndwi">NDWI</option>
+                <option value="evi">EVI</option>
+            </select>
+        </div>
 
-            <div class="control-group">
-                <div class="map-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #2ecc71"></div>
-                        <span>Alto</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #f1c40f"></div>
-                        <span>Medio</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e74c3c"></div>
-                        <span>Bajo</span>
-                    </div>
-                </div>
+        <!-- Descarga de Datos -->
+        <div class="control-group">
+            <div class="section-title">Exportar Datos</div>
+            <div class="download-options">
+                <select id="formatSelector" class="control-input">
+                    <option value="csv">CSV</option>
+                    <option value="geotiff">GeoTIFF</option>
+                    <option value="shp">Shapefile</option>
+                </select>
+                <button id="downloadButton" class="download-button">Descargar</button>
             </div>
         </div>
+    </div> <!-- ← Cierre del div.sidebar -->
+
+    <!-- Contenedor Principal Mapa + Gráfico -->
+    <div class="main-container">
+        <!-- Mapa -->
         <div id="map"></div>
+        
+        <!-- Espacio para Gráficos -->
+        <div id="chart-container">
+            <h3 class="chart-title"></h3>
+            <div id="d3-chart"></div>
+        </div>
+    </div>
 
-        <!-- Scripts EN ESTE ORDEN -->
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/georaster@1.0.0-beta.9/dist/georaster.browser.min.js"></script>
-        <script src="https://unpkg.com/georaster-layer-for-leaflet@1.6.0/dist/georaster-layer-for-leaflet.browser.min.js"></script>
-
-        <script>
-            // Configuración del Mapa
-            const map = L.map('map').setView([-33.04752000, -71.44249000], 12.6);
-    
-            // Capa base
-            L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.{ext}', {
-                minZoom: 0,
-                maxZoom: 20,
-                attribution: '&copy; Stadia Maps | &copy; OpenMapTiles',
-                ext: 'png'
-            }).addTo(map);
-    
-            // Carga del GeoTIFF (VERSIÓN CORREGIDA)
-            fetch("./assets/tif/ndvi/NDVI_Yearly_2023.tif")
-                .then(response => response.arrayBuffer())
-                .then(arrayBuffer => {
-                    // USAR GeoRaster.parse EN LUGAR DE parseGeoraster
-                    GeoRaster.parse(arrayBuffer).then(georaster => {
-                        const layer = new GeoRasterLayer({
-                            georaster: georaster,
-                            opacity: 0.7,
-                            pixelValuesToColorFn: values => {
-                                const ndvi = values[0];
-                                if (ndvi < 0) return '#e74c3c';   // Bajo
-                                if (ndvi < 0.5) return '#f1c40f'; // Medio
-                                return '#2ecc71';                 // Alto
-                            }
-                        });
-                        layer.addTo(map);
-                    }).catch(error => console.error("Error parseando GeoTIFF:", error));
-                })
-                .catch(error => console.error("Error cargando archivo:", error));
-        </script>
-    </body>
-    </html>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/georaster@1.0.0-beta.9/dist/georaster.browser.min.js"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet@1.6.0/dist/georaster-layer-for-leaflet.browser.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./assets/js/map.js"></script>
+    <script src="./assets/js/chart.js"></script>
+</body>
+</html>

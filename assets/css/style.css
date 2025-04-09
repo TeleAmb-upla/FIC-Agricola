@@ -7,19 +7,21 @@
 }
 
 body {
-    background: #f0f2f5;
+    margin: 0;
     height: 100vh;
     display: flex;
+    overflow: hidden;
 }
 
-/* Panel Lateral */
 .sidebar {
     width: 320px;
-    background: #ffffff;
+    height: 100vh;
+    overflow-y: auto;
+    background: #fff;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     padding: 20px;
-    overflow-y: auto;
 }
+
 
 .section-title {
     color: #2c3e50;
@@ -51,12 +53,10 @@ select, input[type="range"] {
     margin-bottom: 10px;
 }
 
-/* Mapa Principal */
 #map {
-    flex: 1;
-    height: 100vh;
-    background: #e9ecef;
-    transition: all 0.3s;
+    flex: 2;
+    height: 70vh;
+    border-bottom: 2px solid #eee;
 }
 
 /* Leyenda del Mapa */
@@ -122,7 +122,32 @@ select, input[type="range"] {
     border-radius: 3px;
 }
 
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
 
+
+#chart-container {
+    flex: 1;
+    min-height: 30vh;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.chart-title {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+#d3-chart {
+    width: 100%;
+    height: calc(100% - 40px);
+}
 
 
 /*logo teleamb*/
@@ -138,4 +163,80 @@ select, input[type="range"] {
     height: auto; /* Mantiene la proporción */
     object-fit: contain; /* Evita distorsión */
 }
+
+
+
+
+
+
+/* movil */
+
+/* Mobile First Approach */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .main-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    #map {
+        height: 60vh;
+        flex: none;
+        border-bottom: none;
+    }
+
+    #chart-container {
+        height: 40vh;
+        flex: none;
+        box-shadow: none;
+        border-top: 2px solid #eee;
+    }
+
+    /* Ajustes específicos para controles móviles */
+    .sidebar-header {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .logo-map {
+        max-width: 100px !important;
+    }
+
+    .app-title {
+        font-size: 1.2rem !important;
+    }
+
+    .control-group {
+        margin-bottom: 15px;
+    }
+
+    .control-input, .download-button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .download-options {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+    /* Mantener los estilos originales para desktop */
+}
+
+
 
