@@ -1,6 +1,4 @@
 // assets/js/map.js
-// assets/js/map.js
-
 
 let map;
 
@@ -21,13 +19,16 @@ export function initMap(mapId) {
     return map;
 }
 
-// Función para determinar el color del píxel (MOVIDA DESDE user-files.js)
+// Función para determinar el color del píxel basado en el valor de NDVI
 export function colorFunction(value) {
-    if (value < -0.2) return '#8B0000';
-    if (value < 0) return '#FF0000';
-    if (value < 0.2) return '#FFFF00';
-    if (value < 0.5) return '#ADFF2F';
-    return '#006400';
+    if (value === null || isNaN(value) || value < -1 || value > 1) {
+        return null; // Transparente para valores nulos o fuera de rango
+    }
+    if (value < -0.2) return '#8B0000'; // Rojo oscuro
+    if (value < 0) return '#FF0000';    // Rojo
+    if (value < 0.2) return '#FFFF00';  // Amarillo
+    if (value < 0.5) return '#ADFF2F';  // Verde claro
+    return '#006400';                   // Verde oscuro
 }
 
 export async function loadGeoRasterLayer(url, mapInstance) {
@@ -37,10 +38,10 @@ export async function loadGeoRasterLayer(url, mapInstance) {
         const georaster = await parseGeoraster(arrayBuffer);
         const rasterLayer = new GeoRasterLayer({
             georaster,
-            resolution: 720,
+            resolution: 256,
             pixelValuesToColorFn: values => {
                 const value = values[0];
-                return value === 0 ? null : colorFunction(value) ; // Usa la función de color
+                return colorFunction(value);
             }
         });
         rasterLayer.addTo(mapInstance);
@@ -59,4 +60,30 @@ export function calculateBounds(georaster) {
 
     const bounds = [[ymin, xmin], [ymax, xmax]];
     return bounds;
+}
+export function enableRasterValuePopup(mapInstance, rasterLayer) {
+    mapInstance.on("click", async function (e) {
+        const { lat, lng } = e.latlng;
+
+        // Verificamos que la capa raster esté definida
+        if (rasterLayer && typeof rasterLayer.getValueAtLatLng === 'function') {
+            try {
+                const value = await rasterLayer.getValueAtLatLng(lat, lng);
+                if (value !== undefined && value !== null && !isNaN(value)) {
+                    const formattedValue = value.toFixed(3); // Ajusta la cantidad de decimales según necesites
+                    L.popup()
+                        .setLatLng([lat, lng])
+                        .setContent(`Valor NDVI: ${formattedValue}`)
+                        .openOn(mapInstance);
+                } else {
+                    L.popup()
+                        .setLatLng([lat, lng])
+                        .setContent("Sin datos en esta ubicación.")
+                        .openOn(mapInstance);
+                }
+            } catch (error) {
+                console.error("Error al obtener el valor del píxel:", error);
+            }
+        }
+    });
 }
