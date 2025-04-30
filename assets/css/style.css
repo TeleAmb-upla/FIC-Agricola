@@ -138,7 +138,7 @@ select, input[type="range"] {
     width: 100%; /* El gráfico se expandirá al ancho de #chart-container */
     height: auto; /* El alto se ajustará proporcionalmente */
     /* Opcional: puedes establecer un alto máximo si lo deseas */
-    max-height: 300px; /* Ejemplo de alto máximo */
+    max-height: 200; /* Ejemplo de alto máximo */
     /* Otros estilos para el contenedor del gráfico */
   }
 /* movil */

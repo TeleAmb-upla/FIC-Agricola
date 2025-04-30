@@ -71,7 +71,7 @@ function aplicarGradiente(svg, datos, escalaColor, idGradiente, valorAccessor) {
         .style("fill", "url(#leyenda-gradiente)");
 
     // Añadir etiquetas numéricas
-    const numTicksLeyenda = 5;
+    const numTicksLeyenda = 6;
     const ticksLeyenda = d3.ticks(d3.min(dominioEscala), d3.max(dominioEscala), numTicksLeyenda);
 
     const escalaLeyenda = d3.scaleLinear()
@@ -281,7 +281,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                      .style("pointer-events", "all")
                      .on("mouseover", (event, d) => {
                          tooltip.transition().duration(200).style("opacity", 0.9);
-                         tooltip.html(`Semana: ${d.week}<br>${capaSeleccionada} Histórico: ${d.historic}<br>${capaSeleccionada}Actual: ${d.current}`)
+                         tooltip.html(`Semana: ${d.week}<br>${capaSeleccionada} Histórico: ${d.historic}<br>${capaSeleccionada} Actual: ${d.current}`)
                              .style("left", (event.pageX + 5) + "px")
                              .style("top", (event.pageY - 28) + "px");
                      })
