@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const actualizarVisualizaciones = async (capaSeleccionada) => {
         try {
             const rutas = {
-                geoJSON: `/assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.tif`,
-                csv: `assets/csv/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
+                geoJSON: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.tif`,
+                csv: `./assets/csv/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
             };
 
             console.log("🔍 Rutas generadas:", rutas);
