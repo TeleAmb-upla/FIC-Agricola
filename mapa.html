@@ -4,60 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explorador Agrícola - TeleAmb</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
+    <script type="module" src="./assets/js/map.js"></script>
+    <script type="module" src="./assets/js/user-files.js"></script>
 </head>
 <body>
-    <!-- Panel Lateral -->
     <div class="sidebar">
-        <!-- Encabezado con Logo -->
         <div class="sidebar-header">
             <img src="./assets/img/TeleAmb.png" alt="Logo TeleAmb" class="logo-map">
             <h1 class="app-title">Explorador Agrícola</h1>
         </div>
 
-        <!-- Sección de Controles Principales -->
         <div class="control-group">
             <div class="section-title">Indices espectrales</div>
             <select id="layerSelector" class="control-input">
-                <option value="ndvi">NDVI</option>
-                <option value="ndwi">NDWI</option>
-                <option value="evi">EVI</option>
+                <option value="false">Seleccionar un indice</option>
+                <option value="NDVI">NDVI</option>
+                <option value="EVI">EVI</option>
+                <option value="GNDVI" disabled style="color: gray;">GNDVI</option>
             </select>
         </div>
 
-        <!-- Descarga de Datos -->
         <div class="control-group">
             <div class="section-title">Exportar Datos</div>
             <div class="download-options">
                 <select id="formatSelector" class="control-input">
-                    <option value="csv">CSV</option>
-                    <option value="geotiff">GeoTIFF</option>
-                    <option value="shp">Shapefile</option>
+                    <option value="false">Seleccione que descargar</option> <option value="csv" disabled style="color: gray;">CSV</option>
+                    <option value="geotiff"disabled style="color: gray;">GeoTIFF</option>
+                    <option value="shp" disabled style="color: gray;">Shapefile</option>
                 </select>
                 <button id="downloadButton" class="download-button">Descargar</button>
             </div>
         </div>
-    </div> <!-- ← Cierre del div.sidebar -->
-
-    <!-- Contenedor Principal Mapa + Gráfico -->
-    <div class="main-container">
-        <!-- Mapa -->
+    </div> <div class="main-container">
         <div id="map"></div>
-        
-        <!-- Espacio para Gráficos -->
+
         <div id="chart-container">
             <h3 class="chart-title"></h3>
             <div id="d3-chart"></div>
+            <div id="legend-container" style="margin-left: 20px;"></div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <div id="tooltip" style="opacity:0; position:absolute; pointer-events:none; background-color:white; border:1px solid #ccc; border-radius:5px; padding:5px; box-shadow:0 2px 10px rgba(0, 0, 0, 0.1);"></div>
+
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/georaster@1.0.0-beta.9/dist/georaster.browser.min.js"></script>
-    <script src="https://unpkg.com/georaster-layer-for-leaflet@1.6.0/dist/georaster-layer-for-leaflet.browser.min.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="./assets/js/map.js"></script>
-    <script src="./assets/js/chart.js"></script>
+    <!-- Georaster -->
+    <script src="https://unpkg.com/georaster"></script>
+    <!-- Georaster layer for Leaflet -->
+    <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+    <script src="https://unpkg.com/geoblaze"></script>
+    <script type="module" src="./assets/js/map.js"></script>
+    <script type="module" src="./assets/js/user-files.js"></script>
 </body>
 </html>

@@ -3,24 +3,22 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Monitoreo Agricola</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-  
-    <!-- Favicons -->
+    <title>Monitoreo Agrícola</title>
+    <!-- (iconos y estilos) ✨ -->
     <link href="assets/img/satellite.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/mainl.css">
 </head>
 <body>
     <div class="login-container">
+        <!-- Titulo -->
         <header class="logo">
             <i class="fas fa-satellite"></i>
-            <h2>Plataforma De Monitoreo Agricola</h2>
+            <h2>Plataforma De Monitoreo Agrícola</h2>
         </header>
         
-        <form id="loginForm">
+        <!-- (formulario)  -->
+        <form id="loginForm" onsubmit="event.preventDefault(); iniciarSesion();">
             <div class="form-group">
                 <input type="text" id="username" required>
                 <label for="username">Usuario</label>
@@ -31,18 +29,21 @@
                 <label for="password">Contraseña</label>
             </div>
             
+            <!-- El botón que hace magia -->
             <button type="submit">
                 <span class="button-text">Ingresar</span>
-                <div class="loader"></div>
+                <div class="loader" style="display: none;"></div>
             </button>
             
+            <!-- El aviso para despistados -->
             <div class="links">
                 <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-
             </div>
         </form>
     </div>
 
-    <script src="./assets/js/auth.js"></script>
+    <!-- Los hechizos de JavaScript en orden -->
+    <script src="./assets/js/usuarios.js"></script>  <!-- Lista de usuarios! -->
+    <script src="./assets/js/auth.js"></script>     <!-- Luego el login -->
 </body>
 </html>
