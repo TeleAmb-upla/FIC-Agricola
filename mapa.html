@@ -18,16 +18,32 @@
             <h1 class="app-title">Explorador Agrícola</h1>
         </div>
         <div class="control-group">
+            <div class="section-title">Tipo de cultivo </div>
+            <div class="download-options">
+                <select id="formatSelector" class="control-input">
+                    <option value="Palto">Palto</option> 
+                    <option value="Papas" disabled style="color: gray;">Papas</option>
+                    <option value="Legumbres"disabled style="color: gray;">Legumbres</option>
+                    <option value="Lechugas" disabled style="color: gray;">Lechugas</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
             <div class="section-title">Indices espectrales</div>
             <select id="layerSelector" class="control-input">
-                <option value="false">Seleccionar un indice</option>
-                <option value="NDVI">NDVI</option>
-                <option value="EVI" disabled style="color: gray;">EVI</option>
-                <option value="NDRE" disabled style="color: gray;">NDRE</option>
-                <option value="SAVI" disabled style="color: gray;">SAVI</option>
-                <option value="MSAVI" disabled style="color: gray;">MSAVI</option>
-                <option value="VARI" disabled style="color: gray;">VARI</option>
-                <option value="GNDVI" disabled style="color: gray;">GNDVI</option>
+
+                <option value="NDVI" selected>NDVI</option>
+                <option value="EVI">EVI</option>
+                <option value="GCI">GCI</option>
+                <option value="GNDVI">GNDVI</option>
+                <option value="LAI">LAI</option>
+                <option value="MNDWI">MNDWI</option>
+                <option value="MSAVI">MSAVI</option>
+                <option value="NDMI">NDMI</option>
+                <option value="NDWI">NDWI</option>
+                <option value="SAVI">SAVI</option>
+
+               
             </select>
         </div>
         <div class="control-group">
@@ -41,10 +57,71 @@
                 <button id="downloadButton" class="download-button">Descargar</button>
             </div>
         </div>
+        
+
+
+
+
+
+     
+            <div class="user-info">
+                
+        
+                <div class="info-grid">
+                    <!-- Información del Usuario -->
+                    <div class="info-item section-title">
+                        <div class="card-icon">👤</div>
+                        <h3 class="card-title">Datos del Usuario</h3>
+                        <div class="card-content">
+                            <p><strong>Nombre:</strong> <span id="user-name">Raúl González</span></p>
+                            <p><strong>Ubicación:</strong> <span id="user-location"> Quillota, Valparaíso, Chile</span></p>
+                        </div>
+                    </div>
+        
+                    <!-- Información del Predio -->
+                    <div class="info-item section-title">
+                        <div class="card-icon">🌱</div>
+                        <h3 class="card-title">Datos del Cultivo</h3>
+                        <div class="card-content">
+                            <p><strong>Cultivo:</strong> <span id="crop-type">Palto</span></p>
+                            <p><strong>Área Total:</strong> <span id="total-area">13.08 (Ha)                            </span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  
+
+
+
+
+    <section id="clients" class="clients">
+    <div class="section-title">
+        <div style="text-align: center;">
+        <h2>Instituciones participantes</h2>
+        </div>
+
+        <div class="clients-grid">
+        <a href="http://www.upla.cl" title="UPLA"><img src="assets/img/Upla_Inst.png" alt="UPLA" /></a>
+        <a href="http://www.teleamb.cl" title="TELEAMB"><img src="assets/img/TeleAmb-vec.png" alt="TELEAMB" /></a>
+        <a href="https://www.gobiernovalparaiso.cl/" title="GORE"><img src="assets/img/logo_regional.png" alt="GORE" /></a>
+        <a href="https://hubambientalupla.cl" title="HUB"><img src="assets/img/HUB-LOGO COLOR.jpg" alt="HUB" /></a>
+        <a href="https://minagri.gob.cl/region-de-valparaiso/" title="SEREMI"><img src="assets/img/seremi_agricultira_v.png" alt="SEREMI" /></a>
+        <a href="#" title="ERI"><img src="assets/img/logo_eri.jpg" alt="ERI" /></a>
+        <a href="#" title="CORE"><img src="assets/img/logo_core.png" alt="CORE" /></a>
+        </div>
+
+        <p style="text-align: center; font-size: 0.9em; margin-top: 15px;">
+        Esta iniciativa ha sido financiada con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso año 2023
+        </p>
+    </div>
+    </section>
+<!-- End Clients Section -->
+
     </div> <div class="main-container">
         <div id="map"></div>
 
         <div id="chart-container">
+            <div class="resize-handle"></div> <!-- Nuevo: Barra para redimensionar -->
             <h3 class="chart-title"></h3>
             <div id="d3-chart"></div>
             <!--<div id="legend-container" style="margin-left: 20px;"></div> -->
@@ -58,8 +135,13 @@
     <script src="https://unpkg.com/georaster"></script>
     <!-- Georaster layer for Leaflet -->
     <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
-    <script src="https://unpkg.com/geoblaze"></script>
+<!-- Luego geoblaze -->
+<script src="https://unpkg.com/geoblaze@1.5.0/dist/geoblaze.min.js"></script>
+
+<script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
+
     <script type="module" src="./assets/js/map.js"></script>
     <script type="module" src="./assets/js/user-files.js"></script>
+   <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
 </body>
 </html>

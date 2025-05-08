@@ -339,3 +339,4 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
 
      }).catch(error => console.error("Error al cargar datos:", error));
 }
+

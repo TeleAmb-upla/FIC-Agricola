@@ -54,9 +54,9 @@ select, input[type="range"] {
 }
 
 #map {
-    flex: 2;
-    height: 70vh;
-    border-bottom: 2px solid #eee;
+    flex: 1;
+    height: calc(100vh - 300px); /* Altura inicial (100vh - altura del gráfico) */
+    min-height: 300px; /* Altura mínima */
 }
 
 /* Leyenda del Mapa */
@@ -127,12 +127,35 @@ select, input[type="range"] {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    position: relative; /* Añade esto */
 }
 
-#chart-container { /* El contenedor padre del gráfico */
-    width: 100%; /* O el ancho que desees para esta sección */
-    /* Otras propiedades de estilo para el contenedor */
-  }
+
+#chart-container {
+    position: relative;
+    height: 400px; /* Altura inicial */
+    background: white;
+    border-top: 2px solid #eee;
+    transition: height 0.2s ease; /* Transición suave */
+}
+
+.resize-handle {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: #4CAF50;
+    cursor: row-resize; /* Cursor de redimensionamiento */
+    opacity: 0.7;
+    z-index: 1000;
+    border-radius: 3px;
+}
+
+.resize-handle:hover {
+    background: #45a049;
+    opacity: 1;
+}
   
   #d3-chart {
     width: 100%; /* El gráfico se expandirá al ancho de #chart-container */
@@ -242,9 +265,9 @@ select, input[type="range"] {
     }
 
     #map {
-        height: 60vh;
-        flex: none;
-        border-bottom: none;
+        flex: 1; /* Ocupa todo el espacio disponible */
+        height: calc(100vh - 300px); /* Ajusta según el espacio del gráfico */
+        min-height: 400px; /* Altura mínima para móviles */
     }
 
 
@@ -284,3 +307,168 @@ select, input[type="range"] {
 
 
 
+
+/*--------------------------------------------------------------
+# Clients Section
+--------------------------------------------------------------*/
+/* === Clients Section === */
+/* === Versión Corregida y Optimizada === */
+.clients {
+    padding: 40px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .clients-grid {
+    display: flex;
+    justify-content: center;
+    width: max-content;
+    animation: slide 20s linear infinite;
+    gap: 40px;
+    padding: 20px 0;
+  }
+  
+  .clients-grid img {
+    width: 120px;  /* Tamaño uniforme */
+    height: 80px;  /* Proporción 3:2 */
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  
+  .clients-grid img:hover {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  /* Animación personalizada para 7 logos (2 visibles a la vez) */
+  @keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-175% - 90px)); } /* Ajuste para 7 logos */
+  }
+  
+  @media (max-width: 768px) {
+    .clients-grid {
+      gap: 25px;
+      padding: 10px 0;
+    }
+    
+    .clients-grid img {
+      width: 90px;
+      height: 50px;
+      min-width: 90px;
+    }
+    
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(-100% - 20px)); }
+    }
+  }
+
+  
+@media (max-width: 768px) {
+  .clients {
+    order: 3; /* Forzar orden en flexbox */
+    margin-top: 20px;
+    padding: 20px 0;
+    background: #f8f9fa;
+  }
+  
+  .main-container {
+    order: 2;
+    flex: none;
+    height: auto;
+  }
+  
+  body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  #chart-container {
+    order: 1;
+  }
+  
+  .clients-grid {
+    animation: mobileSlide 25s linear infinite;
+  }
+  
+  @keyframes mobileSlide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-250% - 60px)); }
+  }
+}
+
+
+
+
+/* Sección de Información */
+.info-section {
+    background: #f8f9fa;
+    padding: 40px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+
+.info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.info-item {
+    text-align: center;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.card-icon {
+    font-size: 2rem;
+    color: #4CAF50;
+    margin-bottom: 10px;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    .info-section {
+        padding: 30px 15px;
+    }
+    
+    .info-grid {
+        flex-direction: column;
+        gap: 30px;
+        padding: 0;
+    }
+    
+    .info-item {
+        max-width: 100%;
+        padding: 15px;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-content {
+        font-size: 0.9rem;
+    }
+}
