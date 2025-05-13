@@ -24,63 +24,112 @@ function aplicarGradiente(svg, datos, escalaColor, idGradiente, valorAccessor) {
 
 // Función para generar leyenda
 function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVal) {
-    svgLeyenda.selectAll("*").remove();
+    const esMovil = window.matchMedia("(max-width: 768px)").matches;
 
-    const anchoLeyenda = 200;
-    const altoLeyenda = 20;
-    const margenLeyenda = { top: 10, right: 30, bottom: 30, left: 30 };
-    const anchoGradiente = anchoLeyenda - margenLeyenda.left - margenLeyenda.right;
+    svgLeyenda.selectAll("*").remove(); // Limpiar siempre primero
 
-    // Título
-    svgLeyenda.append("text")
-        .attr("x", anchoLeyenda / 2)
-        .attr("y", margenLeyenda.top)
+    if(esMovil) {
+        // 1. Leyenda Horizontal (Móvil) --------------------------------------
+        svgLeyenda.attr("class", "leyenda-mobile-horizontal")
+            .attr("width", 300)
+            .attr("height", 100);
+
+        // Título
+        svgLeyenda.append("text")
+            .attr("x", "50%")
+            .attr("y", 20)
+            .style("text-anchor", "middle")
+            .style("font-size", "1em")
+            .text(capaSeleccionada.toUpperCase());
+
+        // Gradiente
+        const gradienteId = `gradiente-mobile-${capaSeleccionada.replace(/\s+/g, '-')}`;
+        const gradiente = svgLeyenda.append("linearGradient")
+            .attr("id", gradienteId)
+            .attr("x1", "0%")
+            .attr("x2", "100%");
+
+        escalaColor.range().forEach((color, i, arr) => {
+            gradiente.append("stop")
+                .attr("offset", `${(i / (arr.length - 1)) * 100}%`)
+                .attr("stop-color", color);
+        });
+
+        // Barra de color
+        svgLeyenda.append("rect")
+            .attr("y", 30)
+            .attr("width", "100%")
+            .attr("height", 20)
+            .style("fill", `url(#${gradienteId})`);
+
+        // Eje
+        const escalaEje = d3.scaleLinear()
+            .domain([minVal, maxVal])
+            .range([10, 290]); // Ajustar según margen
+
+        svgLeyenda.append("g")
+            .attr("transform", "translate(0,75)")
+            .call(d3.axisBottom(escalaEje)
+                .ticks(5)
+                .tickSizeOuter(0)
+                .tickFormat(d3.format(".2f")));
+
+    } else {
+        // 2. Leyenda Vertical (Desktop) -------------------------------------
+    svgLeyenda.attr("class", "leyenda-desktop-vertical")
+        .attr("width", 120)  // Aumentar ancho
+        .attr("height", 300); // Aumentar altura
+
+        // Título
+         svgLeyenda.append("text")
+        .attr("x", 60)  // Centrar en nuevo ancho
+        .attr("y", 25)  // Bajar posición
         .style("text-anchor", "middle")
         .style("font-size", "0.9em")
         .text(capaSeleccionada.toUpperCase());
 
-    // Gradiente
-    const gradiente = svgLeyenda.append("linearGradient")
-        .attr("id", "leyenda-gradiente")
-        .attr("x1", "0%")
-        .attr("x2", "100%");
+        // Gradiente
+        const gradienteId = `gradiente-vertical-${capaSeleccionada.replace(/\s+/g, '-')}`;
+        const gradiente = svgLeyenda.append("linearGradient")
+            .attr("id", gradienteId)
+            .attr("y1", "100%")
+            .attr("y2", "0%")
+            .attr("x1", "0%")
+            .attr("x2", "0%");
 
-    const stops = escalaColor.range().map((color, i, arr) => ({
-        offset: i / (arr.length - 1),
-        color: color
-    }));
+        escalaColor.range().forEach((color, i, arr) => {
+            gradiente.append("stop")
+                .attr("offset", `${(i / (arr.length - 1)) * 100}%`)
+                .attr("stop-color", color);
+        });
 
-    gradiente.selectAll("stop")
-        .data(stops)
-        .enter().append("stop")
-        .attr("offset", d => `${d.offset * 100}%`)
-        .attr("stop-color", d => d.color);
+        // Barra vertical
+       svgLeyenda.append("rect")
+        .attr("x", 45)  // Ajustar posición X
+        .attr("y", 50)  // Ajustar posición Y
+        .attr("width", 25)
+        .attr("height", 220)  // Aumentar altura
+        .style("fill", `url(#${gradienteId})`);
 
-    // Barra de color
-    svgLeyenda.append("rect")
-        .attr("x", margenLeyenda.left)
-        .attr("y", margenLeyenda.top + 15)
-        .attr("width", anchoGradiente)
-        .attr("height", altoLeyenda)
-        .style("fill", "url(#leyenda-gradiente)");
 
-    // Eje numérico
-    const escalaLeyenda = d3.scaleLinear()
-        .domain([minVal, maxVal])
-        .range([margenLeyenda.left, anchoLeyenda - margenLeyenda.right]);
+        // Eje
+        const escalaEje = d3.scaleLinear()
+            .domain([minVal, maxVal])
+            .range([260, 50]); // Invertido para eje vertical
 
-    const numTicksLeyenda = 6;
-    const ticksLeyenda = d3.ticks(minVal, maxVal, numTicksLeyenda);
-
-    const ejeLeyenda = d3.axisBottom(escalaLeyenda)
-        .tickValues(ticksLeyenda)
-        .tickFormat(d3.format(".2f"));
-
-    svgLeyenda.append("g")
-        .attr("transform", `translate(0, ${margenLeyenda.top + 15 + altoLeyenda})`)
-        .style("font-size", "0.7em")
-        .call(ejeLeyenda);
+        svgLeyenda.append("g")
+            .attr("transform", "translate(30,0)")
+            .call(d3.axisLeft(escalaEje)
+                .ticks(5)
+                .tickFormat(d3.format(".2f")));
+    }
 }
+
+
+
+
+
+
 
 // Función para inicializar el gráfico
 export function inicializarGrafico() {
@@ -198,9 +247,12 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         const escalaColor = obtenerEscalaColor(capaSeleccionada, minVal, maxVal);
 
         // Generar leyenda
-        const svgLeyenda = d3.select("#legend-container").html("").append("svg")
-            .attr("width", 200)
-            .attr("height", 70);
+const esMovil = window.matchMedia("(max-width: 768px)").matches;
+const svgLeyenda = d3.select("#legend-container")
+    .html("")
+    .append("svg")
+    .attr("width", esMovil ? "100%" : 100)
+    .attr("height", esMovil ? 100 : 300);
         generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVal);
 
         // Aplicar gradientes
@@ -271,11 +323,15 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                      .style("fill", "transparent")
                      .style("pointer-events", "all")
                      .on("mouseover", (event, d) => {
-                         tooltip.transition().duration(200).style("opacity", 0.9);
-                         tooltip.html(`Semana: ${d.week}<br>${capaSeleccionada} Histórico: ${d.historic}<br>${capaSeleccionada} Actual: ${d.current}`)
-                             .style("left", (event.pageX + 5) + "px")
-                             .style("top", (event.pageY - 28) + "px");
-                     })
+    tooltip.transition().duration(200).style("opacity", 0.9);
+    tooltip.html(`
+        Semana: ${d.week}<br>
+        ${capaSeleccionada} Histórico: ${d3.format(".3f")(d.historic)}<br>
+        ${capaSeleccionada} Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
+    `)
+    .style("left", (event.pageX + 5) + "px")
+    .style("top", (event.pageY - 28) + "px");
+})
                      .on("mouseout", () => {
                          tooltip.transition().duration(500).style("opacity", 0);
                      }),

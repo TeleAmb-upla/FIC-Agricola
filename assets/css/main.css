@@ -2520,3 +2520,63 @@ section,
 
 }
 
+
+
+/* Estilos base (mobile-first)  LOGO SUPERIOR ARRIBA A LA IZQUIERDA*/
+.logo-superior {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los logos se apilen en móviles si no caben */
+  justify-content: center;
+  gap: 10px; /* Espacio menor inicial para móviles */
+  padding: 15px 0;
+}
+
+.superior-container {
+  width: 100px; /* Tamaño base más pequeño para móviles */
+  height: 70px;
+  position: relative;
+}
+
+.superior-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease; /* Suaviza cambios de tamaño */
+}
+
+/* Media Queries para pantallas más grandes */
+@media (min-width: 768px) { /* Tablet */
+  .logo-superior {
+    gap: 20px;
+    flex-wrap: nowrap; /* Asegura disposición en línea */
+    padding: 20px 0;
+  }
+  
+  .superior-container {
+    width: 130px;
+    height: 90px;
+  }
+}
+
+@media (min-width: 992px) { /* Desktop */
+  .logo-superior {
+    gap: 30px;
+  }
+  
+  .superior-container {
+    width: 150px;
+    height: 100px;
+  }
+}
+
+/* Ajustes especiales para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .superior-container {
+    width: 80px;
+    height: 60px;
+  }
+  
+  .logo-superior {
+    gap: 5px;
+  }
+}

@@ -87,6 +87,9 @@ export function getColorParams(capaSeleccionada) {
     return colorParams[capaSeleccionada.toUpperCase()]; // Convertir a mayúsculas para coincidencia
 }
 
+
+
+
 // Modified loadGeoRasterLayer to specify which layer's color scheme to use
 // Modified loadGeoRasterLayer to handle NA, NULL, and NaN as transparent
 export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
@@ -94,63 +97,65 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         const response = await fetch(url);
         const arrayBuffer = await response.arrayBuffer();
         const georaster = await parseGeoraster(arrayBuffer);
-        
         const params = getColorParams(capaSeleccionada);
 
-        // Eliminar título anterior si existe
-        if (mapInstance.titleControl) {
-            mapInstance.removeControl(mapInstance.titleControl);
-        }
+        // Eliminar controles anteriores
+        [mapInstance.titleControl, mapInstance.legendControl].forEach(control => {
+            if (control) {
+                mapInstance.removeControl(control);
+                control = null;
+            }
+        });
 
-        // Crear nuevo título centrado
-        mapInstance.titleControl = L.control({ position: 'topleft' });
-        mapInstance.titleControl.onAdd = function () {
+        // Control del título optimizado
+        mapInstance.titleControl = L.control({ position: 'topright' });
+        mapInstance.titleControl.onAdd = () => {
             const div = L.DomUtil.create('div', 'map-title');
-            div.style.cssText = `
-                position: absolute;
-                left: 1600%;
-                transform: translateX(-50%);
-                background-color: rgba(255, 255, 255, 0.95);
-                padding: 8px 25px;
-                border-radius: 4px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                font-family: Arial, sans-serif !important;
-                font-size: 16px;
-                color: #333333 !important;
-                text-align: center;
-                white-space: nowrap;
-                top: 10px;
-                z-index: 1000;
-                font-weight: 600;
+            div.innerHTML = `
+                <div class="legend-title-container">
+                    <span class="legend-main-title">Índice de Vegetación</span>
+                    <span class="legend-layer-name">${capaSeleccionada.toUpperCase()}</span>
+                </div>
             `;
-            div.innerHTML = `<span style="letter-spacing: 0.5px;">Índice de Vegetación ${capaSeleccionada.toUpperCase()}</span>`;
             return div;
         };
         mapInstance.titleControl.addTo(mapInstance);
 
+        // Leyenda vertical optimizada
+        mapInstance.legendControl = L.control({ position: 'bottomright' });
+        mapInstance.legendControl.onAdd = () => {
+            const div = L.DomUtil.create('div', 'map-legend');
+            const gradientColors = params.palette.map(color => `#${color}`).join(', ');
+            
+            div.innerHTML = `
+                <div class="legend-scale-container">
+                    <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
+                    <div class="legend-values">
+                        <span>${params.min.toFixed(2)}</span>
+                        <span>${params.max.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+            return div;
+        };
+        mapInstance.legendControl.addTo(mapInstance);
+
+        // Capa raster
         const rasterLayer = new GeoRasterLayer({
             georaster,
             resolution: 256,
             pixelValuesToColorFn: values => {
                 const value = values[0];
                 
-                // Manejar valores nulos o inválidos
-                if (
-                    value === null ||
-                    value === undefined ||
-                    isNaN(value) ||
-                    value === georaster.noDataValue
-                ) {
+                if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
                     return "transparent";
                 }
                 
-                // Calcular color
                 const clampedValue = Math.max(params.min, Math.min(value, params.max));
                 const normalized = (clampedValue - params.min) / (params.max - params.min);
                 const index = Math.floor(normalized * (params.palette.length - 1));
-                const colorIndex = Math.max(0, Math.min(index, params.palette.length - 1));
                 
-                return `#${params.palette[colorIndex]}`;
+                return `#${params.palette[Math.max(0, Math.min(index, params.palette.length - 1))]}`;
             },
             opacity: params.opacity
         });
@@ -162,6 +167,17 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         throw error;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 export function calculateBounds(georaster) {
     const xmin = georaster.xmin;
     const xmax = georaster.xmax;
