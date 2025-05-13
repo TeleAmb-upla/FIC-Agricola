@@ -1,34 +1,69 @@
 
 // assets/js/chart.js
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
+
+
+
 // indicator-colors.js
 export const colorRanges = {
     "NDVI": {
-        domain: [0, 0.33, 0.66, 1],
+       
         range: ["red", "sandybrown", "lightgreen", "forestgreen"]
     },
     "SAVI": {
-        domain: [-1, 0, 0.5, 1], 
+       
         range: ["darkred", "lightgray", "yellow", "darkgreen"]
     },
     "EVI": {
-        domain: [-1, 0, 0.5, 1], // Ejemplo: ¡Reemplaza con los rangos reales!
+        // Ejemplo: ¡Reemplaza con los rangos reales!
         range: ["purple", "lightblue", "orange", "lime"]
+    },
+    "GNDVI": {
+         // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["blue", "lightyellow", "orange", "green"]
+    },
+    "LAI": {
+        // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["black", "lightgray", "yellow", "green"]
+    },
+    "GCI": {
+         // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["darkblue", "lightblue", "orange", "green"]
+    },
+    "MSAVI": {
+        // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["darkblue", "lightblue", "orange", "green"]
+    },
+    "NDWI": {
+         // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["darkblue", "lightblue", "orange", "green"]
+    },
+    "MNDWI": {
+         // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["darkblue", "lightblue", "orange", "green"]
+    },
+    "NDMI": {
+         // Ejemplo: ¡Reemplaza con los rangos reales!
+        range: ["darkblue", "lightblue", "orange", "green"]
     },
     // Aquí puedes añadir las definiciones para más indicadores en el futuro
 };
 
-// Función para obtener la escala de color basada en el indicador
-export function obtenerEscalaColor(indicador) {
-    const rangos = colorRanges[indicador];
+export function obtenerEscalaColor(capaSeleccionada, minVal, maxVal) {
+    const rangos = colorRanges[capaSeleccionada];
+    
     if (rangos) {
+        const numColores = rangos.range.length;
+        const dominio = Array.from({length: numColores}, (_, i) => 
+            minVal + (maxVal - minVal) * (i / (numColores - 1))
+        );
+        
         return d3.scaleLinear()
-            .domain(rangos.domain)
+            .domain(dominio)
             .range(rangos.range);
-    } else {
-        // Escala de color por defecto si el indicador no se encuentra
-        return d3.scaleLinear()
-            .domain([-1, 0, 1])
-            .range(["red", "lightgray", "green"]);
     }
+    
+    return d3.scaleLinear()
+        .domain([minVal, (minVal + maxVal)/2, maxVal])
+        .range(["red", "lightgray", "green"]);
 }
