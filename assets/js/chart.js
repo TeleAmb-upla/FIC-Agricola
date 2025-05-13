@@ -241,12 +241,16 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                      .attr("r", 6)
                      .style("fill", "transparent")
                      .style("pointer-events", "all")
-                     .on("mouseover", (event, d) => {
-                         tooltip.transition().duration(200).style("opacity", 0.9);
-                         tooltip.html(`Semana: ${d.week}<br>${capaSeleccionada} Histórico: ${d.historic}<br>${capaSeleccionada} Actual: ${d.current}`)
-                             .style("left", (event.pageX + 5) + "px")
-                             .style("top", (event.pageY - 28) + "px");
-                     })
+.on("mouseover", (event, d) => {
+    tooltip.transition().duration(200).style("opacity", 0.9);
+    tooltip.html(`
+        Semana: ${d.week}<br>
+        ${capaSeleccionada} Histórico: ${d3.format(".3f")(d.historic)}<br>
+        ${capaSeleccionada} Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
+    `)
+    .style("left", (event.pageX + 5) + "px")
+    .style("top", (event.pageY - 28) + "px");
+})
                      .on("mouseout", () => {
                          tooltip.transition().duration(500).style("opacity", 0);
                      }),

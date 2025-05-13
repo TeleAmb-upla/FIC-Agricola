@@ -96,28 +96,57 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         const georaster = await parseGeoraster(arrayBuffer);
         
         const params = getColorParams(capaSeleccionada);
-        
+
+        // Eliminar título anterior si existe
+        if (mapInstance.titleControl) {
+            mapInstance.removeControl(mapInstance.titleControl);
+        }
+
+        // Crear nuevo título centrado
+        mapInstance.titleControl = L.control({ position: 'topleft' });
+        mapInstance.titleControl.onAdd = function () {
+            const div = L.DomUtil.create('div', 'map-title');
+            div.style.cssText = `
+                position: absolute;
+                left: 1600%;
+                transform: translateX(-50%);
+                background-color: rgba(255, 255, 255, 0.95);
+                padding: 8px 25px;
+                border-radius: 4px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                font-family: Arial, sans-serif !important;
+                font-size: 16px;
+                color: #333333 !important;
+                text-align: center;
+                white-space: nowrap;
+                top: 10px;
+                z-index: 1000;
+                font-weight: 600;
+            `;
+            div.innerHTML = `<span style="letter-spacing: 0.5px;">Índice de Vegetación ${capaSeleccionada.toUpperCase()}</span>`;
+            return div;
+        };
+        mapInstance.titleControl.addTo(mapInstance);
+
         const rasterLayer = new GeoRasterLayer({
             georaster,
             resolution: 256,
             pixelValuesToColorFn: values => {
                 const value = values[0];
                 
-                // Verificar si el valor es NA, NULL, NaN o coincide con el valor NoData del georaster
+                // Manejar valores nulos o inválidos
                 if (
                     value === null ||
                     value === undefined ||
                     isNaN(value) ||
                     value === georaster.noDataValue
                 ) {
-                    return "transparent"; // Valor transparente
+                    return "transparent";
                 }
                 
-                // 1. Normalización del valor
+                // Calcular color
                 const clampedValue = Math.max(params.min, Math.min(value, params.max));
                 const normalized = (clampedValue - params.min) / (params.max - params.min);
-                
-                // 2. Asignación del color
                 const index = Math.floor(normalized * (params.palette.length - 1));
                 const colorIndex = Math.max(0, Math.min(index, params.palette.length - 1));
                 
