@@ -125,12 +125,6 @@ function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVa
     }
 }
 
-
-
-
-
-
-
 // Función para inicializar el gráfico
 export function inicializarGrafico() {
     if (svg) svg.remove();

@@ -5,48 +5,41 @@ import * as d3 from 'https://cdn.skypack.dev/d3@7';
 
 
 // indicator-colors.js
+// indicator-colors.js (actualizado)
 export const colorRanges = {
     "NDVI": {
-       
-        range: ["red", "sandybrown", "lightgreen", "forestgreen"]
-    },
-    "SAVI": {
-       
-        range: ["darkred", "lightgray", "yellow", "darkgreen"]
+        range: ["#ffffff", "#ce7e45", "#df923d", "#f1b555", "#fcd163", "#99b718", "#74a901", "#66a000", "#529400", "#3e8601", "#207401", "#056201", "#004c00", "#023b01", "#012e01", "#011d01", "#011301"]
     },
     "EVI": {
-        // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["purple", "lightblue", "orange", "lime"]
+        range: ["#ffffff", "#f7f7b0", "#e6f59b", "#c6ea7f", "#a6d96a", "#86c45d", "#66bd63", "#46a356", "#2e8b4a", "#1a753e", "#0a5c32"]
+    },
+    "SAVI": {
+        range: ["#8b4513", "#a05a2c", "#b56f45", "#ca855e", "#df9a77", "#f4b090", "#d5c293", "#b6d496", "#97e699", "#60c67d", "#399565"]
     },
     "GNDVI": {
-         // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["blue", "lightyellow", "orange", "green"]
+        range: ["#ff0000", "#ff4500", "#ff8c00", "#ffd700", "#ffff00", "#adff2f", "#69d500", "#32cd32", "#008000", "#006400"]
     },
     "LAI": {
-        // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["black", "lightgray", "yellow", "green"]
-    },
-    "GCI": {
-         // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["darkblue", "lightblue", "orange", "green"]
-    },
-    "MSAVI": {
-        // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["darkblue", "lightblue", "orange", "green"]
-    },
-    "NDWI": {
-         // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["darkblue", "lightblue", "orange", "green"]
-    },
-    "MNDWI": {
-         // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["darkblue", "lightblue", "orange", "green"]
+        range: ["#ffffff", "#e0f3e0", "#c1e7c1", "#a2dba2", "#83cf83", "#64c364", "#45b745", "#26ab26", "#068b06", "#005c00"]
     },
     "NDMI": {
-         // Ejemplo: ¡Reemplaza con los rangos reales!
-        range: ["darkblue", "lightblue", "orange", "green"]
+        range: ["#8b0000", "#ff0000", "#ffa07a", "#ffffff", "#add8e6", "#0000ff", "#00008b"]
     },
-    // Aquí puedes añadir las definiciones para más indicadores en el futuro
+    "GCI": {
+        range: ["#b2182b", "#ef8a62", "#fddbc7", "#f7f7f7", "#b5c6d0", "#5890b0", "#2166ac"]
+    },
+    "MSAVI": {
+        range: ["#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#b9d9d4", "#80cdc1", "#35978f", "#01665e"]
+    },
+    "NDWI": {
+        range: ["#d73027", "#fc8d59", "#fee090", "#e0f3f8", "#91bfdb", "#4575b4"]
+    },
+    "MNDWI": {
+        range: ["#a50026", "#d75926", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#66bd63", "#1a9850", "#006837"]
+    },
+    "NDMI": {
+        range: ["#8b0000", "#ff0000", "#ffa07a", "#ffffff", "#add8e6", "#0000ff", "#00008b"]
+    }
 };
 
 export function obtenerEscalaColor(capaSeleccionada, minVal, maxVal) {

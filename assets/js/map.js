@@ -87,9 +87,6 @@ export function getColorParams(capaSeleccionada) {
     return colorParams[capaSeleccionada.toUpperCase()]; // Convertir a mayúsculas para coincidencia
 }
 
-
-
-
 // Modified loadGeoRasterLayer to specify which layer's color scheme to use
 // Modified loadGeoRasterLayer to handle NA, NULL, and NaN as transparent
 export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
@@ -167,16 +164,6 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         throw error;
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 export function calculateBounds(georaster) {
     const xmin = georaster.xmin;
