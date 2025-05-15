@@ -518,94 +518,72 @@ select, input[type="range"] {
 /* === Clients Section === */
 /* === Versión Corregida y Optimizada === */
 .clients {
-    padding: 40px 0;
-    overflow: hidden;
-    position: relative;
-  }
-  
-  .clients-grid {
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    animation: slide 20s  infinite;
-    gap: 40px;
-    padding: 20px 0;
-  }
-  
-  .clients-grid img {
-    width: 120px;  /* Tamaño uniforme */
-    height: 80px;  /* Proporción 3:2 */
-    object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.7;
-    transition: all 0.1s ease;
-    flex-shrink: 0;
-  }
-  
-  .clients-grid img:hover {
-    filter: grayscale(0);
-    opacity: 1;
-    transform: scale(1.1);
-  }
-  
-  /* Animación personalizada para 7 logos (2 visibles a la vez) */
-  @keyframes slide {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-175% - 90px)); } /* Ajuste para 7 logos */
-  }
-  
-  @media (max-width: 768px) {
-    .clients-grid {
-      gap: 25px;
-      padding: 10px 0;
-    }
-    
-    .clients-grid img {
-      width: 90px;
-      height: 50px;
-      min-width: 90px;
-    }
-    
-    @keyframes slide {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(calc(-100% - 20px)); }
-    }
-  }
+  padding: 20px 0;
+  overflow: hidden;
+  position: relative;
 
-  
-@media (max-width: 768px) {
-  .clients {
-    order: 3; /* Forzar orden en flexbox */
-    margin-top: 20px;
-    padding: 20px 0;
-    background: #f8f9fa;
+}
+
+.clients-grid {
+  display: flex;
+  width: fit-content;
+  animation: slide 10s linear infinite;
+  gap: 40px;
+  padding: 20px 0;
+}
+
+.clients-grid::after {
+  content: "";
+  flex: 100%; /* Agrega espacio para efecto continuo */
+}
+
+.clients-grid img {
+  width: 120px;
+  height: 80px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.1s ease;
+  flex-shrink: 0;
+}
+
+.clients-grid img:hover {
+  filter: grayscale(0);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
   }
-  
-  .main-container {
-    order: 2;
-    flex: none;
-    height: auto;
-  }
-  
-  body {
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  
-  #chart-container {
-    order: 1;
-  }
-  
-  .clients-grid {
-    animation: mobileSlide 30s linear infinite;
-  }
-  
-  @keyframes mobileSlide {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-250% - 60px)); }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
+@media (max-width: 768px) {
+  .clients-grid {
+    gap: 25px;
+    padding: 10px 0;
+    animation: mobileSlide 20s linear infinite;
+  }
+
+  .clients-grid img {
+    width: 90px;
+    height: 50px;
+    min-width: 90px;
+  }
+
+  @keyframes mobileSlide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-60%);
+    }
+  }
+}
 
 
 

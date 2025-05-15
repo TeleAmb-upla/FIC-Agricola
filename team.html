@@ -49,13 +49,22 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
 <a href="index.html" class="logo-superior" aria-label="Logos institucionales">
+  <!-- Logo de 150x150px -->
   <div class="superior-container" role="img" aria-label="Logo TeleAmb">
-    <img src="./assets/img/TeleAmb.png" alt="" class="superior-image"> 
+    <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo TeleAmb" />
   </div>
-  <div class="superior-container" role="img" aria-label="Logo FIC Teleamb">
-    <img src="./assets/img/Logo_FIC_Teleamb.png" alt="" class="superior-image"> 
+
+  <!-- Texto ajustado a 150px -->
+  <div class="superior-text">
+    <p>
+      Plataforma de <strong>Monitoreo Satelital Agrícola</strong>
+    </p>
+    <p>
+      para la Adaptación al <strong>Cambio Climático</strong>
+    </p>
   </div>
 </a>
+
 
       <nav id="navmenu" class="navmenu">
         <ul>
@@ -72,18 +81,50 @@
 
   <main class="main">
 
-    <!-- Page Title -->
-    <div class="page-title light-background">
-      <div class="container">
-        <h1>Equipo</h1>
-        <nav class="breadcrumbs">
+<!-- Aplicando al contenedor principal -->
+<div class="page-title light-background" style="padding-left: 100px; padding-top: 50px; box-sizing: 1 border-box;"> 
+  <div class="container">
+    <h1>Equipo</h1>
+    <nav class="breadcrumbs"></nav>
+  </div>
+</div>
 
-        </nav>
+
+
+
+<section id="seccion-text-img-sup" class="team">
+  <div class="container container-custom" data-aos="fade-up">
+    <div class="row justify-content-start align-items-center gx-0"> <!-- Added gx-0 -->
+      
+      <!-- Columna IMAGEN -->
+      <div class="col-lg-6 order-lg-1 image-column">
+        <div class="image-wrapper">
+          <img 
+            src="./assets/img/teleamb.png" 
+            class="img-fluid hover-scale" 
+            alt="Teleamb" 
+            style="max-width: 350px;">
+        </div>
       </div>
-    </div><!-- End Page Title -->
+
+      <!-- Columna TEXTO -->
+      <div class="col-lg-6 order-lg-2 text-column">
+        <div class="text-content">
+          <p class="custom-text">
+            El equipo de investigación está compuesto por un grupo multidisciplinario de profesionales con experiencia 
+            en el uso de tecnologías satelitales y en la gestión de recursos hídricos.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div> 
+</section>
+
 
     <!-- Team Section -->
  <!-- INICIO DE SECCIÓN EQUIPO -->
+  
 <section id="team" class="team">
   <div class="container" data-aos="fade-up">
    <!-- Sección: Asistentes de Investigación -->
@@ -242,10 +283,12 @@
       </div>
 
     </div>
-
-    <div class="copyright d-flex flex-column flex-md-row align-items-center justify-content-md-between">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Teleamb.</strong> <span>Todos los derechos reservados</span></p>
-           </div>
+      <div class="copyright d-flex flex-column flex-md-row align-items-center justify-content-md-between">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">TeleAmb.</strong> <span>Todos los derechos reservados</span></p>
+        <div class="credits">
+          Diseñado por <a>TERRAVIEW </a>
+             </div>
+    </div>
   </div>
 </footer>
 

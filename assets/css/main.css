@@ -751,17 +751,20 @@ section,
 .about .swiper-pagination {
   position: absolute;
   bottom: 30px;
+
 }
 
 .about .swiper-pagination .swiper-pagination-bullet {
   margin: 0 5px;
   background: #ffffff;
   opacity: 0.3;
+  
 }
 
 .about .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
   background: var(--accent-color);
   opacity: 1;
+  
 }
 
 .about .section-subtitle {
@@ -1478,6 +1481,7 @@ section,
 .portfolio-details .swiper-pagination {
   margin-top: 20px;
   position: relative;
+  
 }
 
 .portfolio-details .swiper-pagination .swiper-pagination-bullet {
@@ -1717,6 +1721,104 @@ section,
 .team .slider-nav a:first-child {
   margin-right: 5px;
 }
+
+
+
+/*--------------------------------------------------------------
+# Control de texto sobre team
+--------------------------------------------------------------*/
+
+
+
+
+
+
+/* Contenedor principal */
+.container-custom {
+  max-width: 100% !important;
+  padding: 0 30px 0 0 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Columna de imagen */
+.image-column {
+  padding-right: 10 !important;
+  margin-left: 0px; /* Empuja la imagen hacia la izquierda */
+}
+
+.image-wrapper {
+  transform: translateX(32%);
+  transition: transform 0.3s ease;
+}
+
+/* Columna de texto */
+.text-column {
+  padding-left: 40px !important;
+  position: relative;
+  z-index: 2;
+}
+
+.custom-text {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.3rem !important; /* Tamaño ligeramente reducido */
+  line-height: 1.3 !important; /* Espaciado entre líneas ajustado */
+  text-align: justify;
+  hyphens: auto;
+  max-width: 75%; /* Control del ancho máximo */
+  padding-right: 15px !important; /* Reducción del espacio derecho */
+  margin: 0 !important;
+  word-spacing: -0.05em; /* Compactación entre palabras */
+}
+
+.custom-text strong {
+  font-weight: 700 !important; /* Negrita */
+}
+
+/* Efecto hover para imagen */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+
+
+@media (max-width: 768px) {
+  .container-custom {
+    padding: 0 10px !important;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .image-column,
+  .text-column {
+    padding: 130 !important;
+    width: 100%;
+    text-align: center;
+  }
+
+  .image-wrapper {
+    transform: translateX(0%);
+    display: flex;
+    justify-content: center;
+  }
+
+  .custom-text {
+    font-size: 1.1rem !important;
+    line-height: 1.4 !important;
+    max-width: 100%;
+    padding: 0 10px !important;
+    text-align: justify;
+  }
+}
+
+
+
+
 
 /*--------------------------------------------------------------
 # Blog Posts 2 Section
@@ -2522,61 +2624,76 @@ section,
 
 
 
-/* Estilos base (mobile-first)  LOGO SUPERIOR ARRIBA A LA IZQUIERDA*/
+/* Estilo para el enlace del logo superior */
 .logo-superior {
   display: flex;
-  flex-wrap: wrap; /* Permite que los logos se apilen en móviles si no caben */
-  justify-content: center;
-  gap: 10px; /* Espacio menor inicial para móviles */
-  padding: 15px 0;
+  align-items: center;
 }
 
+/* Contenedor del logo */
 .superior-container {
-  width: 100px; /* Tamaño base más pequeño para móviles */
-  height: 70px;
-  position: relative;
+  width: 85px;
+  height: 85px;
+  flex-shrink: 0;
 }
 
-.superior-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform 0.3s ease; /* Suaviza cambios de tamaño */
+.superior-container img {
+  width: 120%;
+  height: 120%;
+  border-radius: 0%;
+  object-fit: cover;
+  margin-left: px ;
 }
 
-/* Media Queries para pantallas más grandes */
-@media (min-width: 768px) { /* Tablet */
+/* Texto al lado del logo */
+.superior-text {
+  margin-left: 15px;
+}
+
+.superior-text p {
+  font-size: 2em;
+  line-height: 1.2;
+  font-family: 'LATO', sans-serif;
+  color: #033E60;
+  margin: 0;
+}
+
+.superior-text p:nth-child(2) {
+  line-height: 1;
+}
+
+/* Versión móvil */
+@media (max-width: 600px) {
   .logo-superior {
-    gap: 20px;
-    flex-wrap: nowrap; /* Asegura disposición en línea */
-    padding: 20px 0;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
+
   .superior-container {
-    width: 130px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+  }
+
+  .superior-text p {
+    font-size: 1.2em;
+    line-height: 1.4;
   }
 }
 
-@media (min-width: 992px) { /* Desktop */
-  .logo-superior {
-    gap: 30px;
-  }
-  
-  .superior-container {
-    width: 150px;
-    height: 100px;
+
+
+/* Solo para desktop */
+@media (min-width: 769px) {
+  .about-custom {
+    padding-left: 25%;
   }
 }
 
-/* Ajustes especiales para pantallas muy pequeñas */
-@media (max-width: 480px) {
-  .superior-container {
-    width: 80px;
-    height: 60px;
-  }
-  
-  .logo-superior {
-    gap: 5px;
+/* Para móviles (puedes dejar sin padding o algo más adecuado) */
+@media (max-width: 768px) {
+  .about-custom {
+    padding-left: 5%;
+    padding-right: 5%;
   }
 }

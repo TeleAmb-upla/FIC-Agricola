@@ -32,12 +32,21 @@ function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVa
         // 1. Leyenda Horizontal (Móvil) --------------------------------------
         svgLeyenda.attr("class", "leyenda-mobile-horizontal")
             .attr("width", 300)
-            .attr("height", 100);
+            .attr("height", 110);
+
+        svgLeyenda.append("text")
+            .attr("x", "50%")
+            .attr("y", 10)  // ← 10 en lugar de 20 (más arriba)
+            .style("text-anchor", "middle")
+            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
+            .style("fill", "#666")  // Color más suave
+            .text("Histórico: —     Actual: --");  // Tu texto
+
 
         // Título
         svgLeyenda.append("text")
             .attr("x", "50%")
-            .attr("y", 20)
+            .attr("y", 30)
             .style("text-anchor", "middle")
             .style("font-size", "1em")
             .text(capaSeleccionada.toUpperCase());
@@ -57,7 +66,7 @@ function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVa
 
         // Barra de color
         svgLeyenda.append("rect")
-            .attr("y", 30)
+            .attr("y", 40)
             .attr("width", "100%")
             .attr("height", 20)
             .style("fill", `url(#${gradienteId})`);
@@ -78,11 +87,30 @@ function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVa
         // 2. Leyenda Vertical (Desktop) -------------------------------------
     svgLeyenda.attr("class", "leyenda-desktop-vertical")
         .attr("width", 120)  // Aumentar ancho
-        .attr("height", 300); // Aumentar altura
+        .attr("height", 310); // Aumentar altura
+
+ var po_ly = 290;
+
+        svgLeyenda.append("text")
+            .attr("x", "57")
+            .attr("y", po_ly )  // ← 10 en lugar de 20 (más arriba)
+            .style("text-anchor", "middle")
+            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
+            .style("fill", "#666")  // Color más suave
+            .text("Histórico: —");  // Tu texto
+
+
+        svgLeyenda.append("text")
+            .attr("x", "50%")
+            .attr("y", po_ly+20 )  // ← 10 en lugar de 20 (más arriba)
+            .style("text-anchor", "middle")
+            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
+            .style("fill", "#666")  // Color más suave
+            .text("Actual: --");  // Tu texto
 
         // Título
          svgLeyenda.append("text")
-        .attr("x", 60)  // Centrar en nuevo ancho
+        .attr("x", 55)  // Centrar en nuevo ancho
         .attr("y", 25)  // Bajar posición
         .style("text-anchor", "middle")
         .style("font-size", "0.9em")
@@ -207,11 +235,6 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
      const margenInferior = 50;
      const margenIzquierdo = 70;
         
-
-
-
-
-
         // Calcular valores mínimos y máximos
         const allValues = datos.reduce((acc, d) => {
             acc.push(d.historic);
@@ -291,8 +314,9 @@ const svgLeyenda = d3.select("#legend-container")
     tooltip.transition().duration(200).style("opacity", 0.9);
     tooltip.html(`
         Semana: ${d.week}<br>
-        ${capaSeleccionada} Histórico: ${d3.format(".3f")(d.historic)}<br>
-        ${capaSeleccionada} Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
+        Histórico: ${d3.format(".3f")(d.historic)}<br>
+        Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
+        
     `)
     .style("left", (event.pageX + 5) + "px")
     .style("top", (event.pageY - 28) + "px");
@@ -320,8 +344,8 @@ const svgLeyenda = d3.select("#legend-container")
     tooltip.transition().duration(200).style("opacity", 0.9);
     tooltip.html(`
         Semana: ${d.week}<br>
-        ${capaSeleccionada} Histórico: ${d3.format(".3f")(d.historic)}<br>
-        ${capaSeleccionada} Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
+        Histórico: ${d3.format(".3f")(d.historic)}<br>
+        Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
     `)
     .style("left", (event.pageX + 5) + "px")
     .style("top", (event.pageY - 28) + "px");
