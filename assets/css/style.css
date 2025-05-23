@@ -368,11 +368,11 @@ select, input[type="range"] {
 @media (max-width: 768px) {
 
     #d3-chart .chart-title-svg {
-        font-size: 1.4em !important;
+        font-size: 1.05em !important; /* Más pequeño para móvil */
     }
 
     #d3-chart .axis text {
-        font-size: 1em !important;
+        font-size: 0.78em !important; /* Más pequeño para móvil */
     }
 
     #d3-chart .linea-historic,
@@ -386,33 +386,37 @@ select, input[type="range"] {
         box-shadow: none;
         border-top: 2px solid #eee;
         margin-top: 20px;
-        flex-direction: column; /* Nuevo */
+        flex-direction: column;
+        padding: 8px; /* Reducir padding para más espacio */
+        gap: 8px;     /* Menor espacio entre gráfico y leyenda */
     }
 
-
-        /* Añadir esto */
     .chart-wrapper {
         flex-direction: column;
         height: auto;
+        width: 100%;
     }
     #d3-chart {
-        width: 100%;
-        height: 275px; /* La altura se ajustará según la proporción del viewBox */
-        max-height: 75vh; /* Aumentamos el max-height para hacerlo más largo */
+        width: 370px;
+        max-width: 98vw;
+        min-width: 220px;
+        height: 275px;
+        max-height: 75vh;
         background: white;
         border-radius: 10px;
-        padding: 15px;
+        padding: 6px;
+        margin: 0 auto;
+        box-sizing: border-box;
     }
 
     #legend-container {
-        order: 1; /* Coloca la leyenda después del gráfico */
+        order: 1;
         width: 100%;
         height: auto;
-        margin: 20px 0 0 0;
-        padding: 10px;
+        margin: 10px 0 0 0;
+        padding: 6px;
     }
-
-      /* Estilos específicos para la leyenda horizontal */
+    /* Estilos específicos para la leyenda horizontal */
     .leyenda-mobile-horizontal {
         display: flex;
         flex-direction: column;

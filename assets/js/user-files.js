@@ -23,6 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const capaSeleccionada = layerSelector.value;
         const semanaSeleccionada = weekSelector.value;
 
+        // Actualizar el título del gráfico según el índice seleccionado
+        const chartTitle = document.querySelector('.chart-title');
+        if (chartTitle) {
+            chartTitle.textContent = capaSeleccionada;
+        }
+
         try {
             // Rutas TIFF: histórico (2024) y actual (2025)
             const rutas = {
@@ -93,8 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             miMapa.fitBounds(bounds);
 
-            cargarDatosEnGrafico(rutas.csv, "NDVI");
-
+            cargarDatosEnGrafico(rutas.csv, capaSeleccionada); // Usar capaSeleccionada aquí también
         } catch (error) {
             console.error("🔥 Error crítico:", error.message);
             alert(`🚨 Error: ${error.message}`);
