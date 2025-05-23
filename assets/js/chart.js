@@ -156,23 +156,33 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         yScale.domain([minVal - yMargin, maxVal + yMargin])
             .range([altoGrafico + margenSuperior, margenSuperior]);
 
+        // --- AQUÍ SE DEFINEN LAS LETRAS DE LOS MESES PARA EL EJE X ---
+        // E = Enero, F = Febrero, M = Marzo, A = Abril, M = Mayo, J = Junio,
+        // J = Julio, A = Agosto, S = Septiembre, O = Octubre, N = Noviembre, D = Diciembre
         const meses = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+        // -------------------------------------------------------------
 
         // Calcular la semana de inicio de cada mes (aproximado, semana que contiene el día 1 de cada mes)
         function getWeeksInicioMes(year) {
-            const weeks = [];
-            for (let m = 0; m < 12; m++) {
-                const firstDay = new Date(year, m, 1);
-                // Calcular número de semana ISO
-                const temp = new Date(firstDay.getTime());
-                temp.setHours(0, 0, 0, 0);
-                // Jueves en la semana ISO
+            const weeks = []; // Array donde se guardarán los números de semana de inicio de cada mes
+            for (let m = 0; m < 12; m++) { // Itera sobre los 12 meses (0=enero, 11=diciembre)
+                const firstDay = new Date(year, m, 1); // Crea un objeto Date para el primer día del mes m
+                // Calcular número de semana ISO:
+                const temp = new Date(firstDay.getTime()); // Copia la fecha para no modificar firstDay
+                temp.setHours(0, 0, 0, 0); // Asegura que la hora sea 00:00:00.000
+                // Jueves en la semana ISO: ajusta la fecha al jueves de esa semana
                 temp.setDate(temp.getDate() + 3 - ((temp.getDay() + 6) % 7));
+                // Encuentra el jueves de la primera semana del año (ISO)
                 const week1 = new Date(temp.getFullYear(), 0, 4);
+                // Calcula el número de semana ISO para temp:
+                // - Diferencia de días entre temp y week1
+                // - Ajusta por desfase de días
+                // - Divide por 7 para obtener semanas
+                // - Suma 1 porque las semanas ISO empiezan en 1
                 const weekNumber = 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
-                weeks.push(weekNumber);
+                weeks.push(weekNumber); // Guarda el número de semana de inicio de ese mes
             }
-            return weeks;
+            return weeks; // Devuelve un array de 12 elementos, uno por mes
         }
 
         const weeksInicioMes = getWeeksInicioMes(year);
@@ -203,7 +213,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-            { label: "Histórico", color: COLOR_HISTORIC, style: "solid" },
+            { label: "Histórico (x̄) (2018-2024) ", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
             { label: "Último Año", color: COLOR_LAST, style: "solid" },
