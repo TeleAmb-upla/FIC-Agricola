@@ -2,8 +2,6 @@
 // assets/js/chart.js
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
 
-
-
 // indicator-colors.js
 // indicator-colors.js (actualizado)
 export const colorRanges = {

@@ -22,137 +22,6 @@ function aplicarGradiente(svg, datos, escalaColor, idGradiente, valorAccessor) {
     return `url(#${idGradiente})`;
 }
 
-// Función para generar leyenda
-function generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVal) {
-    const esMovil = window.matchMedia("(max-width: 768px)").matches;
-
-    svgLeyenda.selectAll("*").remove(); // Limpiar siempre primero
-
-    if(esMovil) {
-        // 1. Leyenda Horizontal (Móvil) --------------------------------------
-        svgLeyenda.attr("class", "leyenda-mobile-horizontal")
-            .attr("width", 300)
-            .attr("height", 110);
-
-        svgLeyenda.append("text")
-            .attr("x", "50%")
-            .attr("y", 10)  // ← 10 en lugar de 20 (más arriba)
-            .style("text-anchor", "middle")
-            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
-            .style("fill", "#666")  // Color más suave
-            .text("Histórico: —     Actual: --");  // Tu texto
-
-
-        // Título
-        svgLeyenda.append("text")
-            .attr("x", "50%")
-            .attr("y", 30)
-            .style("text-anchor", "middle")
-            .style("font-size", "1em")
-            .text(capaSeleccionada.toUpperCase());
-
-        // Gradiente
-        const gradienteId = `gradiente-mobile-${capaSeleccionada.replace(/\s+/g, '-')}`;
-        const gradiente = svgLeyenda.append("linearGradient")
-            .attr("id", gradienteId)
-            .attr("x1", "0%")
-            .attr("x2", "100%");
-
-        escalaColor.range().forEach((color, i, arr) => {
-            gradiente.append("stop")
-                .attr("offset", `${(i / (arr.length - 1)) * 100}%`)
-                .attr("stop-color", color);
-        });
-
-        // Barra de color
-        svgLeyenda.append("rect")
-            .attr("y", 40)
-            .attr("width", "100%")
-            .attr("height", 20)
-            .style("fill", `url(#${gradienteId})`);
-
-        // Eje
-        const escalaEje = d3.scaleLinear()
-            .domain([minVal, maxVal])
-            .range([10, 290]); // Ajustar según margen
-
-        svgLeyenda.append("g")
-            .attr("transform", "translate(0,75)")
-            .call(d3.axisBottom(escalaEje)
-                .ticks(5)
-                .tickSizeOuter(0)
-                .tickFormat(d3.format(".2f")));
-
-    } else {
-        // 2. Leyenda Vertical (Desktop) -------------------------------------
-    svgLeyenda.attr("class", "leyenda-desktop-vertical")
-        .attr("width", 120)  // Aumentar ancho
-        .attr("height", 310); // Aumentar altura
-
- var po_ly = 290;
-
-        svgLeyenda.append("text")
-            .attr("x", "57")
-            .attr("y", po_ly )  // ← 10 en lugar de 20 (más arriba)
-            .style("text-anchor", "middle")
-            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
-            .style("fill", "#666")  // Color más suave
-            .text("Histórico: —");  // Tu texto
-
-
-        svgLeyenda.append("text")
-            .attr("x", "50%")
-            .attr("y", po_ly+20 )  // ← 10 en lugar de 20 (más arriba)
-            .style("text-anchor", "middle")
-            .style("font-size", "0.8em")  // Tamaño menor para diferenciar
-            .style("fill", "#666")  // Color más suave
-            .text("Actual: --");  // Tu texto
-
-        // Título
-         svgLeyenda.append("text")
-        .attr("x", 55)  // Centrar en nuevo ancho
-        .attr("y", 25)  // Bajar posición
-        .style("text-anchor", "middle")
-        .style("font-size", "0.9em")
-        .text(capaSeleccionada.toUpperCase());
-
-        // Gradiente
-        const gradienteId = `gradiente-vertical-${capaSeleccionada.replace(/\s+/g, '-')}`;
-        const gradiente = svgLeyenda.append("linearGradient")
-            .attr("id", gradienteId)
-            .attr("y1", "100%")
-            .attr("y2", "0%")
-            .attr("x1", "0%")
-            .attr("x2", "0%");
-
-        escalaColor.range().forEach((color, i, arr) => {
-            gradiente.append("stop")
-                .attr("offset", `${(i / (arr.length - 1)) * 100}%`)
-                .attr("stop-color", color);
-        });
-
-        // Barra vertical
-       svgLeyenda.append("rect")
-        .attr("x", 45)  // Ajustar posición X
-        .attr("y", 50)  // Ajustar posición Y
-        .attr("width", 25)
-        .attr("height", 220)  // Aumentar altura
-        .style("fill", `url(#${gradienteId})`);
-
-
-        // Eje
-        const escalaEje = d3.scaleLinear()
-            .domain([minVal, maxVal])
-            .range([260, 50]); // Invertido para eje vertical
-
-        svgLeyenda.append("g")
-            .attr("transform", "translate(30,0)")
-            .call(d3.axisLeft(escalaEje)
-                .ticks(5)
-                .tickFormat(d3.format(".2f")));
-    }
-}
-
 // Función para inicializar el gráfico
 export function inicializarGrafico() {
     if (svg) svg.remove();
@@ -219,164 +88,359 @@ export function inicializarGrafico() {
         .text("Valor del Índice");
 }
 
+
+
+function weekToDate(year, week) {
+    const simple = new Date(year, 0, 1 + (week - 1) * 7);
+    const dow = simple.getDay();
+    const ISOweekStart = new Date(simple);
+    if (dow <= 4)
+        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else
+        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    return ISOweekStart;
+}
+
+
+function getWeekStartEnd(year, week) {
+    const d = weekToDate(year, week);
+    const start = new Date(d);
+    const end = new Date(d);
+    end.setDate(end.getDate() + 6);
+    return { start, end };
+}
+
+const year = 2025;
+
 // Función principal para cargar datos
 export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
     d3.csv(rutaCSV).then(datosCrudos => {
-        const datos = datosCrudos.map(d => ({
-            week: +d.Week,
-            historic: +d.Historic,
-            current: d.Current ? +d.Current : null
-        }));
+        const datos = datosCrudos.map(d => {
+            const { start, end } = getWeekStartEnd(year, +d.Week);
+            return {
+                week: +d.Week,
+                historic: +d.Historic,
+                current: d.Current ? +d.Current : null,
+                Last: +d.Last,
+                P25: +d.P25,
+                P75: +d.P75,
+                dateStart: start,
+                dateEnd: end,
+                month: start.getMonth(1) // 0 = enero, 1 = febrero, etc.
+            };
+        });
 
         if (!svg) inicializarGrafico();
-     // Añadir esta sección de márgenes dentro de la función
-     const margenSuperior = 30;
-     const margenDerecho = 20;
-     const margenInferior = 50;
-     const margenIzquierdo = 70;
-        
-        // Calcular valores mínimos y máximos
+
+        const margenSuperior = 30;
+        const margenDerecho = 20;
+        const margenInferior = 50;
+        const margenIzquierdo = 70;
+
         const allValues = datos.reduce((acc, d) => {
-            acc.push(d.historic);
+            acc.push(d.historic, d.P25, d.P75);
             if (d.current !== null) acc.push(d.current);
             return acc;
         }, []);
-        
+
         const minVal = d3.min(allValues);
         const maxVal = d3.max(allValues);
         const yMargin = (maxVal - minVal) * 0.1;
 
-        // Actualizar escalas
         const contenedor = d3.select("#d3-chart");
         const anchoContenedor = contenedor.node().getBoundingClientRect().width;
         const anchoGrafico = anchoContenedor - margenIzquierdo - margenDerecho;
         const altoGrafico = altoViewBox - margenSuperior - margenInferior;
-        
+
         xScale.range([margenIzquierdo, anchoGrafico + margenIzquierdo]);
         yScale.domain([minVal - yMargin, maxVal + yMargin])
-                .range([altoGrafico + margenSuperior, margenSuperior]);
+            .range([altoGrafico + margenSuperior, margenSuperior]);
 
-        // Actualizar ejes
-        svg.select(".x-axis").call(d3.axisBottom(xScale).ticks(7).tickFormat(d => `Sem ${d}`));
+        const meses = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
+        // Calcular la semana de inicio de cada mes (aproximado, semana que contiene el día 1 de cada mes)
+        function getWeeksInicioMes(year) {
+            const weeks = [];
+            for (let m = 0; m < 12; m++) {
+                const firstDay = new Date(year, m, 1);
+                // Calcular número de semana ISO
+                const temp = new Date(firstDay.getTime());
+                temp.setHours(0, 0, 0, 0);
+                // Jueves en la semana ISO
+                temp.setDate(temp.getDate() + 3 - ((temp.getDay() + 6) % 7));
+                const week1 = new Date(temp.getFullYear(), 0, 4);
+                const weekNumber = 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+                weeks.push(weekNumber);
+            }
+            return weeks;
+        }
+
+        const weeksInicioMes = getWeeksInicioMes(year);
+
+        svg.select(".x-axis")
+            .call(
+                d3.axisBottom(xScale)
+                    .ticks(52)
+                    .tickFormat(function(d) {
+                        // Mostrar la letra del mes solo en la semana de inicio de cada mes, el resto vacío
+                        const idx = weeksInicioMes.indexOf(d);
+                        if (idx !== -1) {
+                            return meses[idx];
+                        }
+                        // No mostrar nada para los demás ticks
+                        return "";
+                    })
+            );
+
         svg.select(".y-axis").call(d3.axisLeft(yScale).ticks(6));
 
-        // Crear escala de color
-        const escalaColor = obtenerEscalaColor(capaSeleccionada, minVal, maxVal);
+        // Define colores fijos para cada línea (mover aquí, antes de cualquier uso)
+        const COLOR_HISTORIC = "#1f77b4";   // azul
+        const COLOR_CURRENT  = "#ff7f0e";   // naranja
+        const COLOR_LAST     = "#2ca02c";   // verde
+        const COLOR_IQR      = "#999";      // gris para banda intercuartílica
 
-        // Generar leyenda
-const esMovil = window.matchMedia("(max-width: 768px)").matches;
-const svgLeyenda = d3.select("#legend-container")
-    .html("")
-    .append("svg")
-    .attr("width", esMovil ? "100%" : 100)
-    .attr("height", esMovil ? 100 : 300);
-        generarLeyenda(svgLeyenda, capaSeleccionada, escalaColor, minVal, maxVal);
+        // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
+        // Limpia el contenedor y crea un SVG para la leyenda
+        const legendData = [
+            { label: "Histórico", color: COLOR_HISTORIC, style: "solid" },
+            { label: "Actual", color: COLOR_CURRENT, style: "dash" },
+             { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
+            { label: "Año Pasado", color: COLOR_LAST, style: "solid" },
+            { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
+            
+        ];
 
-        // Aplicar gradientes
-        const idGradienteHistoric = `gradiente-historic-${capaSeleccionada.replace(/[^a-zA-Z0-9]/g, '')}`;
-        const idGradienteCurrent = `gradiente-current-${capaSeleccionada.replace(/[^a-zA-Z0-9]/g, '')}`;
+        const legendContainer = d3.select("#legend-container");
+        legendContainer.html(""); // Limpia contenido previo
+
+        const legendWidth = 150; // Más ancho para evitar corte de texto
+        const legendHeight = legendData.length * 24 + 28; // Espacio extra para el título
+        const legendSvg = legendContainer.append("svg")
+            .attr("width", legendWidth)
+            .attr("height", legendHeight);
+
+        const legendGroup = legendSvg.append("g")
+            .attr("class", "custom-legend")
+            .attr("transform", `translate(0,28)`); // Deja espacio arriba para el título
+
+        // Título de la leyenda
+        legendSvg.append("text")
+            .attr("x", legendWidth / 2)
+            .attr("y", 18)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "1em")
+            .attr("fill", "#222")
+            .text("Leyenda");
+
+        legendData.forEach((item, i) => {
+            const entry = legendGroup.append("g")
+                .attr("class", "legend-entry")
+                .attr("transform", `translate(0,${i * 24})`);
+            if (item.style === "area") {
+                entry.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", 32)
+                    .attr("height", 8)
+                    .attr("fill", item.color)
+                    .attr("opacity", 0.3);
+            } else if (item.style === "circle") {
+                entry.append("circle")
+                    .attr("cx", 16)
+                    .attr("cy", 6)
+                    .attr("r", 6)
+                    .attr("fill", item.color)
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 1.5);
+            } else {
+                entry.append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 5)
+                    .attr("x2", 32)
+                    .attr("y2", 5)
+                    .attr("stroke", item.color)
+                    .attr("stroke-width", 3)
+                    .attr("stroke-dasharray",
+                        item.style === "dash" ? "7,4" :
+                        item.style === "dot" ? "2,2" : "0"
+                    );
+            }
+            entry.append("text")
+                .attr("x", 40)
+                .attr("y", 12)
+                .attr("font-size", "0.8em")
+                .attr("fill", "#333")
+                .text(item.label);
+        });
+
+        // Banda intercuartílica (P25 - P75)
+        svg.select(".area-iqr").remove();
+        const areaIQR = d3.area()
+            .x(d => xScale(d.week))
+            .y0(d => yScale(d.P25))
+            .y1(d => yScale(d.P75))
+            .curve(d3.curveMonotoneX);
+        
+           // banda intercuartílica
+        svg.append("path")
+            .datum(datos)
+            .attr("class", "area-iqr")
+            .attr("fill", COLOR_IQR)
+            .attr("opacity", 0.3)
+            .attr("d", areaIQR);
 
         // Línea histórica
         svg.select(".linea-historic").remove();
-        svg.append("path")
+        const lineaHistoric = svg.append("path")
             .datum(datos)
             .attr("class", "linea-historic")
             .attr("fill", "none")
             .attr("stroke-width", 2)
-            .style("stroke", aplicarGradiente(svg, datos, escalaColor, idGradienteHistoric, d => d.historic))
+            .style("stroke", COLOR_HISTORIC)
             .attr("d", lineHistoric);
+
+        // Animación del trazo de la línea histórica
+        const totalLengthHistoric = lineaHistoric.node().getTotalLength();
+        lineaHistoric
+            .attr("stroke-dasharray", totalLengthHistoric + " " + totalLengthHistoric)
+            .attr("stroke-dashoffset", totalLengthHistoric)
+            .transition()
+            .duration(1200)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
 
         // Línea actual
         svg.select(".linea-current").remove();
+        const datosActual = datos.filter(d => d.current !== null);
         svg.append("path")
-            .datum(datos.filter(d => d.current !== null))
+            .datum(datosActual)
             .attr("class", "linea-current")
             .attr("fill", "none")
             .attr("stroke-width", 2)
             .attr("stroke-dasharray", "5,5")
-            .style("stroke", aplicarGradiente(svg, datos.filter(d => d.current !== null), escalaColor, idGradienteCurrent, d => d.current))
+            .style("stroke", COLOR_CURRENT)
             .attr("d", lineCurrent);
-         
-         // Tooltip
-         const tooltip = d3.select("#tooltip");
 
-         const puntosHistoricos = svg.selectAll(".tooltip-circle-historic")
-             .data(datos)
-             .join(
-                 enter => enter.append("circle")
-                     .attr("class", "tooltip-circle-historic")
-                     .attr("cx", d => xScale(d.week))
-                     .attr("cy", d => yScale(d.historic))
-                     .attr("r", 6)
-                     .style("fill", "transparent")
-                     .style("pointer-events", "all")
-.on("mouseover", (event, d) => {
-    tooltip.transition().duration(200).style("opacity", 0.9);
-    tooltip.html(`
-        Semana: ${d.week}<br>
-        Histórico: ${d3.format(".3f")(d.historic)}<br>
-        Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
-        
-    `)
-    .style("left", (event.pageX + 5) + "px")
-    .style("top", (event.pageY - 28) + "px");
-})
-                     .on("mouseout", () => {
-                         tooltip.transition().duration(500).style("opacity", 0);
-                     }),
-                 update => update
-                     .attr("cx", d => xScale(d.week))
-                     .attr("cy", d => yScale(d.historic)),
-                 exit => exit.remove()
-             );
+        // Punto final de la línea actual
+        if (datosActual.length > 0) {
+            const ultimo = datosActual[datosActual.length - 1];
+            svg.selectAll(".punto-final-actual").remove();
+            svg.append("circle")
+                .attr("class", "punto-final-actual")
+                .attr("cx", xScale(ultimo.week))
+                .attr("cy", yScale(ultimo.current))
+                .attr("r", 7)
+                .attr("fill", COLOR_CURRENT)
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2);
+        }
 
-         const puntosActuales = svg.selectAll(".tooltip-circle-current")
-             .data(datos.filter(d => d.current !== null)) // Filtra los datos donde 'current' no es null
-             .join(
-                 enter => enter.append("circle")
-                     .attr("class", "tooltip-circle-current")
-                     .attr("cx", d => xScale(d.week))
-                     .attr("cy", d => yScale(d.current))
-                     .attr("r", 6)
-                     .style("fill", "transparent")
-                     .style("pointer-events", "all")
-                     .on("mouseover", (event, d) => {
-    tooltip.transition().duration(200).style("opacity", 0.9);
-    tooltip.html(`
-        Semana: ${d.week}<br>
-        Histórico: ${d3.format(".3f")(d.historic)}<br>
-        Actual: ${d.current !== null ? d3.format(".3f")(d.current) : "N/A"}
-    `)
-    .style("left", (event.pageX + 5) + "px")
-    .style("top", (event.pageY - 28) + "px");
-})
-                     .on("mouseout", () => {
-                         tooltip.transition().duration(500).style("opacity", 0);
-                     }),
-                 update => update
-                     .attr("cx", d => xScale(d.week))
-                     .attr("cy", d => yScale(d.current)),
-                 exit => exit.remove()
-             );
+        // Línea Last
+        svg.select(".linea-last").remove();
+        const lineaLast = svg.append("path")
+            .datum(datos.filter(d => !isNaN(d.Last)))
+            .attr("class", "linea-last")
+            .attr("fill", "none")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "2,2")
+            .attr("stroke", COLOR_LAST)
+            .attr("d", d3.line()
+                .x(d => xScale(d.week))
+                .y(d => yScale(d.Last))
+                .curve(d3.curveMonotoneX)
+            );
+
+        // Animación del trazo de la línea Last (más lenta)
+        const totalLengthLast = lineaLast.node().getTotalLength();
+        lineaLast
+            .attr("stroke-dasharray", totalLengthLast + " " + totalLengthLast)
+            .attr("stroke-dashoffset", totalLengthLast)
+            .transition()
+            .duration(1800) // más lento que la histórica
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
+
+        // ------------------ NUEVO TOOLTIP DE LÍNEA --------------------
+        svg.selectAll(".hover-line-group").remove();
+
+        const focusGroup = svg.append("g").attr("class", "hover-line-group").style("display", "none");
+
+        // Línea vertical
+        focusGroup.append("line")
+            .attr("class", "hover-line")
+            .attr("y1", yScale.range()[1])
+            .attr("y2", yScale.range()[0])
+            .attr("stroke", "#999")
+            .attr("stroke-width", 1)
+            .attr("stroke-dasharray", "3,3");
+
+        // Caja de información
+        const tooltipBox = d3.select("#tooltip");
+        svg.on("mousemove", (event) => {
+            const [mouseX] = d3.pointer(event);
+            const weekX = Math.round(xScale.invert(mouseX));
+            const closest = datos.find(d => d.week === weekX);
+
+            // Formato a máximo 3 caracteres (ej: 1.03, 0.99, etc.)
+            function formatShort(val) {
+                if (val === null || isNaN(val)) return "N/A";
+                return Number(val).toFixed(2);
+            }
+
+            if (closest) {
+                focusGroup.style("display", null);
+                focusGroup.select(".hover-line")
+                    .attr("x1", xScale(weekX))
+                    .attr("x2", xScale(weekX));
+
+                tooltipBox
+                    .style("opacity", 1)
+.html(`
+    <strong>Semana ${closest.week}</strong><br>
+    Histórico: ${formatShort(closest.historic)}<br>
+    Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
+    Último Año: ${!isNaN(closest.Last) ? formatShort(closest.Last) : "N/A"}<br>
+    P25: ${!isNaN(closest.P25) ? formatShort(closest.P25) : "N/A"}<br>
+    P75: ${!isNaN(closest.P75) ? formatShort(closest.P75) : "N/A"}
+`)
+                    .style("left", (event.pageX + 15) + "px")
+                    .style("top", (event.pageY - 30) + "px");
+            }
+        }).on("mouseleave", () => {
+            focusGroup.style("display", "none");
+            tooltipBox.style("opacity", 0);
+        });
 
 
-         // Título del gráfico
-         let titulo = svg.select(".chart-title-svg");
-         if (titulo.empty()) {
-             titulo = svg.append("text")
-                 .attr("class", "chart-title-svg")
-                 .attr("x", anchoContenedor / 2)
-                 .attr("y", margenSuperior / 2 + 10)
-                 .attr("text-anchor", "middle")
-                 .style("font-size", "1.2em")
-                 .text(`${capaSeleccionada} - Histórico vs Actual`);
-         } else {
-             titulo.text(`${capaSeleccionada} - Histórico vs Actual`);
-         }
 
-         // Actualizar el título del eje Y
-         svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCase()}`);
+        // Título del gráfico
+        let titulo = svg.select(".chart-title-svg");
+        if (titulo.empty()) {
+            titulo = svg.append("text")
+                .attr("class", "chart-title-svg")
+                .attr("x", anchoContenedor / 2)
+                .attr("y", margenSuperior / 2 + 10)
+                .attr("text-anchor", "middle")
+                .style("font-size", "1.2em")
+                .text(`${capaSeleccionada} - Histórico vs Actual`);
+        } else {
+            titulo.text(`${capaSeleccionada} - Histórico vs Actual`);
+        }
 
-     }).catch(error => console.error("Error al cargar datos:", error));
+        // Línea de subrayado bajo el título
+        svg.selectAll(".chart-title-underline").remove();
+        svg.append("line")
+            .attr("class", "chart-title-underline")
+            .attr("x1", anchoContenedor / 2 - 110)
+            .attr("x2", anchoContenedor / 2 + 110)
+            .attr("y1", margenSuperior / 2 + 16)
+            .attr("y2", margenSuperior / 2 + 16)
+            .attr("stroke", "#4CAF50")
+            .attr("stroke-width", 2);
+
+        // Título del eje Y
+        svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCase()}`);
+
+    }).catch(error => console.error("Error al cargar datos:", error));
 }
-

@@ -1,4 +1,4 @@
-  /* Estilos Generales */
+/* Estilos Generales */
   * {
     margin: 0;
     padding: 0;
@@ -66,6 +66,29 @@ select, input[type="range"] {
     border-radius: 8px !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
     min-width: 180px !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    display: block !important;
+    /* Si tienes problemas de visibilidad, puedes agregar: */
+    /* visibility: visible !important; */
+    /* pointer-events: auto !important; */
+}
+
+/* Si tienes problemas de superposición, fuerza la visibilidad y posición */
+.leaflet-control {
+    z-index: 10000 !important;
+    position: relative !important;
+    display: block !important;
+}
+
+/* Si las leyendas se superponen, puedes agregar margen extra */
+.leaflet-bottom.leaflet-left .map-legend {
+    margin-left: 10px !important;
+    margin-bottom: 20px !important;
+}
+.leaflet-bottom.leaflet-right .map-legend {
+    margin-right: 10px !important;
+    margin-bottom: 20px !important;
 }
 
 .legend-item {
@@ -302,11 +325,18 @@ select, input[type="range"] {
     height: 100%;
 }
 #legend-container {
-    width: 100px;
-    height: 100%;
+    width: 120px; /* Aumenta el ancho de la leyenda */
+    height: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#d3-chart {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: calc(100% - 200px); /* Limita el ancho del gráfico para dejar espacio a la leyenda */
+    height: 100% !important;
 }
 
 
@@ -653,4 +683,36 @@ select, input[type="range"] {
     .card-content {
         font-size: 0.9rem;
     }
+}
+
+/* Subrayado SVG para el título del gráfico */
+.chart-title-underline {
+    stroke: #4CAF50;
+    stroke-width: 2;
+}
+
+
+/* ...existing code... */
+.leaflet-sbs-divider {
+    background: #fff !important;   /* Línea blanca visible */
+    opacity: 1 !important;
+    width: 4px !important;
+    border-radius: 2px !important;
+    z-index: 9999 !important;
+}
+
+/* Haz invisible la barra/rango pero NO ocultes la línea ni el thumb */
+.leaflet-sbs-range {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    outline: none !important;
+    z-index: 9999 !important;
+    position: absolute !important;
+    margin-top: 0 !important;
+
+    /* El input es invisible, pero la línea (divider) se ve */
+    /* Desactiva el popup mientras se arrastra el slider */
+    /* No se puede evitar solo con CSS, esto debe manejarse en JS */
 }

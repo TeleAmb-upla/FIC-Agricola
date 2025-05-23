@@ -1,7 +1,7 @@
 // assets/js/user-files.js
 
 import { cargarDatosEnGrafico } from './chart.js';
-import { initMap, loadGeoRasterLayer, calculateBounds,enableRasterValuePopup  } from './map.js';
+import { initMap, loadGeoRasterLayer, calculateBounds, enableRasterValuePopup, initSideBySide, renderDualLegends } from './map.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
@@ -9,56 +9,91 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const mapContainer = document.getElementById('map-container');
     let miMapa;
-    let currentRasterLayer;
+    let currentRasterLayerLeft;
+    let currentRasterLayerRight;
 
     // Inicializar el mapa (solo una vez al cargar la página)
     miMapa = initMap('map');
 
     const layerSelector = document.getElementById("layerSelector");
+    const weekSelector = document.getElementById("weekSelector");
 
-    const actualizarVisualizaciones = async (capaSeleccionada) => {
+    // Nueva función para actualizar visualizaciones con índice y semana
+    const actualizarVisualizaciones = async () => {
+        const capaSeleccionada = layerSelector.value;
+        const semanaSeleccionada = weekSelector.value;
+
         try {
+            // Rutas TIFF: histórico (2024) y actual (2025)
             const rutas = {
-                geoJSON: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.tif`,
+                tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2024_${semanaSeleccionada}.tif`,
+                tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2025_${semanaSeleccionada}.tif`,
                 csv: `./assets/csv/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
-            };
+            }; 
 
             console.log("🔍 Rutas generadas:", rutas);
 
-            const [geoJSONExiste, csvExiste] = await Promise.all([
-                fetch(rutas.geoJSON).then(res => {
-                    console.log(`📦 GeoJSON (${capaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
+            // Verificar existencia de ambos tiff y csv
+            const [tiffLeftExiste, tiffRightExiste, csvExiste] = await Promise.all([
+                fetch(rutas.tiffLeft).then(res => {
+                    console.log(`📦 TIFF Left (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
+                    return res.ok;
+                }),
+                fetch(rutas.tiffRight).then(res => {
+                    console.log(`📦 TIFF Right (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
                     return res.ok;
                 }),
                 fetch(rutas.csv).then(res => {
-                    console.log(`📊 CSV (${capaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
+                    console.log(`📊 CSV (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
                     return res.ok;
                 })
             ]);
 
-            if (!geoJSONExiste) throw new Error(`GeoJSON no encontrado: ${rutas.geoJSON}`);
+            if (!tiffLeftExiste) throw new Error(`TIFF izquierdo no encontrado: ${rutas.tiffLeft}`);
+            if (!tiffRightExiste) throw new Error(`TIFF derecho no encontrado: ${rutas.tiffRight}`);
             if (!csvExiste) throw new Error(`CSV no encontrado: ${rutas.csv}`);
 
             console.log("🚀 Archivos verificados. Cargando visualizaciones...");
 
-            // Si hay una capa raster anterior, la eliminamos
-            if (currentRasterLayer) {
-                miMapa.removeLayer(currentRasterLayer);
-            }
+            // Eliminar capas anteriores si existen
+            if (currentRasterLayerLeft) miMapa.removeLayer(currentRasterLayerLeft);
+            if (currentRasterLayerRight) miMapa.removeLayer(currentRasterLayerRight);
 
-            loadGeoRasterLayer(rutas.geoJSON, miMapa, capaSeleccionada) // Ya no pasa la función de color
-                .then(({ rasterLayer, georaster }) => {
-                    currentRasterLayer = rasterLayer;
-                    const bounds = calculateBounds(georaster);
-                    enableRasterValuePopup(miMapa, rasterLayer, capaSeleccionada, georaster);
-                    miMapa.fitBounds(bounds);
-                })
-                .catch(error => {
-                    console.error('Error al cargar la capa raster:', error);
-                    alert(`🚨 Error al cargar la capa raster: ${error.message}`);
-                });
+            // Cargar ambos TIFF (ejemplo: para comparación side-by-side)
+            const [left, right] = await Promise.all([
+                loadGeoRasterLayer(rutas.tiffLeft, miMapa, capaSeleccionada),   // Histórico (2024)
+                loadGeoRasterLayer(rutas.tiffRight, miMapa, capaSeleccionada)   // Actual (2025)
+            ]);
+            currentRasterLayerLeft = left.rasterLayer;
+            currentRasterLayerRight = right.rasterLayer;
 
-            cargarDatosEnGrafico(rutas.csv, capaSeleccionada);
+            // Agrega side-by-side: histórico a la izquierda, actual a la derecha
+            initSideBySide(miMapa, left.rasterLayer, right.rasterLayer);
+
+            // Ajustar el mapa y popups para ambos raster
+            const bounds = calculateBounds(left.georaster);
+
+            // Asegúrate de pasar los argumentos correctamente:
+            // enableRasterValuePopup(map, capa actual, nombre actual, raster actual, capa histórico, nombre histórico, raster histórico)
+            enableRasterValuePopup(
+                miMapa,
+                right.rasterLayer, "Actual", right.georaster, // derecha: actual (2025)
+                left.rasterLayer, "Histórico", left.georaster  // izquierda: histórico (2024)
+            );
+
+            // También para las leyendas duales:
+            renderDualLegends(
+                miMapa,
+                capaSeleccionada,
+                right.georaster, // actual
+                left.georaster,  // historico
+                semanaSeleccionada, // actual
+                semanaSeleccionada  // historico (ajusta si tienes semanas distintas)
+            );
+
+            miMapa.fitBounds(bounds);
+
+            cargarDatosEnGrafico(rutas.csv, "NDVI");
 
         } catch (error) {
             console.error("🔥 Error crítico:", error.message);
@@ -66,14 +101,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    layerSelector.addEventListener("change", (e) => {
-        console.log("🔄 El usuario seleccionó:", e.target.value);
-        actualizarVisualizaciones(e.target.value);
-    });
+    // Listeners para ambos selectores
+    layerSelector.addEventListener("change", actualizarVisualizaciones);
+    weekSelector.addEventListener("change", actualizarVisualizaciones);
 
-    // Seleccionar automáticamente "NDVI" al cargar
+    // Seleccionar automáticamente "NDVI" y semana 01 al cargar
     layerSelector.value = "NDVI";
-    layerSelector.dispatchEvent(new Event("change"));
+    weekSelector.value = "01";
+    actualizarVisualizaciones();
 });
 
 
