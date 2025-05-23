@@ -213,7 +213,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-            { label: "Histórico (x̄) (2018-2024) ", color: COLOR_HISTORIC, style: "solid" },
+            { label: "Histórico (x̄)  ", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
             { label: "Último Año", color: COLOR_LAST, style: "solid" },
@@ -433,17 +433,17 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                 .attr("y", margenSuperior / 2 + 10)
                 .attr("text-anchor", "middle")
                 .style("font-size", "1.2em")
-                .text(`${capaSeleccionada} - Histórico vs Actual`);
+                .text(`${capaSeleccionada} - Histórico (2018-2024) vs Actual (2025)`);
         } else {
-            titulo.text(`${capaSeleccionada} - Histórico vs Actual`);
+            titulo.text(`${capaSeleccionada} - Histórico (2018-2024) vs Actual (2025)`);
         }
 
         // Línea de subrayado bajo el título
         svg.selectAll(".chart-title-underline").remove();
         svg.append("line")
             .attr("class", "chart-title-underline")
-            .attr("x1", anchoContenedor / 2 - 110)
-            .attr("x2", anchoContenedor / 2 + 110)
+            .attr("x1", anchoContenedor / 2 - 200)
+            .attr("x2", anchoContenedor / 2 + 200)
             .attr("y1", margenSuperior / 2 + 16)
             .attr("y2", margenSuperior / 2 + 16)
             .attr("stroke", "#4CAF50")

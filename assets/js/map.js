@@ -1,22 +1,22 @@
-let map;
+let map; // Variable global para la instancia del mapa Leaflet
 
-// Variable global para controlar si el usuario está arrastrando el slider
+// Variable global para controlar si el usuario está arrastrando el slider side-by-side
 let isDraggingSlider = false;
 
+// Inicializa el mapa Leaflet en el elemento con id mapId
 export function initMap(mapId) {
     if (map) {
-        map.remove();
+        map.remove(); // Elimina el mapa anterior si existe
     }
-    map = L.map(mapId).setView([-33.036, -71.381], 11);
+    map = L.map(mapId).setView([-33.036, -71.381], 11); // Crea el mapa centrado en las coordenadas dadas
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
         attribution: '© Esri, Earthstar Geographics'
-    }).addTo(map);
+    }).addTo(map); // Añade la capa base de imágenes satelitales
     return map;
 }
 
-// assets/js/map-colors.js
-
+// Diccionario con descripciones para cada índice
 const text_cont = {
     NDVI: "Índice de Vegetación de Diferencia Normalizada",
     EVI: "Índice de Vegetación Mejorada",
@@ -30,17 +30,7 @@ const text_cont = {
     MNDWI: "Índice de Agua de Diferencia Normalizada Modificado"
 };
 
-
-
-
-
-
-
-
-
-
-
-
+// Paletas de colores y opacidad para cada índice
 const colorParams = {
     NDVI: {
       opacity: 1,
@@ -84,12 +74,12 @@ const colorParams = {
     }
   };
   
-// Modified getColorParams to accept the layer name (string) instead of pixel value
+// Devuelve los parámetros de color para la capa seleccionada
 export function getColorParams(capaSeleccionada) {
-    return colorParams[capaSeleccionada.toUpperCase()]; // Convertir a mayúsculas para coincidencia
+    return colorParams[capaSeleccionada.toUpperCase()]; // Busca por nombre en mayúsculas
 }
 
-// Utilidad para calcular min y max de un raster (ignora noData)
+// Calcula el valor mínimo y máximo de un raster, ignorando valores noData
 function getRasterMinMax(georaster) {
     let min = Infinity, max = -Infinity;
     const noData = georaster.noDataValue;
@@ -105,17 +95,33 @@ function getRasterMinMax(georaster) {
     return { min, max };
 }
 
-export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
+// Carga un raster GeoTIFF y crea la capa Leaflet correspondiente
+export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, georasterHistorico = null) {
     try {
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        const georaster = await parseGeoraster(arrayBuffer);
-        const params = getColorParams(capaSeleccionada);
+        const response = await fetch(url); // Descarga el archivo TIFF
+        const arrayBuffer = await response.arrayBuffer(); // Lo convierte a ArrayBuffer
+        const georaster = await parseGeoraster(arrayBuffer); // Parsea el raster
+        const params = getColorParams(capaSeleccionada); // Obtiene la paleta de colores
 
-        // Calcula min y max reales del raster ACTUAL (solo para este raster)
-        const { min, max } = getRasterMinMax(georaster);
+        // Calcula min/max del raster actual
+        const { min: minAct, max: maxAct } = getRasterMinMax(georaster);
 
-        // Eliminar controles anteriores
+        // Si hay raster histórico, calcula también su min/max
+        let minHist = null, maxHist = null;
+        if (georasterHistorico) {
+            const minMaxHist = getRasterMinMax(georasterHistorico);
+            minHist = minMaxHist.min;
+            maxHist = minMaxHist.max;
+        }
+
+        // Calcula el mínimo absoluto y el máximo absoluto entre ambos raster
+        let minAbs = minAct, maxAbs = maxAct;
+        if (minHist !== null && maxHist !== null) {
+            minAbs = Math.min(minAct, minHist);
+            maxAbs = Math.max(maxAct, maxHist);
+        }
+
+        // Elimina controles anteriores del mapa (título, leyenda, etc.)
         [mapInstance.titleControl, mapInstance.legendControl, mapInstance.legendControlLeft].forEach(control => {
             if (control) {
                 mapInstance.removeControl(control);
@@ -123,7 +129,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
             }
         });
 
-        // Control del título optimizado
+        // Control de título (arriba a la derecha)
         mapInstance.titleControl = L.control({ position: 'topright' });
         mapInstance.titleControl.onAdd = () => {
             const div = L.DomUtil.create('div', 'map-title');
@@ -137,7 +143,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         };
         mapInstance.titleControl.addTo(mapInstance);
 
-        // Control independiente para la descripción del índice (ajustado)
+        // Control independiente para la descripción del índice (arriba a la izquierda)
         function addOrUpdateDescriptionControl(mapInstance, capaSeleccionada) {
             if (mapInstance.descControl) {
                 mapInstance.removeControl(mapInstance.descControl);
@@ -167,7 +173,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         // Agrega/actualiza el control de descripción independiente
         addOrUpdateDescriptionControl(mapInstance, capaSeleccionada);
 
-        // Leyenda vertical optimizada
+        // Leyenda vertical (abajo a la derecha) usando minAbs y maxAbs
         mapInstance.legendControl = L.control({ position: 'bottomright' });
         mapInstance.legendControl.onAdd = () => {
             const div = L.DomUtil.create('div', 'map-legend');
@@ -179,9 +185,9 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
                 </div>
                 <div class="legend-scale-container">
                     <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
-                    <div class="legend-values">
-                        <span>${min.toFixed(2)}</span>
-                        <span>${max.toFixed(2)}</span>
+                    <div class="legend-values" style="font-size:0.85em;">
+                        <span style="margin-right:10px;">MinAbs: <span style="font-size:0.95em;">${minAbs.toFixed(2)}</span></span>
+                        <span>MaxAbs: <span style="font-size:0.95em;">${maxAbs.toFixed(2)}</span></span>
                     </div>
                 </div>
             `;
@@ -189,30 +195,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
         };
         mapInstance.legendControl.addTo(mapInstance);
 
-        // Leyenda vertical optimizada izquierda (Histórico)
-        mapInstance.legendControlLeft = L.control({ position: 'bottomleft' });
-        mapInstance.legendControlLeft.onAdd = () => {
-            const div = L.DomUtil.create('div', 'map-legend');
-            const gradientColors = params.palette.map(color => `#${color}`).join(', ');
-            div.innerHTML = `
-                <div class="legend-title-container">
-                    <span class="legend-main-title">${capaSeleccionada.toUpperCase()}</span>
-                    <span class="legend-layer-type" style="font-weight:bold; color:#34495e; font-size:0.9em;">Histórico</span>
-                </div>
-                <div class="legend-scale-container">
-                    <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
-                    <div class="legend-values">
-                        <span>${min.toFixed(2)}</span>
-                        <span>${max.toFixed(2)}</span>
-                    </div>
-                </div>
-            `;
-            return div;
-        };
-        mapInstance.legendControlLeft.addTo(mapInstance);
-
-
-        // Capa raster
+        // Crea la capa raster Leaflet usando la paleta y los valores absolutos
         const rasterLayer = new GeoRasterLayer({
             georaster,
             resolution: 256,
@@ -221,22 +204,23 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
                 if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
                     return "transparent";
                 }
-                // Normaliza usando min y max calculados
-                const clampedValue = Math.max(min, Math.min(value, max));
-                const normalized = (clampedValue - min) / (max - min);
+                // Normaliza el valor usando minAbs y maxAbs
+                const clampedValue = Math.max(minAbs, Math.min(value, maxAbs));
+                const normalized = (clampedValue - minAbs) / (maxAbs - minAbs);
                 const index = Math.floor(normalized * (params.palette.length - 1));
                 return `#${params.palette[Math.max(0, Math.min(index, params.palette.length - 1))]}`;
             },
             opacity: params.opacity
         });
         
-        return { rasterLayer, georaster };
+        return { rasterLayer, georaster }; // Devuelve la capa y el raster
     } catch (error) {
         console.error('Error al cargar el GeoTIFF:', error);
         throw error;
     }
 }
 
+// Calcula los límites geográficos del raster para ajustar el mapa
 export function calculateBounds(georaster) {
     const xmin = georaster.xmin;
     const xmax = georaster.xmax;
@@ -244,12 +228,14 @@ export function calculateBounds(georaster) {
     const ymax = georaster.ymax;
     return [[ymin, xmin], [ymax, xmax]]; // Formato Leaflet: [suroeste, noreste]
 }
+
+// Habilita el popup de valores de raster al hacer click en el mapa
 export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, georaster, rasterLayer2, layerName2, georaster2, capaSeleccionada) {
-    // Remueve cualquier listener anterior para evitar duplicados
+    // Remueve listeners previos para evitar duplicados
     mapInstance.off("click");
     mapInstance.off("dblclick");
 
-    // --- Manejo de eventos para el slider ---
+    // Manejo de eventos para el slider side-by-side (desactiva popup mientras se arrastra)
     setTimeout(() => {
         const rangeInput = document.querySelector('.leaflet-sbs-range');
         if (rangeInput) {
@@ -259,7 +245,6 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
             rangeInput.addEventListener('touchstart', function(e) {
                 isDraggingSlider = true;
             });
-            // Cuando termina el drag, vuelve a desactivar la bandera
             rangeInput.addEventListener('mouseup', function(e) {
                 setTimeout(() => { isDraggingSlider = false; }, 10);
             });
@@ -272,17 +257,17 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
         }
     }, 200);
 
-    // Mostrar popup en click (mantiene solo uno visible, reemplaza el anterior, NO se cierra con otro click)
+    // Evento click en el mapa para mostrar popup con valores de ambos raster
     mapInstance.on("click", function (e) {
-        if (isDraggingSlider) return;
+        if (isDraggingSlider) return; // No mostrar popup si se está arrastrando el slider
 
         const { lat, lng } = e.latlng;
         try {
-            // --- Valor ACTUAL ---
+            // Obtiene el valor del raster actual en la ubicación clickeada
             let value1 = null, value2 = null;
             let value1Text = "", value2Text = "";
 
-            // --- Actual ---
+            // Valor actual
             if (
                 lng >= georaster.xmin && lng <= georaster.xmax &&
                 lat >= georaster.ymin && lat <= georaster.ymax
@@ -308,7 +293,7 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
                 value1Text = "Fuera de los límites del raster";
             }
 
-            // --- Histórico ---
+            // Valor histórico (si existe)
             if (georaster2 && georaster2.values && georaster2.values[0]) {
                 if (
                     lng >= georaster2.xmin && lng <= georaster2.xmax &&
@@ -338,7 +323,7 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
                 value2Text = "No disponible";
             }
 
-            // Contenido popup unificado
+            // Contenido del popup con ambos valores
             let content = `
                 <div class="legend-title-container">
                     <span class="legend-main-title">Valores</span>
@@ -346,7 +331,7 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
                     <span>Histórico: <span class="legend-layer-name">${isNaN(value2Text) ? value2Text : Number(value2Text).toFixed(2)}</span></span>
                 </div>
             `;
-            // Usa autoClose: false y closeOnClick: false para mantener el popup hasta doble click
+            // Muestra el popup (no se cierra con otro click, solo con doble click)
             mapInstance.closePopup();
             L.popup({ autoClose: false, closeOnClick: false })
                 .setLatLng([lat, lng])
@@ -361,18 +346,13 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
         }
     });
 
-    // Cierra el popup solo con doble click en cualquier parte del mapa
+    // Cierra el popup con doble click en el mapa
     mapInstance.on("dblclick", function () {
         mapInstance.closePopup();
     });
 }
 
-/**
- * Inicializa el control side-by-side en el mapa con dos capas raster.
- * @param {object} mapInstance - Instancia de Leaflet map.
- * @param {object} leftLayer - Capa raster izquierda.
- * @param {object} rightLayer - Capa raster derecha.
- */
+// Inicializa el control side-by-side para comparar dos capas raster
 export function initSideBySide(mapInstance, leftLayer, rightLayer) {
     // Elimina el control anterior si existe
     if (mapInstance._sideBySideControl) {
@@ -402,19 +382,16 @@ export function initSideBySide(mapInstance, leftLayer, rightLayer) {
         if (window.L && window.L.control && window.L.control.sideBySide) {
             mapInstance._sideBySideControl = window.L.control.sideBySide(leftLayer, rightLayer).addTo(mapInstance);
 
-            // --- Solo permitir mover el slider si el usuario arrastra el thumb ---
+            // Solo permitir mover el slider si el usuario arrastra el thumb
             const rangeInput = document.querySelector('.leaflet-sbs-range');
             if (rangeInput) {
-                // Deshabilita pointer-events en toda la barra excepto el thumb
                 rangeInput.style.pointerEvents = "none";
-                // Habilita pointer-events solo en el thumb al iniciar drag
                 rangeInput.addEventListener('mousedown', function(e) {
                     rangeInput.style.pointerEvents = "auto";
                 });
                 rangeInput.addEventListener('touchstart', function(e) {
                     rangeInput.style.pointerEvents = "auto";
                 });
-                // Cuando termina el drag, vuelve a deshabilitar pointer-events
                 rangeInput.addEventListener('mouseup', function(e) {
                     rangeInput.style.pointerEvents = "none";
                 });
@@ -425,7 +402,6 @@ export function initSideBySide(mapInstance, leftLayer, rightLayer) {
                     rangeInput.style.pointerEvents = "none";
                 });
             }
-            // --- Fin configuración slider ---
         } else {
             console.log('Leaflet sideBySide control not found');
         }
@@ -439,6 +415,7 @@ function getLegendHtml(capa, georaster, tipo) {
     // ...existing code...
 }
 
+// Renderiza la leyenda usando los valores absolutos de ambos raster
 export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual, georasterHistorico, semanaActual, semanaHistorico) {
     // Elimina leyendas anteriores
     [mapInstance.legendControl, mapInstance.legendControlLeft].forEach(control => {
@@ -449,10 +426,13 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
 
     const params = getColorParams(capaSeleccionada);
 
-    // Leyenda derecha (Actual)
-    const { min: minActual, max: maxActual } = getRasterMinMax(georasterActual);
-    // Log min/max actual
-    console.log(`[Leyenda Actual] ${capaSeleccionada}: min=${minActual}, max=${maxActual}`);
+    // Calcula min/max de ambos raster
+    const { min: minAct, max: maxAct } = getRasterMinMax(georasterActual);
+    const { min: minHist, max: maxHist } = getRasterMinMax(georasterHistorico);
+
+    // Calcula los valores absolutos para la leyenda
+    const minAbs = Math.min(minAct, minHist);
+    const maxAbs = Math.max(maxAct, maxHist);
 
     mapInstance.legendControl = L.control({ position: 'bottomright' });
     mapInstance.legendControl.onAdd = () => {
@@ -467,9 +447,9 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
             </div>
             <div class="legend-scale-container">
                 <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
-                <div class="legend-values">
-                    <span>${minActual.toFixed(2)}</span>
-                    <span>${maxActual.toFixed(2)}</span>
+                <div class="legend-values" style="font-size:0.85em;">
+                    <span style="margin-right:10px;">MinAbs: <span style="font-size:0.95em;">${minAbs.toFixed(2)}</span></span>
+                    <span>MaxAbs: <span style="font-size:0.95em;">${maxAbs.toFixed(2)}</span></span>
                 </div>
             </div>
         `;
@@ -477,33 +457,8 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
     };
     mapInstance.legendControl.addTo(mapInstance);
 
-    // Leyenda izquierda (Histórico)
-    const { min: minHistorico, max: maxHistorico } = getRasterMinMax(georasterHistorico);
-    // Log min/max histórico
-    console.log(`[Leyenda Histórico] ${capaSeleccionada}: min=${minHistorico}, max=${maxHistorico}`);
-
-    mapInstance.legendControlLeft = L.control({ position: 'bottomleft' });
-    mapInstance.legendControlLeft.onAdd = () => {
-        const div = L.DomUtil.create('div', 'map-legend');
-        const gradientColors = params.palette.map(color => `#${color}`).join(', ');
-        div.innerHTML = `
-            <div class="legend-title-container">
-                <span class="legend-main-title">${capaSeleccionada.toUpperCase()}</span>
-                <span class="legend-layer-type" style="font-weight:bold; color:#34495e; font-size:0.9em;">
-                    Histórico <span style="color:#888;font-weight:normal; text-decoration:underline;">Semana ${semanaHistorico}</span>
-                </span>
-            </div>
-            <div class="legend-scale-container">
-                <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
-                <div class="legend-values">
-                    <span>${minHistorico.toFixed(2)}</span>
-                    <span>${maxHistorico.toFixed(2)}</span>
-                </div>
-            </div>
-        `;
-        return div;
-    };
-    mapInstance.legendControlLeft.addTo(mapInstance);
+    // Elimina la creación de legendControlLeft (histórica)
+    // ...existing code...
 }
 
 // Cuando tengas ambos georasters y la capa seleccionada, llama así:
