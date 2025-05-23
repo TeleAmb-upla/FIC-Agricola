@@ -15,8 +15,66 @@
 
     <script type="module" src="./assets/js/map.js"></script>
     <script type="module" src="./assets/js/user-files.js"></script>
+    <style>
+        /* Modal styles */
+        #fake-data-modal {
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #fake-data-modal .modal-content {
+            background: #fff;
+            padding: 2em 2.5em;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 400px;
+        }
+        #fake-data-modal button {
+            margin-top: 1.5em;
+            padding: 0.6em 2em;
+            font-size: 1em;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        body.modal-open {
+            overflow: hidden;
+            pointer-events: none;
+        }
+        body.modal-open #fake-data-modal {
+            pointer-events: auto;
+        }
+    </style>
 </head>
 <body>
+    <!-- Modal de advertencia de datos falsos -->
+    <div id="fake-data-modal">
+        <div class="modal-content">
+            <h2>¡Aviso Importante!</h2>
+            <p>
+                Esta plataforma utiliza <strong>datos simulados</strong> solo para fines demostrativos.<br>
+                No utilice la información aquí presentada para la toma de decisiones reales.<br><br>
+                Para continuar, debe aceptar este aviso.
+            </p>
+            <button id="accept-fake-data">De acuerdo</button>
+        </div>
+    </div>
+    <script>
+        // Bloquea la interacción hasta aceptar
+        document.body.classList.add('modal-open');
+        document.getElementById('accept-fake-data').onclick = function() {
+            document.getElementById('fake-data-modal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        };
+    </script>
     <div class="sidebar">
         <div class="sidebar-header">
             <!--<img src="./assets/img/TeleAmb.png" alt="Logo TeleAmb" class="logo-map"> -->

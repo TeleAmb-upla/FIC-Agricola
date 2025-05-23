@@ -206,7 +206,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             { label: "Histórico", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
-            { label: "Año Pasado", color: COLOR_LAST, style: "solid" },
+            { label: "Último Año", color: COLOR_LAST, style: "solid" },
             { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
             
         ];
