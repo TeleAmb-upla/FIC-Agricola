@@ -720,3 +720,17 @@ select, input[type="range"] {
     /* Desactiva el popup mientras se arrastra el slider */
     /* No se puede evitar solo con CSS, esto debe manejarse en JS */
 }
+
+.map-index-desc {
+    background: rgba(255,255,255,0.97);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 0;
+    margin: 10px;
+    width: 180px;
+    height: 164px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}

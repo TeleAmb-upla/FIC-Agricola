@@ -17,6 +17,30 @@ export function initMap(mapId) {
 
 // assets/js/map-colors.js
 
+const text_cont = {
+    NDVI: "Índice de Vegetación de Diferencia Normalizada",
+    EVI: "Índice de Vegetación Mejorada",
+    SAVI: "Índice de Vegetación Ajustado por Suelo",
+    GNDVI: "Índice de Vegetación de Diferencia Normalizada Verde",
+    LAI: "Índice de Área Foliar",
+    NDMI: "Índice de Humedad de Diferencia Normalizada",
+    GCI: "Índice de Clorofila Verde",
+    MSAVI: "Índice de Vegetación Mejorado Modificado",
+    NDWI: "Índice de Agua de Diferencia Normalizada",
+    MNDWI: "Índice de Agua de Diferencia Normalizada Modificado"
+};
+
+
+
+
+
+
+
+
+
+
+
+
 const colorParams = {
     NDVI: {
       opacity: 1,
@@ -112,6 +136,36 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada) {
             return div;
         };
         mapInstance.titleControl.addTo(mapInstance);
+
+        // Control independiente para la descripción del índice (ajustado)
+        function addOrUpdateDescriptionControl(mapInstance, capaSeleccionada) {
+            if (mapInstance.descControl) {
+                mapInstance.removeControl(mapInstance.descControl);
+                mapInstance.descControl = null;
+            }
+            const descripcion = text_cont[capaSeleccionada.toUpperCase()] || "";
+            if (!descripcion) return;
+
+            mapInstance.descControl = L.control({ position: 'topleft' });
+            mapInstance.descControl.onAdd = function() {
+                const div = L.DomUtil.create('div', 'map-index-desc');
+                div.innerHTML = `
+                    <div style="width:180px; height:164px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+                        <div style="font-weight:bold; font-size:1.05em; color:#2c3e50; margin-top:10px; margin-bottom:12px; text-align:center;">
+                            ${capaSeleccionada.toUpperCase()}
+                        </div>
+                        <div style="font-size:0.98em; color:#333; text-align:justify; line-height:1.3; padding:0 8px;">
+                            ${descripcion}
+                        </div>
+                    </div>
+                `;
+                return div;
+            };
+            mapInstance.descControl.addTo(mapInstance);
+        }
+
+        // Agrega/actualiza el control de descripción independiente
+        addOrUpdateDescriptionControl(mapInstance, capaSeleccionada);
 
         // Leyenda vertical optimizada
         mapInstance.legendControl = L.control({ position: 'bottomright' });
