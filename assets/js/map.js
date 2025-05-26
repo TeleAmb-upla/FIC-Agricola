@@ -18,16 +18,17 @@ export function initMap(mapId) {
 
 // Diccionario con descripciones para cada índice
 const text_cont = {
-    NDVI: "Índice de Vegetación de Diferencia Normalizada",
-    EVI: "Índice de Vegetación Mejorada",
-    SAVI: "Índice de Vegetación Ajustado por Suelo",
-    GNDVI: "Índice de Vegetación de Diferencia Normalizada Verde",
+    NDVI: "(Normalized Difference Vegetation Index) Mide la salud y vigor de los cultivos.",
+    
+    EVI: "(Enhanced Vegetation Index) Mejora el NDVI en áreas con mucha vegetación o con suelos húmedos, haciendo que sea más preciso en esas condiciones.",
+    SAVI: "(Soil Adjusted Vegetation Index) Corrige el efecto del suelo en zonas con poca vegetación usando un valor fijo, lo que mejora la estimación de verdor en suelos expuestos.",
+    GNDVI: "(Green NDVI) Detecta mejor el estrés en las plantas que el NDVI, lo que ayuda a monitorear el contenido de clorofila.",
     LAI: "Índice de Área Foliar",
-    NDMI: "Índice de Humedad de Diferencia Normalizada",
+    NDMI: "(Normalized Difference Moisture Index) Evalúa la humedad dentro de las plantas, específicamente en las hojas. Es útil para detectar el estrés hídrico en los cultivos y optimizar el riego.",
     GCI: "Índice de Clorofila Verde",
-    MSAVI: "Índice de Vegetación Mejorado Modificado",
-    NDWI: "Índice de Agua de Diferencia Normalizada",
-    MNDWI: "Índice de Agua de Diferencia Normalizada Modificado"
+    MSAVI: "(Modified Soil Adjusted Vegetation Index) Ajusta automáticamente el efecto del suelo sin necesidad de un valor fijo, siendo más preciso en áreas con vegetación muy escasa.",
+    NDWI: "(Normalized Difference Water Index) Detecta la presencia de agua en la vegetación y el suelo, ayudando a identificar áreas con humedad o cuerpos de agua.",
+    MNDWI: "(Modified Normalized Difference Water Index) Mejora la detección de cuerpos de agua, como lagos o ríos, especialmente en áreas urbanas o con suelos secos"
 };
 
 // Paletas de colores y opacidad para cada índice
@@ -156,7 +157,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
             mapInstance.descControl.onAdd = function() {
                 const div = L.DomUtil.create('div', 'map-index-desc');
                 div.innerHTML = `
-                    <div style="width:180px; height:164px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+                    <div style="width:180px; height:164px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; font-family: Arial, sans-serif;">
                         <div style="font-weight:bold; font-size:1.05em; color:#2c3e50; margin-top:10px; margin-bottom:12px; text-align:center;">
                             ${capaSeleccionada.toUpperCase()}
                         </div>
