@@ -175,9 +175,9 @@ select, input[type="range"] {
 /* Versión Móvil */
 @media (max-width: 768px) {
     .map-title {
-        padding: 8px 10px !important;
+        padding: 5px 9px !important;
         max-width: 85vw !important;
-        transform: translate(-10px, 10px) scale(0.9) !important;
+        transform: translate(-10px, 30px) scale(0.9) !important;
         transform-origin: right top !important;
     }
     
@@ -450,7 +450,7 @@ select, input[type="range"] {
 
 .logo-map {
     max-width: 120px; /* Control del ancho máximo */
-    height: 57px; /* Mantiene la proporción */
+    height: 120px; /* Mantiene la proporción */
     object-fit: contain; /* Evita distorsión */
 }
 .loader {
@@ -502,12 +502,13 @@ select, input[type="range"] {
         height: auto;
     }
 
+@media (max-width: 768px) {
     #map {
-        flex: 1; /* Ocupa todo el espacio disponible */
-        height: calc(100vh - 300px); /* Ajusta según el espacio del gráfico */
-        min-height: 400px; /* Altura mínima para móviles */
+        flex: 1;
+        height: calc(100vh - 100px);
+        min-height: 600px;
     }
-
+}
 
     /* Ajustes específicos para controles móviles */
     .sidebar-header {
@@ -728,9 +729,24 @@ select, input[type="range"] {
     padding: 0;
     margin: 10px;
     width: 180px;
-    height: 164px;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10001;
 }
+
+/* Fondo blanco para los controles flotantes de texto "Histórico" y "Actual" */
+.map-label-historico, .map-label-actual {
+    background: #fff;
+    padding: 6px 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1em;
+    border: 1px solid #e0e0e0;
+    opacity: 0.97;
+    margin: 8px;
+    display: inline-block;
+}
+

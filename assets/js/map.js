@@ -18,7 +18,7 @@ export function initMap(mapId) {
 
 // Diccionario con descripciones para cada índice
 const text_cont = {
-    NDVI: "(Normalized Difference Vegetation Index) Mide la salud y vigor de los cultivos.",
+    NDVI: "Evalúa la salud vegetal mediante y vigor de los cultivos. Se basa en la reflectancia de luz infrarroja y roja. Valores cercanos a 1 indican vegetación densa y sana; valores próximos a 0 corresponden a suelos, agua o ausencia de cobertura vegetal.",
     
     EVI: "(Enhanced Vegetation Index) Mejora el NDVI en áreas con mucha vegetación o con suelos húmedos, haciendo que sea más preciso en esas condiciones.",
     SAVI: "(Soil Adjusted Vegetation Index) Corrige el efecto del suelo en zonas con poca vegetación usando un valor fijo, lo que mejora la estimación de verdor en suelos expuestos.",
@@ -144,6 +144,8 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
         };
         mapInstance.titleControl.addTo(mapInstance);
 
+
+
         // Control independiente para la descripción del índice (arriba a la izquierda)
         function addOrUpdateDescriptionControl(mapInstance, capaSeleccionada) {
             if (mapInstance.descControl) {
@@ -157,7 +159,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
             mapInstance.descControl.onAdd = function() {
                 const div = L.DomUtil.create('div', 'map-index-desc');
                 div.innerHTML = `
-                    <div style="width:180px; height:164px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; font-family: Arial, sans-serif;">
+                    <div style="width:180px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
                         <div style="font-weight:bold; font-size:1.05em; color:#2c3e50; margin-top:10px; margin-bottom:12px; text-align:center;">
                             ${capaSeleccionada.toUpperCase()}
                         </div>
@@ -403,6 +405,63 @@ export function initSideBySide(mapInstance, leftLayer, rightLayer) {
                     rangeInput.style.pointerEvents = "none";
                 });
             }
+
+            // Agrega etiquetas "Histórico" (izquierda) y "Actual" (derecha)
+            // Elimina etiquetas previas si existen
+            const prevLabels = document.querySelectorAll('.sbs-label-historico, .sbs-label-actual');
+            prevLabels.forEach(el => el.parentNode.removeChild(el));
+            // Crea y posiciona las etiquetas
+            const mapContainer = mapInstance.getContainer();
+
+            // Estilos base para ambos labels
+            const labelBaseStyle = `
+                position: absolute;
+                top: 18px;
+                z-index: 999;
+                background: rgba(255,255,255,0.85);
+                padding: 3px 12px;
+                border-radius: 6px;
+                font-weight: bold;
+                color: #2c3e50;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+                font-size: 1em;
+                pointer-events: none;
+                transition: left 0.2s, right 0.2s;
+            `;
+
+            // Media query para móvil (max-width: 600px)
+            const mobileStyle = `
+                @media (max-width:600px) {
+                    .sbs-label-historico, .sbs-label-actual {
+                        top: 10px !important;
+                        font-size: 0.95em !important;
+                        padding: 2px 8px !important;
+                    }
+                    .sbs-label-historico { left: 50px !important; }
+                    .sbs-label-actual { right: 60px !important; }
+                }
+            `;
+            // Inserta el style solo una vez
+            if (!document.getElementById('sbs-label-mobile-style')) {
+                const styleTag = document.createElement('style');
+                styleTag.id = 'sbs-label-mobile-style';
+                styleTag.innerHTML = mobileStyle;
+                document.head.appendChild(styleTag);
+            }
+
+            // Etiqueta izquierda (Histórico)
+            const leftLabel = document.createElement('div');
+            leftLabel.className = 'sbs-label-historico';
+            leftLabel.innerText = 'Histórico';
+            leftLabel.setAttribute('style', labelBaseStyle + 'left: 500px; right: auto;');
+            // Etiqueta derecha (Actual)
+            const rightLabel = document.createElement('div');
+            rightLabel.className = 'sbs-label-actual';
+            rightLabel.innerText = 'Actual';
+            rightLabel.setAttribute('style', labelBaseStyle + 'right: 500px; left: auto;');
+            // Agrega al contenedor del mapa
+            mapContainer.appendChild(leftLabel);
+            mapContainer.appendChild(rightLabel);
         } else {
             console.log('Leaflet sideBySide control not found');
         }
