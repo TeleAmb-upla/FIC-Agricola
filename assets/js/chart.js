@@ -43,7 +43,7 @@ export function inicializarGrafico() {
 
     // Escalas iniciales
     xScale = d3.scaleLinear()
-        .domain([1, 52])
+        .domain([1, 53])
         .range([margenIzquierdo, anchoGrafico + margenIzquierdo]);
 
     yScale = d3.scaleLinear()
@@ -53,12 +53,14 @@ export function inicializarGrafico() {
     // Líneas
     lineHistoric = d3.line()
         .x(d => xScale(d.week))
-        .y(d => yScale(d.historic));
+        .y(d => yScale(d.historic))
+        .curve(d3.curveMonotoneX); // suaviza la línea histórica
 
     lineCurrent = d3.line()
         .defined(d => d.current !== null)
         .x(d => xScale(d.week))
-        .y(d => yScale(d.current));
+        .y(d => yScale(d.current))
+        .curve(d3.curveMonotoneX); // suaviza la línea actual
 
     // Ejes
     svg.append("g")
@@ -77,7 +79,7 @@ export function inicializarGrafico() {
         .attr("x", anchoContenedor / 2)
         .attr("y", altoGrafico + margenSuperior + margenInferior - 10)
         .style("text-anchor", "middle")
-        .text("Semana del Año");
+        .text("Tiempo (Semanas)");
 
     svg.append("text")
         .attr("class", "y-axis-label")
@@ -119,9 +121,18 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             const { start, end } = getWeekStartEnd(year, +d.Week);
             return {
                 week: +d.Week,
-                historic: +d.Historic,
+                historic: +d.P50,
                 current: d.Current ? +d.Current : null,
-                Last: +d.Last,
+                Last: (
+                    d.Last !== undefined &&
+                    d.Last !== null &&
+                    d.Last !== "" &&
+                    d.Last !== " " &&
+                    d.Last.toLowerCase?.() !== "na" &&
+                    d.Last.toLowerCase?.() !== "null" &&
+                    d.Last.toLowerCase?.() !== "undefined" &&
+                    !isNaN(+d.Last)
+                ) ? +d.Last : null,
                 P25: +d.P25,
                 P75: +d.P75,
                 dateStart: start,
@@ -190,7 +201,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         svg.select(".x-axis")
             .call(
                 d3.axisBottom(xScale)
-                    .ticks(52)
+                    .ticks(53)
                     .tickFormat(function(d) {
                         // Mostrar la letra del mes solo en la semana de inicio de cada mes, el resto vacío
                         const idx = weeksInicioMes.indexOf(d);
@@ -213,10 +224,10 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-            { label: "Histórico (x̄)  ", color: COLOR_HISTORIC, style: "solid" },
+            { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
-            { label: "Último Año", color: COLOR_LAST, style: "solid" },
+         //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
             { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
             
         ];
@@ -232,7 +243,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
 
         const legendGroup = legendSvg.append("g")
             .attr("class", "custom-legend")
-            .attr("transform", `translate(0,28)`); // Deja espacio arriba para el título
+            .attr("transform", `translate(0,27)`); // Deja espacio arriba para el título
 
         // Título de la leyenda
         legendSvg.append("text")
@@ -290,7 +301,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             .x(d => xScale(d.week))
             .y0(d => yScale(d.P25))
             .y1(d => yScale(d.P75))
-            .curve(d3.curveMonotoneX);
+            .curve(d3.curveMonotoneX); // suaviza el área IQR
         
            // banda intercuartílica
         svg.append("path")
@@ -345,21 +356,24 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                 .attr("stroke", "#fff")
                 .attr("stroke-width", 2);
         }
-
+/*
         // Línea Last
         svg.select(".linea-last").remove();
+        // Usar d3.line() con .defined() para saltar valores nulos y conectar los puntos válidos
+        const lineLast = d3.line()
+            .defined(d => !isNaN(d.Last) && d.Last !== null)
+            .x(d => xScale(d.week))
+            .y(d => yScale(d.Last))
+            .curve(d3.curveMonotoneX); // suaviza la línea Last
+
         const lineaLast = svg.append("path")
-            .datum(datos.filter(d => !isNaN(d.Last)))
+            .datum(datos)
             .attr("class", "linea-last")
             .attr("fill", "none")
             .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "2,2")
+            .attr("stroke-dasharray", "5,5") // igual que la línea "current"
             .attr("stroke", COLOR_LAST)
-            .attr("d", d3.line()
-                .x(d => xScale(d.week))
-                .y(d => yScale(d.Last))
-                .curve(d3.curveMonotoneX)
-            );
+            .attr("d", lineLast);
 
         // Animación del trazo de la línea Last (más lenta)
         const totalLengthLast = lineaLast.node().getTotalLength();
@@ -370,7 +384,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             .duration(1800) // más lento que la histórica
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
-
+*/
         // ------------------ NUEVO TOOLTIP DE LÍNEA --------------------
         svg.selectAll(".hover-line-group").remove();
 
@@ -410,7 +424,6 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
     <strong>Semana ${closest.week}</strong><br>
     Histórico: ${formatShort(closest.historic)}<br>
     Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
-    Último Año: ${!isNaN(closest.Last) ? formatShort(closest.Last) : "N/A"}<br>
     P25: ${!isNaN(closest.P25) ? formatShort(closest.P25) : "N/A"}<br>
     P75: ${!isNaN(closest.P75) ? formatShort(closest.P75) : "N/A"}
 `)
@@ -450,7 +463,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             .attr("stroke-width", 2);
 
         // Título del eje Y
-        svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCase()}`);
+        svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCASE()}`);
 
     }).catch(error => console.error("Error al cargar datos:", error));
 }
