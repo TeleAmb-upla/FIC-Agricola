@@ -446,9 +446,9 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                 .attr("y", margenSuperior / 2 + 10)
                 .attr("text-anchor", "middle")
                 .style("font-size", "1.2em")
-                .text(`${capaSeleccionada} - Histórico (2018-2024) vs Actual (2025)`);
+                .text(`${capaSeleccionada} - Histórico (2019-2024) vs Actual (2025)`);
         } else {
-            titulo.text(`${capaSeleccionada} - Histórico (2018-2024) vs Actual (2025)`);
+            titulo.text(`${capaSeleccionada} - Histórico (2019-2024) vs Actual (2025)`);
         }
 
         // Línea de subrayado bajo el título
