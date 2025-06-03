@@ -116,28 +116,28 @@
         <div class="control-group">
             <div class="section-title">Semana</div>
             <select id="weekSelector" class="control-input">
-                <option value="01" disabled style="color: gray;">Semana 1</option>
-                <option value="02" disabled style="color: gray;">Semana 2</option>
-                <option value="03" disabled style="color: gray;">Semana 3</option>
-                <option value="04" disabled style="color: gray;">Semana 4</option>
-                <option value="05" disabled style="color: gray;">Semana 5</option>
-                <option value="06" disabled style="color: gray;">Semana 6</option>
-                <option value="07" disabled style="color: gray;">Semana 7</option>
-                <option value="08" disabled style="color: gray;">Semana 8</option>
-                <option value="09" disabled style="color: gray;">Semana 9</option>
-                <option value="10" disabled style="color: gray;">Semana 10</option>
-                <option value="11" disabled style="color: gray;">Semana 11</option>
-                <option value="12" disabled style="color: gray;">Semana 12</option>
-                <option value="13" disabled style="color: gray;">Semana 13</option>
-                <option value="14" disabled style="color: gray;">Semana 14</option>
-                <option value="15" disabled style="color: gray;">Semana 15</option>
-                <option value="16" disabled style="color: gray;">Semana 16</option>
-                <option value="17" selected>Semana 17</option>
+                <option value="01"selected>Semana 1</option>
+                <option value="02">Semana 2</option>
+                <option value="03">Semana 3</option>
+                <option value="04">Semana 4</option>
+                <option value="05">Semana 5</option>
+                <option value="06">Semana 6</option>
+                <option value="07">Semana 7</option>
+                <option value="08">Semana 8</option>
+                <option value="09">Semana 9</option>
+                <option value="10">Semana 10</option>
+                <option value="11">Semana 11</option>
+                <option value="12">Semana 12</option>
+                <option value="13">Semana 13</option>
+                <option value="14">Semana 14</option>
+                <option value="15">Semana 15</option>
+                <option value="16">Semana 16</option>
+                <option value="17">Semana 17</option>
                 <option value="18">Semana 18</option>
-                <option value="19" disabled style="color: gray;">Semana 19</option>
-                <option value="20" disabled style="color: gray;">Semana 20</option>
-                <option value="21" disabled style="color: gray;">Semana 21</option>
-                <option value="22" disabled style="color: gray;">Semana 22</option>
+                <option value="19">Semana 19</option>
+                <option value="20">Semana 20</option>
+                <option value="21">Semana 21</option>
+                <option value="22">Semana 22</option>
                 <option value="23" disabled style="color: gray;">Semana 23</option>
                 <option value="24" disabled style="color: gray;">Semana 24</option>
                 <option value="25" disabled style="color: gray;">Semana 25</option>
@@ -187,6 +187,11 @@
         -->
 
 
+        <div class="control-group opacity-desktop">
+            <div class="section-title">Opacidad del mapa</div>
+            <input type="range" id="opacitySlider" class="control-input" min="0" max="100" value="100" step="1">
+            <div style="font-size:0.9em; color:#34495e; margin-bottom:10px;"> <span id="opacityValue">100</span>%</div>
+        </div>
 
 
 
@@ -253,7 +258,12 @@
         </p>
     </div>
     </section>
-<!-- End Clients Section -->
+    <!-- Nuevo: Control de opacidad para móvil -->
+    <div class="control-group opacity-mobile" style="display:none;">
+        <div class="section-title">Opacidad del mapa</div>
+        <input type="range" id="opacitySliderMobile" class="control-input" min="0" max="100" value="100" step="1">
+        <div style="font-size:0.9em; color:#34495e; margin-bottom:10px;"> <span id="opacityValueMobile">100</span>%</div>
+    </div>
 
     </div> <div class="main-container">
         <div id="map"></div>
@@ -290,5 +300,58 @@
     <script type="module" src="./assets/js/map.js"></script>
     <script type="module" src="./assets/js/user-files.js"></script>
    <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
+
+   <script>
+    // Slider de opacidad para desktop y móvil
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para actualizar la opacidad de las capas raster (GeoRasterLayer)
+        function updateRasterOpacity(val) {
+            // Usa la variable global 'map' que expone la instancia real de Leaflet
+            const mapInstance = window.map;
+            if (mapInstance && mapInstance.eachLayer) {
+                mapInstance.eachLayer(function(layer) {
+                    // Identifica GeoRasterLayer por la presencia de setOpacity y pixelValuesToColorFn
+                    if (layer && typeof layer.setOpacity === 'function' && layer.options && layer.options.pixelValuesToColorFn) {
+                        layer.setOpacity(val);
+                    }
+                });
+            }
+        }
+
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        if (opacitySlider) {
+            opacitySlider.addEventListener('input', function() {
+                const percent = parseInt(opacitySlider.value, 10);
+                const opacity = percent / 100;
+                opacityValue.textContent = percent;
+                updateRasterOpacity(opacity);
+            });
+        }
+        // Slider de opacidad para móvil
+        const opacitySliderMobile = document.getElementById('opacitySliderMobile');
+        const opacityValueMobile = document.getElementById('opacityValueMobile');
+        if (opacitySliderMobile) {
+            opacitySliderMobile.addEventListener('input', function() {
+                const percent = parseInt(opacitySliderMobile.value, 10);
+                const opacity = percent / 100;
+                opacityValueMobile.textContent = percent;
+                updateRasterOpacity(opacity);
+            });
+        }
+        // Sincroniza sliders
+        function syncSliders(val) {
+            if (opacitySlider && opacitySlider.value != val) opacitySlider.value = val;
+            if (opacitySliderMobile && opacitySliderMobile.value != val) opacitySliderMobile.value = val;
+        }
+        if (opacitySlider && opacitySliderMobile) {
+            opacitySlider.addEventListener('input', () => syncSliders(opacitySlider.value));
+            opacitySliderMobile.addEventListener('input', () => syncSliders(opacitySliderMobile.value));
+        }
+        // Inicializa la opacidad
+        if (opacitySlider) updateRasterOpacity(parseInt(opacitySlider.value, 10) / 100);
+        if (opacitySliderMobile) updateRasterOpacity(parseInt(opacitySliderMobile.value, 10) / 100);
+    });
+    </script>
 </body>
 </html>

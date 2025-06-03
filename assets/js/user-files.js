@@ -31,9 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Rutas TIFF: histórico (2024) y actual (2025)
+
+            
             const rutas = {
-                tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2024_${semanaSeleccionada}.tif`,
-                tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2025_${semanaSeleccionada}.tif`,
+                tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2019_2024_${semanaSeleccionada}.tif`,
+                tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2025_2025_${semanaSeleccionada}.tif`,
                 csv: `./assets/csv/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
             }; 
 
@@ -42,11 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Verificar existencia de ambos tiff y csv
             const [tiffLeftExiste, tiffRightExiste, csvExiste] = await Promise.all([
                 fetch(rutas.tiffLeft).then(res => {
-                    console.log(`📦 TIFF Left (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
+                    console.log(`📦 TIFF Historico (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
                     return res.ok;
                 }),
                 fetch(rutas.tiffRight).then(res => {
-                    console.log(`📦 TIFF Right (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
+                    console.log(`📦 TIFF Actual (${semanaSeleccionada}):`, res.ok ? "EXISTE ✅" : "NO EXISTE ❌");
                     return res.ok;
                 }),
                 fetch(rutas.csv).then(res => {
@@ -111,8 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
     weekSelector.addEventListener("change", actualizarVisualizaciones);
 
     // Seleccionar automáticamente "NDVI" y semana 01 al cargar
-    layerSelector.value = "NDVI";
-    weekSelector.value = "17";
+    layerSelector.value = "EVI";
+    weekSelector.value = "01";
     actualizarVisualizaciones();
 });
 

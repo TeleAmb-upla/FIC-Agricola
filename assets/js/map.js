@@ -13,13 +13,13 @@ export function initMap(mapId) {
         maxZoom: 19,
         attribution: '© Esri, Earthstar Geographics'
     }).addTo(map); // Añade la capa base de imágenes satelitales
+    window.map = map; // <-- Exponer la instancia globalmente para el slider
     return map;
 }
 
 // Diccionario con descripciones para cada índice
 const text_cont = {
     NDVI: "Qué indica: Se utiliza para cuantificar el verdor de la vegetación y es útil para comprender la densidad de la vegetación y evaluar los cambios en la salud de las plantas. Valores: Los valores del NDVI varían entre -1 y 1. Cuando obtenemos valores cercanos a 1 (entre 0.6 y 0.9), esto nos indica vegetación densa y en buen estado de salud. Valores intermedios (0.2 a 0.5) señalan vegetación moderada o en crecimiento. Los valores próximos a cero y negativos representan superficies sin vegetación, como suelo desnudo, rocas o áreas urbanas.",
-    
     EVI: "Qué indica: Diseñado para áreas de vegetación densa o suelos húmedos, minimiza distorsiones atmosféricas y del suelo. Valores: Este índice presenta valores entre -1 y 1. Los valores más altos (0.5 a 1) corresponden a vegetación densa y saludable. Valores entre 0.2 y 0.4 indican vegetación moderada. Cuando los valores son inferiores a 0.1, estamos ante suelos expuestos o zonas con muy poca vegetación. Los valores negativos aparecen en superficies no vegetales como construcciones o áreas secas.",
     SAVI: "Qué indica: Analiza vegetación en zonas con mucho suelo expuesto, incorporando un factor de corrección fijo para minimizar la interferencia del suelo. Valores: Sus valores oscilan entre -1 y 1. Valores superiores a 0.4 indican buena cobertura vegetal. Cuando están entre 0.1 y 0.3, muestran vegetación escasa. Los valores menores a cero generalmente corresponden a suelos desnudos o cuerpos de agua. Este índice es particularmente valioso en zonas donde el suelo está muy expuesto.",
     GNDVI: "Qué indica: Evalúa el contenido de clorofila y estrés vegetal usando luz verde en lugar de roja, siendo más sensible a cambios tempranos en salud vegetal. Valores: Con un rango de -1 a 1, los valores superiores a 0.7 muestran plantas con alto contenido de clorofila y excelente salud. Valores entre 0.3 y 0.6 representan vegetación normal. Cuando los valores caen por debajo de 0.2, esto indica problemas como estrés hídrico o deficiencias nutricionales en las plantas, siendo especialmente útil para detectar estos problemas en etapas tempranas.",
@@ -34,43 +34,43 @@ const text_cont = {
 // Paletas de colores y opacidad para cada índice
 const colorParams = {
     NDVI: {
-      opacity: 1,
+        range: [0.1650213, 0.9906824],
       palette: ['ffffff', 'ce7e45', 'df923d', 'f1b555', 'fcd163', '99b718', '74a901', '66a000', '529400', '3e8601', '207401', '056201', '004c00', '023b01', '012e01', '011d01', '011301']
     },
     EVI: {
-      opacity: 1,
+        range: [0.1084304 , 0.8187659],
       palette: ['ffffff', 'f7f7b0', 'e6f59b', 'c6ea7f', 'a6d96a', '86c45d', '66bd63', '46a356', '2e8b4a', '1a753e', '0a5c32']
     },
     SAVI: {
-      opacity: 1,
+        range: [0.1197699, 0.7382485],
       palette: ['8b4513', 'a05a2c', 'b56f45', 'ca855e', 'df9a77', 'f4b090', 'd5c293', 'b6d496', '97e699', '60c67d', '399565']
     },
     GNDVI: {
-      opacity: 1,
+        range: [0.2808267, 0.9659922 ],
       palette: ['ff0000', 'ff4500', 'ff8c00', 'ffd700', 'ffff00', 'adff2f', '69d500', '32cd32', '008000', '006400']
     },
     LAI: {
-      opacity: 1,
+        range: [],
       palette: ['ffffff', 'e0f3e0', 'c1e7c1', 'a2dba2', '83cf83', '64c364', '45b745', '26ab26', '068b06', '005c00']
     },
     NDMI: {
-      opacity: 1,
+        range: [-0.1785035 , 0.645138 ],
       palette: ['8b0000', 'ff0000', 'ffa07a', 'ffffff', 'add8e6', '0000ff', '00008b']
     },
     GCI: {
-      opacity: 1,
+        range: [],
       palette: ['b2182b', 'ef8a62', 'fddbc7', 'f7f7f7', 'b5c6d0', '5890b0', '2166ac']
     },
     MSAVI: {
-      opacity: 1,
+        range: [0.09787198, 0.8282566],
       palette: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'b9d9d4', '80cdc1', '35978f', '01665e']
     },
     NDWI: {
-      opacity: 1,
+        range: [-0.9659922, -0.2808267],
       palette: ["d73027", "fc8d59", "fee090", "e0f3f8", "91bfdb", "4575b4"]
     },
     MNDWI: {
-      opacity: 1,
+        range: [-0.8976954, -0.1324944],
       palette: ['a50026', 'd75926', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4', '66bd63', '1a9850', '006837']
     }
   };
@@ -104,23 +104,9 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
         const georaster = await parseGeoraster(arrayBuffer); // Parsea el raster
         const params = getColorParams(capaSeleccionada); // Obtiene la paleta de colores
 
-        // Calcula min/max del raster actual
-        const { min: minAct, max: maxAct } = getRasterMinMax(georaster);
-
-        // Si hay raster histórico, calcula también su min/max
-        let minHist = null, maxHist = null;
-        if (georasterHistorico) {
-            const minMaxHist = getRasterMinMax(georasterHistorico);
-            minHist = minMaxHist.min;
-            maxHist = minMaxHist.max;
-        }
-
-        // Calcula el mínimo absoluto y el máximo absoluto entre ambos raster
-        let minAbs = minAct, maxAbs = maxAct;
-        if (minHist !== null && maxHist !== null) {
-            minAbs = Math.min(minAct, minHist);
-            maxAbs = Math.max(maxAct, maxHist);
-        }
+        // Usa el rango definido en colorParams
+        let minRange = params.range && params.range.length === 2 ? params.range[0] : 0;
+        let maxRange = params.range && params.range.length === 2 ? params.range[1] : 1;
 
         // Elimina controles anteriores del mapa (título, leyenda, etc.)
         [mapInstance.titleControl, mapInstance.legendControl, mapInstance.legendControlLeft].forEach(control => {
@@ -176,7 +162,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
         // Agrega/actualiza el control de descripción independiente
         addOrUpdateDescriptionControl(mapInstance, capaSeleccionada);
 
-        // Leyenda vertical (abajo a la derecha) usando minAbs y maxAbs
+        // Leyenda vertical (abajo a la derecha) usando minRange y maxRange
         mapInstance.legendControl = L.control({ position: 'bottomright' });
         mapInstance.legendControl.onAdd = () => {
             const div = L.DomUtil.create('div', 'map-legend');
@@ -189,8 +175,8 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
                 <div class="legend-scale-container">
                     <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
                     <div class="legend-values" style="font-size:0.85em;">
-                        <span style="margin-right:10px;">MinAbs: <span style="font-size:0.95em;">${minAbs.toFixed(2)}</span></span>
-                        <span>MaxAbs: <span style="font-size:0.95em;">${maxAbs.toFixed(2)}</span></span>
+                        <span style="margin-right:10px;">Min: <span style="font-size:0.95em;">${minRange.toFixed(2)}</span></span>
+                        <span>Max: <span style="font-size:0.95em;">${maxRange.toFixed(2)}</span></span>
                     </div>
                 </div>
             `;
@@ -198,7 +184,7 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
         };
         mapInstance.legendControl.addTo(mapInstance);
 
-        // Crea la capa raster Leaflet usando la paleta y los valores absolutos
+        // Crea la capa raster Leaflet usando la paleta y el rango definido
         const rasterLayer = new GeoRasterLayer({
             georaster,
             resolution: 256,
@@ -207,13 +193,13 @@ export async function loadGeoRasterLayer(url, mapInstance, capaSeleccionada, geo
                 if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
                     return "transparent";
                 }
-                // Normaliza el valor usando minAbs y maxAbs
-                const clampedValue = Math.max(minAbs, Math.min(value, maxAbs));
-                const normalized = (clampedValue - minAbs) / (maxAbs - minAbs);
+                // Normaliza el valor usando minRange y maxRange
+                const clampedValue = Math.max(minRange, Math.min(value, maxRange));
+                const normalized = (clampedValue - minRange) / (maxRange - minRange);
                 const index = Math.floor(normalized * (params.palette.length - 1));
                 return `#${params.palette[Math.max(0, Math.min(index, params.palette.length - 1))]}`;
             },
-            opacity: params.opacity
+            opacity: 1 // La opacidad se controla solo por el slider
         });
         
         return { rasterLayer, georaster }; // Devuelve la capa y el raster
@@ -288,7 +274,7 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
                 if (value1 === undefined || value1 === null) {
                     value1Text = "Sin datos en esta ubicación";
                 } else if (isNaN(value1)) {
-                    value1Text = "Valor no numérico (NaN)";
+                    value1Text = "Imagen con un 50% de Nubosidad";
                 } else {
                     value1Text = value1.toFixed(3);
                 }
@@ -315,7 +301,7 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
                     if (value2 === undefined || value2 === null) {
                         value2Text = "Sin datos en esta ubicación";
                     } else if (isNaN(value2)) {
-                        value2Text = "Valor no numérico (NaN)";
+                        value2Text = "Imagen con un 50% de Nubosidad";
                     } else {
                         value2Text = value2.toFixed(3);
                     }
@@ -468,6 +454,92 @@ export function initSideBySide(mapInstance, leftLayer, rightLayer) {
     }, 100);
 }
 
+/**
+ * Crea un slider de opacidad vertical personalizado sobre el mapa.
+ * Controla la opacidad de las capas leftLayer (Histórico) y rightLayer (Actual).
+ * El slider aparece centrado y permite ajustar la opacidad de ambas capas.
+
+ */
+export function createOpacitySlider(mapInstance, leftLayer, rightLayer) {
+    // Elimina slider anterior si existe
+    const prevSlider = document.getElementById('opacity-slider-container');
+    if (prevSlider && prevSlider.parentNode) {
+        prevSlider.parentNode.removeChild(prevSlider);
+    }
+
+    // Crea el contenedor del slider
+    const sliderContainer = document.createElement('div');
+    sliderContainer.id = 'opacity-slider-container';
+    sliderContainer.style.position = 'absolute';
+    sliderContainer.style.top = '50%';
+    sliderContainer.style.left = '50%';
+    sliderContainer.style.transform = 'translate(-50%, -50%)';
+    sliderContainer.style.zIndex = '10001';
+    sliderContainer.style.background = 'rgba(255,255,255,0.95)';
+    sliderContainer.style.borderRadius = '12px';
+    sliderContainer.style.boxShadow = '0 2px 10px rgba(0,0,0,0.13)';
+    sliderContainer.style.padding = '18px 10px 18px 10px';
+    sliderContainer.style.display = 'flex';
+    sliderContainer.style.flexDirection = 'column';
+    sliderContainer.style.alignItems = 'center';
+    sliderContainer.style.width = '48px';
+    sliderContainer.style.height = '220px';
+
+    // Etiquetas
+    const labelHist = document.createElement('div');
+    labelHist.innerText = 'Hist.';
+    labelHist.style.fontSize = '0.85em';
+    labelHist.style.color = '#2c3e50';
+    labelHist.style.marginBottom = '6px';
+    sliderContainer.appendChild(labelHist);
+
+    // Slider de opacidad (vertical)
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0.2';
+    slider.max = '1';
+    slider.step = '0.01';
+    slider.value = rightLayer && rightLayer.options && rightLayer.options.opacity ? rightLayer.options.opacity : 1;
+    slider.style.writingMode = 'bt-lr'; // vertical
+    slider.style.WebkitAppearance = 'slider-vertical';
+    slider.style.width = '30px';
+    slider.style.height = '140px';
+    slider.style.margin = '0 0 0 0';
+    slider.style.cursor = 'pointer';
+    slider.style.background = 'transparent';
+    slider.style.accentColor = '#4CAF50';
+
+    sliderContainer.appendChild(slider);
+
+    // Etiqueta inferior
+    const labelAct = document.createElement('div');
+    labelAct.innerText = 'Act.';
+    labelAct.style.fontSize = '0.85em';
+    labelAct.style.color = '#2c3e50';
+    labelAct.style.marginTop = '6px';
+    sliderContainer.appendChild(labelAct);
+
+    // Valor numérico
+    const valueLabel = document.createElement('div');
+    valueLabel.innerText = `${Math.round(slider.value * 100)}%`;
+    valueLabel.style.fontSize = '0.85em';
+    valueLabel.style.color = '#4CAF50';
+    valueLabel.style.marginTop = '8px';
+    sliderContainer.appendChild(valueLabel);
+
+    // Evento para actualizar opacidad
+    slider.addEventListener('input', function() {
+        const val = parseFloat(slider.value);
+        if (leftLayer && typeof leftLayer.setOpacity === 'function') leftLayer.setOpacity(val);
+        if (rightLayer && typeof rightLayer.setOpacity === 'function') rightLayer.setOpacity(val);
+        valueLabel.innerText = `${Math.round(val * 100)}%`;
+    });
+
+    // Añade el slider al contenedor del mapa
+    const mapContainer = mapInstance.getContainer();
+    mapContainer.appendChild(sliderContainer);
+}
+
 // En renderDualLegends:
 function getLegendHtml(capa, georaster, tipo) {
     // Calcula min y max SOLO del raster correspondiente (izquierda o derecha)
@@ -475,7 +547,7 @@ function getLegendHtml(capa, georaster, tipo) {
     // ...existing code...
 }
 
-// Renderiza la leyenda usando los valores absolutos de ambos raster
+// Renderiza la leyenda usando el rango definido en colorParams
 export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual, georasterHistorico, semanaActual, semanaHistorico) {
     // Elimina leyendas anteriores
     [mapInstance.legendControl, mapInstance.legendControlLeft].forEach(control => {
@@ -486,13 +558,9 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
 
     const params = getColorParams(capaSeleccionada);
 
-    // Calcula min/max de ambos raster
-    const { min: minAct, max: maxAct } = getRasterMinMax(georasterActual);
-    const { min: minHist, max: maxHist } = getRasterMinMax(georasterHistorico);
-
-    // Calcula los valores absolutos para la leyenda
-    const minAbs = Math.min(minAct, minHist);
-    const maxAbs = Math.max(maxAct, maxHist);
+    // Usa el rango definido en colorParams
+    let minRange = params.range && params.range.length === 2 ? params.range[0] : 0;
+    let maxRange = params.range && params.range.length === 2 ? params.range[1] : 1;
 
     mapInstance.legendControl = L.control({ position: 'bottomright' });
     mapInstance.legendControl.onAdd = () => {
@@ -502,14 +570,14 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
             <div class="legend-title-container">
                 <span class="legend-main-title">${capaSeleccionada.toUpperCase()}</span>
                 <span class="legend-layer-type" style="font-weight:bold; color:#34495e; font-size:0.9em;">
-                    Actual <span style="color:#888;font-weight:normal; text-decoration:underline;">Semana ${semanaActual}</span>
+                     <span style="color:#888;font-weight:normal; text-decoration:underline;">Semana ${semanaActual}</span>
                 </span>
             </div>
             <div class="legend-scale-container">
                 <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors})"></div>
                 <div class="legend-values" style="font-size:0.85em;">
-                    <span style="margin-right:10px;">MinAbs: <span style="font-size:0.95em;">${minAbs.toFixed(2)}</span></span>
-                    <span>MaxAbs: <span style="font-size:0.95em;">${maxAbs.toFixed(2)}</span></span>
+                    <span style="margin-right:10px;">Min: <span style="font-size:0.95em;">${minRange.toFixed(2)}</span></span>
+                    <span>Max: <span style="font-size:0.95em;">${maxRange.toFixed(2)}</span></span>
                 </div>
             </div>
         `;
@@ -520,6 +588,3 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
     // Elimina la creación de legendControlLeft (histórica)
     // ...existing code...
 }
-
-// Cuando tengas ambos georasters y la capa seleccionada, llama así:
-// renderDualLegends(mapInstance, capaSeleccionada, georasterActual, georasterHistorico);
