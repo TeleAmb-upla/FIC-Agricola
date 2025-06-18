@@ -1,11 +1,47 @@
 // assets/js/user-files.js
 
 import { cargarDatosEnGrafico } from './chart.js';
-import { initMap, loadGeoRasterLayer, calculateBounds, enableRasterValuePopup, initSideBySide, renderDualLegends } from './map.js';
+import { initMap, loadGeoRasterLayer, calculateBounds, enableRasterValuePopup, initSideBySide, renderDualLegends, getActivePalette, syncRastersAndLegend, setDefaultPalette, updateSideBySideWithPalette } from './map.js';
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Mostrar el nombre del usuario autenticado
     const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
-    if (!usuario) window.location.href = "plataforma.html";
+    if (usuario && usuario.Nombre) {
+        const userNameSpan = document.getElementById('user-name');
+        if (userNameSpan) userNameSpan.textContent = usuario.Nombre;
+    }
+
+    // Mostrar la localidad del usuario autenticado
+    if (usuario && usuario.localidad) {
+        fetch('./assets/basa_data/localidad.json')
+            .then(res => res.json())
+            .then(localidades => {
+                const localidadId = usuario.localidad;
+                const localidadNombre = localidades[localidadId]?.nombre;
+                if (localidadNombre) {
+                    const locationSpan = document.getElementById('locationSelector');
+                    if (locationSpan) locationSpan.textContent = localidadNombre + ',';
+                }
+            });
+    }
+
+    // Mostrar el nombre del cultivo como texto fijo
+    if (usuario && usuario.cultivo) {
+        fetch('./assets/basa_data/cultivo.json')
+            .then(res => res.json())
+            .then(cultivos => {
+                const cultivoId = usuario.cultivo;
+                const cultivoNombre = cultivos[cultivoId]?.nombre;
+                if (cultivoNombre) {
+                    // Mostrar en el span fijo
+                    const cropSelectorSpan = document.getElementById('cropSelector');
+                    if (cropSelectorSpan) cropSelectorSpan.textContent = cultivoNombre;
+                    // También actualizar en la tarjeta de usuario si existe
+                    const cropTypeSpan = document.getElementById('crop-type');
+                    if (cropTypeSpan) cropTypeSpan.textContent = cultivoNombre;
+                }
+            });
+    }
 
     const mapContainer = document.getElementById('map-container');
     let miMapa;
@@ -14,12 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicializar el mapa (solo una vez al cargar la página)
     miMapa = initMap('map');
+    setDefaultPalette(); // <-- Fuerza la paleta original SIEMPRE al iniciar
 
     const layerSelector = document.getElementById("layerSelector");
     const weekSelector = document.getElementById("weekSelector");
 
     // Nueva función para actualizar visualizaciones con índice y semana
     const actualizarVisualizaciones = async () => {
+        setDefaultPalette(); // <-- Fuerza la paleta original cada vez que se actualiza
         const capaSeleccionada = layerSelector.value;
         const semanaSeleccionada = weekSelector.value;
 
@@ -31,8 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Rutas TIFF: histórico (2024) y actual (2025)
-
-            
             const rutas = {
                 tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2019_2024_${semanaSeleccionada}.tif`,
                 tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2025_2025_${semanaSeleccionada}.tif`,
@@ -67,36 +103,31 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentRasterLayerLeft) miMapa.removeLayer(currentRasterLayerLeft);
             if (currentRasterLayerRight) miMapa.removeLayer(currentRasterLayerRight);
 
-            // Cargar ambos TIFF (ejemplo: para comparación side-by-side)
-            const [left, right] = await Promise.all([
-                loadGeoRasterLayer(rutas.tiffLeft, miMapa, capaSeleccionada),   // Histórico (2024)
-                loadGeoRasterLayer(rutas.tiffRight, miMapa, capaSeleccionada)   // Actual (2025)
+            // Cargar ambos TIFF como georaster
+            const [georasterHistorico, georasterActual] = await Promise.all([
+                loadGeoRasterLayer(rutas.tiffLeft),   // Histórico (2024)
+                loadGeoRasterLayer(rutas.tiffRight)   // Actual (2025)
             ]);
-            currentRasterLayerLeft = left.rasterLayer;
-            currentRasterLayerRight = right.rasterLayer;
 
-            // Agrega side-by-side: histórico a la izquierda, actual a la derecha
-            initSideBySide(miMapa, left.rasterLayer, right.rasterLayer);
-
-            // Ajustar el mapa y popups para ambos raster
-            const bounds = calculateBounds(left.georaster);
-
-            // Asegúrate de pasar los argumentos correctamente:
-            // enableRasterValuePopup(map, capa actual, nombre actual, raster actual, capa histórico, nombre histórico, raster histórico)
-            enableRasterValuePopup(
-                miMapa,
-                right.rasterLayer, "Actual", right.georaster, // derecha: actual (2025)
-                left.rasterLayer, "Histórico", left.georaster  // izquierda: histórico (2024)
-            );
-
-            // También para las leyendas duales:
-            renderDualLegends(
+            // Sincronizar ambos rasters, leyenda, textos y side-by-side
+            updateSideBySideWithPalette(
                 miMapa,
                 capaSeleccionada,
-                right.georaster, // actual
-                left.georaster,  // historico
-                semanaSeleccionada, // actual
-                semanaSeleccionada  // historico (ajusta si tienes semanas distintas)
+                georasterActual,
+                georasterHistorico,
+                semanaSeleccionada,
+                semanaSeleccionada,
+                usuario.codigo_base // <-- PASA EL CODIGO BASE CORRECTO
+            );
+
+            // Ajustar el mapa y popups para ambos raster
+            const bounds = calculateBounds(georasterHistorico);
+
+            enableRasterValuePopup(
+                miMapa,
+                miMapa.rasterLayerRight, "Actual", georasterActual,
+                miMapa.rasterLayerLeft, "Histórico", georasterHistorico,
+                capaSeleccionada
             );
 
             miMapa.fitBounds(bounds);

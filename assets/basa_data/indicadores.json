@@ -1,0 +1,8 @@
+{
+  "1": { "nombre": "NDVI" },
+  "2": { "nombre": "EVI" },
+  "3": { "nombre": "GCI" },
+  "4": { "nombre": "LAI" },
+  "5": { "nombre": "MNDVI" },
+  "6": { "nombre": "MSAVI" }
+}

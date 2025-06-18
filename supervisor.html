@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9EDSYTWZCC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9EDSYTWZCC');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador Agrícola - TeleAmb</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="./assets/js/lib/leaflet-side-by-side.min.js"></script>
+    <script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
+    <!-- Leaflet Side-by-Side debe ir aquí -->
+
+
+
+    <script type="module" src="./assets/js/map.js"></script>
+    <script type="module" src="./assets/js/user-files.js"></script>
+    <style>
+        /* Modal styles */
+        #fake-data-modal {
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #fake-data-modal .modal-content {
+            background: #fff;
+            padding: 2em 2.5em;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 400px;
+        }
+        #fake-data-modal button {
+            margin-top: 1.5em;
+            padding: 0.6em 2em;
+            font-size: 1em;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        body.modal-open {
+            overflow: hidden;
+            pointer-events: none;
+        }
+        body.modal-open #fake-data-modal {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de advertencia de datos falsos -->
+<div id="fake-data-modal">
+    <div class="modal-content">
+        <h2>¡Aviso Importante!</h2>
+        <p>
+            Esta plataforma presenta un ejemplo con un agricultor y cultivo demostrativo.<br>
+            Se incorporarán más cultivos y predios a medida que avance el proyecto.<br><br>
+            La información aquí mostrada es solo para fines ilustrativos.
+        </p>
+        <button id="accept-fake-data">De acuerdo</button>
+    </div>
+</div>
+    <script>
+        // Bloquea la interacción hasta aceptar
+        document.body.classList.add('modal-open');
+        document.getElementById('accept-fake-data').onclick = function() {
+            document.getElementById('fake-data-modal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        };
+    </script>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <!--<img src="./assets/img/TeleAmb.png" alt="Logo TeleAmb" class="logo-map"> -->
+            <a href="index.html">
+    <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo FIC" class="logo-map">
+</a>
+            <h1 class="app-title">Monitoreo Satelital Agrícola</h1>
+        </div>
+        <div class="control-group">
+            <div class="section-title">Tipo de cultivo </div>
+            <div class="cultivo-options">
+                <!-- Mostrar el cultivo como texto fijo -->
+                <span id="cropSelector" ></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="section-title">Índices espectrales</div>
+            <select id="layerSelector" class="control-input">
+
+                <option value="NDVI" selected>NDVI</option>
+                <option value="EVI">EVI</option>
+                <option value="GCI" disabled style="color: gray;">GCI</option>
+                <option value="GNDVI">GNDVI</option>
+                <option value="LAI" disabled style="color: gray;">LAI</option>
+                <option value="MNDWI">MNDWI</option>
+                <option value="MSAVI">MSAVI</option>
+                <option value="NDMI">NDMI</option>
+                <option value="NDWI">NDWI</option>
+                <option value="SAVI">SAVI</option>
+
+               
+            </select>
+        </div>
+        <!-- Nuevo selector de semana -->
+        <div class="control-group">
+            <div class="section-title">Semana</div>
+            <select id="weekSelector" class="control-input">
+                <option value="01"selected>Semana 1</option>
+                <option value="02">Semana 2</option>
+                <option value="03">Semana 3</option>
+                <option value="04">Semana 4</option>
+                <option value="05">Semana 5</option>
+                <option value="06">Semana 6</option>
+                <option value="07">Semana 7</option>
+                <option value="08">Semana 8</option>
+                <option value="09">Semana 9</option>
+                <option value="10">Semana 10</option>
+                <option value="11">Semana 11</option>
+                <option value="12">Semana 12</option>
+                <option value="13">Semana 13</option>
+                <option value="14">Semana 14</option>
+                <option value="15">Semana 15</option>
+                <option value="16">Semana 16</option>
+                <option value="17">Semana 17</option>
+                <option value="18">Semana 18</option>
+                <option value="19">Semana 19</option>
+                <option value="20">Semana 20</option>
+                <option value="21">Semana 21</option>
+                <option value="22">Semana 22</option>
+                <option value="23" disabled style="color: gray;">Semana 23</option>
+                <option value="24" disabled style="color: gray;">Semana 24</option>
+                <option value="25" disabled style="color: gray;">Semana 25</option>
+                <option value="26" disabled style="color: gray;">Semana 26</option>
+                <option value="27" disabled style="color: gray;">Semana 27</option>
+                <option value="28" disabled style="color: gray;">Semana 28</option>
+                <option value="29" disabled style="color: gray;">Semana 29</option>
+                <option value="30" disabled style="color: gray;">Semana 30</option>
+                <option value="31" disabled style="color: gray;">Semana 31</option>
+                <option value="32" disabled style="color: gray;">Semana 32</option>
+                <option value="33" disabled style="color: gray;">Semana 33</option>
+                <option value="34" disabled style="color: gray;">Semana 34</option>
+                <option value="35" disabled style="color: gray;">Semana 35</option>
+                <option value="36" disabled style="color: gray;">Semana 36</option>
+                <option value="37" disabled style="color: gray;">Semana 37</option>
+                <option value="38" disabled style="color: gray;">Semana 38</option>
+                <option value="39" disabled style="color: gray;">Semana 39</option>
+                <option value="40" disabled style="color: gray;">Semana 40</option>
+                <option value="41" disabled style="color: gray;">Semana 41</option>
+                <option value="42" disabled style="color: gray;">Semana 42</option>
+                <option value="43" disabled style="color: gray;">Semana 43</option>
+                <option value="44" disabled style="color: gray;">Semana 44</option>
+                <option value="45" disabled style="color: gray;">Semana 45</option>
+                <option value="46" disabled style="color: gray;">Semana 46</option>
+                <option value="47" disabled style="color: gray;">Semana 47</option>
+                <option value="48" disabled style="color: gray;">Semana 48</option>
+                <option value="49" disabled style="color: gray;">Semana 49</option>
+                <option value="50" disabled style="color: gray;">Semana 50</option>
+                <option value="51" disabled style="color: gray;">Semana 51</option>
+                <option value="52" disabled style="color: gray;">Semana 52</option>
+            </select>
+        </div>
+
+        
+        <!--
+        <div class="control-group">
+            <div class="section-title">Exportar Datos</div>
+            <div class="download-options">
+                <select id="formatSelector" class="control-input">
+                    <option value="false">Seleccione que descargar</option> <option value="csv" disabled style="color: gray;">CSV</option>
+                    <option value="geotiff"disabled style="color: gray;">GeoTIFF</option>
+                    <option value="shp" disabled style="color: gray;">Shapefile</option>
+                </select>
+                <button id="downloadButton" class="download-button">Descargar</button>
+            </div>
+        </div>
+        -->
+
+
+        <div class="control-group opacity-desktop">
+            <div class="section-title">Opacidad del mapa</div>
+            <input type="range" id="opacitySlider" class="control-input" min="0" max="100" value="100" step="1">
+            <div style="font-size:0.9em; color:#34495e; margin-bottom:10px;"> <span id="opacityValue">100</span>%</div>
+        </div>
+
+
+
+     
+            <div class="user-info">
+                
+        
+                <div class="info-grid">
+                    <!-- Información del Usuario -->
+                    <div class="info-item section-title">
+                        <div class="card-icon">👤</div>
+                        <h3 class="card-title">Datos del Usuario</h3>
+                        <div class="card-content">
+                            <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                            <p><strong>Ubicación:</strong> <span id="locationSelector"> </span> Valparaíso, Chile </p>
+                        </div>
+                    </div>
+        
+                    <!-- Información del Predio -->
+                    <div class="info-item section-title">
+                        <div class="card-icon">🌱</div>
+                        <h3 class="card-title">Datos del Cultivo</h3>
+                        <div class="card-content">
+                            <p><strong>Cultivo:</strong> <span id="crop-type"></span></p>
+                            <p><strong>Área Total:</strong> <span id="total-area">13,08 (ha)</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  
+
+
+
+
+    <section id="clients" class="clients">
+    <div class="section-title">
+        <div style="text-align: center;">
+        <h2>Instituciones participantes</h2>
+        </div>
+
+       <div class="clients-grid">
+  <!-- Logos originales -->
+  <a href="http://www.upla.cl" title="UPLA"><img src="assets/img/Upla_Inst.png" alt="UPLA" /></a>
+  <a href="http://www.teleamb.cl" title="TELEAMB"><img src="assets/img/TeleAmb-vec.png" alt="TELEAMB" /></a>
+  <a href="https://www.gobiernovalparaiso.cl/" title="GORE"><img src="assets/img/logo_regional.png" alt="GORE" /></a>
+  <a href="https://minagri.gob.cl/region-de-valparaiso/" title="SEREMI"><img src="assets/img/seremi_agricultira_v.png" alt="SEREMI" /></a>
+  <a href="#" title="ERI"><img src="assets/img/logo_eri.jpg" alt="ERI" /></a>
+  <a href="#" title="CORE"><img src="assets/img/logo_core.png" alt="CORE" /></a>
+
+  <!-- Duplicados para animación infinita sin saltos -->
+  <a href="http://www.upla.cl" title="UPLA"><img src="assets/img/Upla_Inst.png" alt="UPLA" /></a>
+  <a href="http://www.teleamb.cl" title="TELEAMB"><img src="assets/img/TeleAmb-vec.png" alt="TELEAMB" /></a>
+  <a href="https://www.gobiernovalparaiso.cl/" title="GORE"><img src="assets/img/logo_regional.png" alt="GORE" /></a>
+  <a href="https://minagri.gob.cl/region-de-valparaiso/" title="SEREMI"><img src="assets/img/seremi_agricultira_v.png" alt="SEREMI" /></a>
+  <a href="#" title="ERI"><img src="assets/img/logo_eri.jpg" alt="ERI" /></a>
+  <a href="#" title="CORE"><img src="assets/img/logo_core.png" alt="CORE" /></a>
+</div>
+
+
+        <p style="text-align: center; font-size: 0.9em; margin-top: 15px;">
+            Esta iniciativa ha sido financiada con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso año 2023 "Código BIP N° 40060933"
+        </p>
+    </div>
+    </section>
+    <!-- Nuevo: Control de opacidad para móvil -->
+    <div class="control-group opacity-mobile" style="display:none;">
+        <div class="section-title">Opacidad del mapa</div>
+        <input type="range" id="opacitySliderMobile" class="control-input" min="0" max="100" value="100" step="1">
+        <div style="font-size:0.9em; color:#34495e; margin-bottom:10px;"> <span id="opacityValueMobile">100</span>%</div>
+    </div>
+
+    </div> <div class="main-container">
+        <div id="map"></div>
+
+        <div id="chart-container">
+            <div class="resize-handle"></div> <!-- Nuevo: Barra para redimensionar -->
+
+            <div id="d3-chart"></div>
+            <div id="legend-container" ></div> 
+        </div>
+    </div>
+
+<div id="tooltip" style="
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 6px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+"></div>
+
+    <!-- Georaster -->
+    <script src="https://unpkg.com/georaster"></script>
+    <!-- Georaster layer for Leaflet -->
+    <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+<!-- Luego geoblaze -->
+<script src="https://unpkg.com/geoblaze@1.5.0/dist/geoblaze.min.js"></script>
+
+<script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
+
+    <script type="module" src="./assets/js/map.js"></script>
+  <!--  <script type="module" src="./assets/js/user-files.js"></script> -->
+   <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
+
+   <script>
+    // Slider de opacidad para desktop y móvil
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para actualizar la opacidad de las capas raster (GeoRasterLayer)
+        function updateRasterOpacity(val) {
+            // Usa la variable global 'map' que expone la instancia real de Leaflet
+            const mapInstance = window.map;
+            if (mapInstance && mapInstance.eachLayer) {
+                mapInstance.eachLayer(function(layer) {
+                    // Identifica GeoRasterLayer por la presencia de setOpacity y pixelValuesToColorFn
+                    if (layer && typeof layer.setOpacity === 'function' && layer.options && layer.options.pixelValuesToColorFn) {
+                        layer.setOpacity(val);
+                    }
+                });
+            }
+        }
+
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        if (opacitySlider) {
+            opacitySlider.addEventListener('input', function() {
+                const percent = parseInt(opacitySlider.value, 10);
+                const opacity = percent / 100;
+                opacityValue.textContent = percent;
+                updateRasterOpacity(opacity);
+            });
+        }
+        // Slider de opacidad para móvil
+        const opacitySliderMobile = document.getElementById('opacitySliderMobile');
+        const opacityValueMobile = document.getElementById('opacityValueMobile');
+        if (opacitySliderMobile) {
+            opacitySliderMobile.addEventListener('input', function() {
+                const percent = parseInt(opacitySliderMobile.value, 10);
+                const opacity = percent / 100;
+                opacityValueMobile.textContent = percent;
+                updateRasterOpacity(opacity);
+            });
+        }
+        // Sincroniza sliders
+        function syncSliders(val) {
+            if (opacitySlider && opacitySlider.value != val) opacitySlider.value = val;
+            if (opacitySliderMobile && opacitySliderMobile.value != val) opacitySliderMobile.value = val;
+        }
+        if (opacitySlider && opacitySliderMobile) {
+            opacitySlider.addEventListener('input', () => syncSliders(opacitySlider.value));
+            opacitySliderMobile.addEventListener('input', () => syncSliders(opacitySliderMobile.value));
+        }
+        // Inicializa la opacidad
+        if (opacitySlider) updateRasterOpacity(parseInt(opacitySlider.value, 10) / 100);
+        if (opacitySliderMobile) updateRasterOpacity(parseInt(opacitySliderMobile.value, 10) / 100);
+    });
+    </script>
+    <!-- Selección automática del cultivo según el usuario autenticado -->
+
+</body>
+</html>

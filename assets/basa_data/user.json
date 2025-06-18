@@ -1,0 +1,34 @@
+[
+  {
+    "usuario": "Fic1",
+    "password": "1234",
+    "codigo_base": "cod_0001",
+    "cultivo": "1",
+    "Nombre": "Raúl González",
+    "localidad": "6"
+  },
+  {
+    "usuario": "Fic2",
+    "password": "5678",
+    "codigo_base": "cod_0002",
+    "cultivo": "2",
+    "Nombre": "Ana Maria",
+    "localidad": "5"
+  },
+  {
+    "usuario": "Fic3",
+    "password": "abcd",
+    "codigo_base": "cod_0003",
+    "cultivo": "3",
+    "Nombre": "Carlos Perez",
+    "localidad": "6"
+  },
+  {
+    "usuario": "Fic4",
+    "password": "efgh",
+    "codigo_base": "cod_0004",
+    "cultivo": "4",
+    "Nombre": "Lucia Fernandez",
+    "localidad": "1"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "NDVI": {
+  "palette": ["ffffff", "fcd163", "011301"]},
+
+  "EVI": {
+  "palette": ["ffffff", "86c45d", "0a5c32"]},
+  
+  "SAVI": {
+  "palette": ["8b4513", "f4b090", "399565"]},
+
+  "GNDVI": {
+  "palette": ["ff0000", "ffff00", "006400"]},
+
+  "LAI": {
+  "palette": ["ffffff", "64c364", "005c00"]},
+
+ "NDMI": {
+  "palette": ["8b0000", "ffffff", "00008b"]},
+
+ "GCI": {
+  "palette": ["b2182b", "f7f7f7", "2166ac"]},
+  
+  "MSAVI": {
+  "palette": ["8c510a", "f6e8c3", "01665e"]},
+
+  "NDWI": {
+  "palette": ["d73027", "fee090", "4575b4"]},
+
+  "MNDWI":{
+  "palette": ["a50026", "fee08b", "006837"]
+  }
+ 
+}

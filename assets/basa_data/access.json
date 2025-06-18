@@ -1,0 +1,16 @@
+[
+  {
+    "usuario": "Supervisor1",
+    "password": "admin1234",
+    "tipo": "supervisor",
+    "acceso_codebase": ["cod_0001"],
+    "Nombre": "Supervisor General"
+  },
+  {
+    "usuario": "Supervisor2",
+    "password": "admin5678",
+    "tipo": "supervisor",
+    "acceso_codebase": ["cod_0003", "cod_0004"],
+    "Nombre": "Supervisor Regional"
+  }
+]

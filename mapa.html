@@ -95,13 +95,9 @@
         </div>
         <div class="control-group">
             <div class="section-title">Tipo de cultivo </div>
-            <div class="download-options">
-                <select id="cropSelector" class="control-input">
-                    <option value="Palto">Palto</option> 
-                    <option value="Papas" disabled style="color: gray;">Papas</option>
-                    <option value="Legumbres"disabled style="color: gray;">Legumbres</option>
-                    <option value="Lechugas" disabled style="color: gray;">Lechugas</option>
-                </select>
+            <div class="cultivo-options">
+                <!-- Mostrar el cultivo como texto fijo -->
+                <span id="cropSelector" ></span>
             </div>
         </div>
         <div class="control-group">
@@ -215,8 +211,8 @@
                         <div class="card-icon">👤</div>
                         <h3 class="card-title">Datos del Usuario</h3>
                         <div class="card-content">
-                            <p><strong>Nombre:</strong> <span id="user-name">Raúl González</span></p>
-                            <p><strong>Ubicación:</strong> <span id="user-location"> Quillota, Valparaíso, Chile</span></p>
+                            <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                            <p><strong>Ubicación:</strong> <span id="locationSelector"> </span> Valparaíso, Chile </p>
                         </div>
                     </div>
         
@@ -225,8 +221,8 @@
                         <div class="card-icon">🌱</div>
                         <h3 class="card-title">Datos del Cultivo</h3>
                         <div class="card-content">
-                            <p><strong>Cultivo:</strong> <span id="crop-type">Palto</span></p>
-                            <p><strong>Área Total:</strong> <span id="total-area">13,08 (ha)                            </span></p>
+                            <p><strong>Cultivo:</strong> <span id="crop-type"></span></p>
+                            <p><strong>Área Total:</strong> <span id="total-area">13,08 (ha)</span></p>
                         </div>
                     </div>
                 </div>
@@ -247,7 +243,6 @@
   <a href="http://www.upla.cl" title="UPLA"><img src="assets/img/Upla_Inst.png" alt="UPLA" /></a>
   <a href="http://www.teleamb.cl" title="TELEAMB"><img src="assets/img/TeleAmb-vec.png" alt="TELEAMB" /></a>
   <a href="https://www.gobiernovalparaiso.cl/" title="GORE"><img src="assets/img/logo_regional.png" alt="GORE" /></a>
-  <a href="https://hubambientalupla.cl" title="HUB"><img src="assets/img/HUB-LOGO COLOR.jpg" alt="HUB" /></a>
   <a href="https://minagri.gob.cl/region-de-valparaiso/" title="SEREMI"><img src="assets/img/seremi_agricultira_v.png" alt="SEREMI" /></a>
   <a href="#" title="ERI"><img src="assets/img/logo_eri.jpg" alt="ERI" /></a>
   <a href="#" title="CORE"><img src="assets/img/logo_core.png" alt="CORE" /></a>
@@ -256,7 +251,6 @@
   <a href="http://www.upla.cl" title="UPLA"><img src="assets/img/Upla_Inst.png" alt="UPLA" /></a>
   <a href="http://www.teleamb.cl" title="TELEAMB"><img src="assets/img/TeleAmb-vec.png" alt="TELEAMB" /></a>
   <a href="https://www.gobiernovalparaiso.cl/" title="GORE"><img src="assets/img/logo_regional.png" alt="GORE" /></a>
-  <a href="https://hubambientalupla.cl" title="HUB"><img src="assets/img/HUB-LOGO COLOR.jpg" alt="HUB" /></a>
   <a href="https://minagri.gob.cl/region-de-valparaiso/" title="SEREMI"><img src="assets/img/seremi_agricultira_v.png" alt="SEREMI" /></a>
   <a href="#" title="ERI"><img src="assets/img/logo_eri.jpg" alt="ERI" /></a>
   <a href="#" title="CORE"><img src="assets/img/logo_core.png" alt="CORE" /></a>
@@ -308,7 +302,7 @@
 <script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
 
     <script type="module" src="./assets/js/map.js"></script>
-    <script type="module" src="./assets/js/user-files.js"></script>
+  <!--  <script type="module" src="./assets/js/user-files.js"></script> -->
    <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
 
    <script>
@@ -363,5 +357,7 @@
         if (opacitySliderMobile) updateRasterOpacity(parseInt(opacitySliderMobile.value, 10) / 100);
     });
     </script>
+    <!-- Selección automática del cultivo según el usuario autenticado -->
+
 </body>
 </html>
