@@ -121,7 +121,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             const { start, end } = getWeekStartEnd(year, +d.Week);
             return {
                 week: +d.Week,
-                historic: +d.P50,
+               // historic: +d.P50,
                 current: d.Current ? +d.Current : null,
                 Last: (
                     d.Last !== undefined &&
@@ -133,8 +133,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                     d.Last.toLowerCase?.() !== "undefined" &&
                     !isNaN(+d.Last)
                 ) ? +d.Last : null,
-                P25: +d.P25,
-                P75: +d.P75,
+                //P25: +d.P25,
+                //P75: +d.P75,
                 dateStart: start,
                 dateEnd: end,
                 month: start.getMonth(1) // 0 = enero, 1 = febrero, etc.
@@ -224,12 +224,12 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-            { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
+        //    { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
          //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
             { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
-            
+         //   
         ];
 
         const legendContainer = d3.select("#legend-container");
@@ -446,17 +446,17 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                 .attr("y", margenSuperior / 2 + 10)
                 .attr("text-anchor", "middle")
                 .style("font-size", "1.2em")
-                .text(`${capaSeleccionada} - Histórico (2019-2024) vs Actual (2025)`);
+                .text(`${capaSeleccionada} Actual (2025)`);
         } else {
-            titulo.text(`${capaSeleccionada} - Histórico (2019-2024) vs Actual (2025)`);
+            titulo.text(`${capaSeleccionada} Actual (2025)`);
         }
 
         // Línea de subrayado bajo el título
         svg.selectAll(".chart-title-underline").remove();
         svg.append("line")
             .attr("class", "chart-title-underline")
-            .attr("x1", anchoContenedor / 2 - 200)
-            .attr("x2", anchoContenedor / 2 + 200)
+            .attr("x1", anchoContenedor / 2 - 100)
+            .attr("x2", anchoContenedor / 2 + 100)
             .attr("y1", margenSuperior / 2 + 16)
             .attr("y2", margenSuperior / 2 + 16)
             .attr("stroke", "#4CAF50")

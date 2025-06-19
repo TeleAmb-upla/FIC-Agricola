@@ -210,11 +210,11 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             // --- Función segura para agregar capas ---
             function safeAddLayer(map, layer) {
                 try {
-                    if (map && map.getContainer && document.body.contains(map.getContainer())) {
-                        layer.addTo(map);
-                    } else {
+                    if (!map || !map.getContainer || !document.body.contains(map.getContainer())) {
                         console.warn('No se puede agregar la capa: el mapa o su contenedor no existen.');
+                        return;
                     }
+                    layer.addTo(map);
                 } catch (e) {
                     console.error('Error agregando capa al mapa:', e);
                 }
@@ -333,6 +333,13 @@ function renderSupervisorLegend(map, capaSeleccionada, min, max) {
     }
 }
 
+// Función segura para ajustar bounds (debe estar al inicio del archivo)
+function safeFitBounds(map, bounds) {
+    if (map && map.getContainer && document.body.contains(map.getContainer())) {
+        map.fitBounds(bounds);
+    }
+}
+
 // Ajusta el mapa a los bounds combinados de todos los rásteres
 function fitAllBounds(map, boundsArray) {
     if (!boundsArray || boundsArray.length === 0) return;
@@ -346,12 +353,6 @@ function fitAllBounds(map, boundsArray) {
     });
     if (!isFinite(minLat) || !isFinite(minLng) || !isFinite(maxLat) || !isFinite(maxLng)) return;
     const combinedBounds = [[minLat, minLng], [maxLat, maxLng]];
-    // --- Función segura para ajustar bounds ---
-    function safeFitBounds(map, bounds) {
-        if (map && map.getContainer && document.body.contains(map.getContainer())) {
-            map.fitBounds(bounds);
-        }
-    }
     safeFitBounds(map, combinedBounds);
 }
 
