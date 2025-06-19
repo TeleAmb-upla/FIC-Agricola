@@ -228,7 +228,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
          //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
-            { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
+         //   { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
          //   
         ];
 
@@ -422,11 +422,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                     .style("opacity", 1)
 .html(`
     <strong>Semana ${closest.week}</strong><br>
-    Histórico: ${formatShort(closest.historic)}<br>
     Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
-    P25: ${!isNaN(closest.P25) ? formatShort(closest.P25) : "N/A"}<br>
-    P75: ${!isNaN(closest.P75) ? formatShort(closest.P75) : "N/A"}
-`)
+    Último: ${closest.Last !== null ? formatShort(closest.Last) : "N/A"}<br>`)
                     .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 30) + "px");
             }
