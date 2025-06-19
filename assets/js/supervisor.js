@@ -36,8 +36,13 @@ function mostrarMapaHuerto(cod_base) {
     }).addTo(window.mapaSupervisor);
     // Mostrar los índices disponibles como botones
     const indices = ['NDVI', 'EVI', 'GNDVI'];
-    let botones = indices.map(indice => `<button onclick=\"cargarCapaIndice('${cod_base}','${indice}')\">${indice}</button>`).join(' ');
+    let botones = indices.map(indice => `<button class='btn-indice' onclick=\"cargarCapaIndice('${cod_base}','${indice}')\">${indice}</button>`).join(' ');
     contenedor.innerHTML += `<div style='margin-bottom:10px;'>${botones}</div><div id='info-indice'></div>`;
+    // --- Simular click automático en NDVI al cargar ---
+    setTimeout(() => {
+        const btn = contenedor.querySelector(".btn-indice");
+        if (btn) btn.click();
+    }, 100);
 }
 
 function cargarCapaIndice(cod_base, indice) {
