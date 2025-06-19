@@ -3,8 +3,11 @@
     "usuario": "Supervisor1",
     "password": "admin1234",
     "tipo": "supervisor",
-    "acceso_codebase": ["cod_0001"],
-    "Nombre": "Supervisor General"
+    "acceso_codebase": ["cod_0001", "cod_0002"],
+    "Nombre": "Supervisor General",
+    "localidad": "6",
+    "cultivo": "1"
+
   },
   {
     "usuario": "Supervisor2",

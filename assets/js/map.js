@@ -87,21 +87,6 @@ export function getColorParams(capaSeleccionada) {
     return colorParams[capaSeleccionada.toUpperCase()]; // Busca por nombre en mayúsculas
 }
 
-// Calcula el valor mínimo y máximo de un raster, ignorando valores noData
-function getRasterMinMax(georaster) {
-    let min = Infinity, max = -Infinity;
-    const noData = georaster.noDataValue;
-    const values = georaster.values[0];
-    for (let y = 0; y < values.length; y++) {
-        for (let x = 0; x < values[0].length; x++) {
-            const v = values[y][x];
-            if (v === null || v === undefined || isNaN(v) || v === noData) continue;
-            if (v < min) min = v;
-            if (v > max) max = v;
-        }
-    }
-    return { min, max };
-}
 
 // Carga un raster GeoTIFF y crea la capa Leaflet correspondiente
 export async function loadGeoRasterLayer(url) {
@@ -506,8 +491,6 @@ export function createOpacitySlider(mapInstance, leftLayer, rightLayer) {
     const mapContainer = mapInstance.getContainer();
     mapContainer.appendChild(sliderContainer);
 }
-
-
 
 // Estado global para la paleta activa
 export let useAltPalette = false;

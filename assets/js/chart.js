@@ -463,7 +463,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
             .attr("stroke-width", 2);
 
         // Título del eje Y
-        svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCASE()}`);
+        svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCase()}`);
 
     }).catch(error => console.error("Error al cargar datos:", error));
 }

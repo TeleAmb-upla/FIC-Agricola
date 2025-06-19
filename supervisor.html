@@ -23,8 +23,9 @@
 
 
 
-    <script type="module" src="./assets/js/map.js"></script>
-    <script type="module" src="./assets/js/user-files.js"></script>
+    <script src="./assets/js/map-supervisor-leaflet.js"></script>
+    <script src="./assets/js/map-supervisor.js"></script>
+    <script src="./assets/js/user-files-supervisor.js"></script>
     <style>
         /* Modal styles */
         #fake-data-modal {
@@ -89,16 +90,22 @@
         <div class="sidebar-header">
             <!--<img src="./assets/img/TeleAmb.png" alt="Logo TeleAmb" class="logo-map"> -->
             <a href="index.html">
-    <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo FIC" class="logo-map">
-</a>
+                <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo FIC" class="logo-map">
+            </a>
             <h1 class="app-title">Monitoreo Satelital Agrícola</h1>
+            <div style="margin-top:10px; font-weight:bold; font-size:1.1em;">
+
+            </div>
         </div>
         <div class="control-group">
-            <div class="section-title">Tipo de cultivo </div>
-            <div class="cultivo-options">
-                <!-- Mostrar el cultivo como texto fijo -->
-                <span id="cropSelector" ></span>
-            </div>
+            <div class="section-title">Predio(s) a cargo</div>
+            <select id="select-codebase" class="control-input" style="width:100%; margin-bottom:10px;"></select>
+            <div id="huerto-datos"></div>
+            <div id="lista-predios-cultivo" style="margin-top:10px;"></div>
+        </div>
+        <div class="control-group">
+            <div class="section-title">Tipo de cultivo</div>
+            <select id="cultivoSelector" class="control-input" style="width:100%; margin-bottom:10px;"></select>
         </div>
         <div class="control-group">
             <div class="section-title">Índices espectrales</div>
@@ -124,26 +131,26 @@
             <select id="weekSelector" class="control-input">
                 <option value="01"selected>Semana 1</option>
                 <option value="02">Semana 2</option>
-                <option value="03">Semana 3</option>
-                <option value="04">Semana 4</option>
-                <option value="05">Semana 5</option>
-                <option value="06">Semana 6</option>
-                <option value="07">Semana 7</option>
-                <option value="08">Semana 8</option>
-                <option value="09">Semana 9</option>
-                <option value="10">Semana 10</option>
-                <option value="11">Semana 11</option>
-                <option value="12">Semana 12</option>
-                <option value="13">Semana 13</option>
-                <option value="14">Semana 14</option>
-                <option value="15">Semana 15</option>
-                <option value="16">Semana 16</option>
-                <option value="17">Semana 17</option>
-                <option value="18">Semana 18</option>
-                <option value="19">Semana 19</option>
-                <option value="20">Semana 20</option>
-                <option value="21">Semana 21</option>
-                <option value="22">Semana 22</option>
+                <option value="03"disabled style="color: gray;">Semana 3</option>
+                <option value="04"disabled style="color: gray;">Semana 4</option>
+                <option value="05"disabled style="color: gray;">Semana 5</option>
+                <option value="06"disabled style="color: gray;">Semana 6</option>
+                <option value="07"disabled style="color: gray;">Semana 7</option>
+                <option value="08"disabled style="color: gray;">Semana 8</option>
+                <option value="09"disabled style="color: gray;">Semana 9</option>
+                <option value="10"disabled style="color: gray;">Semana 10</option>
+                <option value="11"disabled style="color: gray;">Semana 11</option>
+                <option value="12"disabled style="color: gray;">Semana 12</option>
+                <option value="13"disabled style="color: gray;">Semana 13</option>
+                <option value="14"disabled style="color: gray;">Semana 14</option>
+                <option value="15"disabled style="color: gray;">Semana 15</option>
+                <option value="16"disabled style="color: gray;">Semana 16</option>
+                <option value="17"disabled style="color: gray;">Semana 17</option>
+                <option value="18"disabled style="color: gray;">Semana 18</option>
+                <option value="19"disabled style="color: gray;">Semana 19</option>
+                <option value="20"disabled style="color: gray;">Semana 20</option>
+                <option value="21"disabled style="color: gray;">Semana 21</option>
+                <option value="22"disabled style="color: gray;">Semana 22</option>
                 <option value="23" disabled style="color: gray;">Semana 23</option>
                 <option value="24" disabled style="color: gray;">Semana 24</option>
                 <option value="25" disabled style="color: gray;">Semana 25</option>
@@ -176,7 +183,10 @@
                 <option value="52" disabled style="color: gray;">Semana 52</option>
             </select>
         </div>
+        <div class="control-group">
 
+            
+        </div>
         
         <!--
         <div class="control-group">
@@ -218,11 +228,9 @@
         
                     <!-- Información del Predio -->
                     <div class="info-item section-title">
-                        <div class="card-icon">🌱</div>
-                        <h3 class="card-title">Datos del Cultivo</h3>
+                        
                         <div class="card-content">
-                            <p><strong>Cultivo:</strong> <span id="crop-type"></span></p>
-                            <p><strong>Área Total:</strong> <span id="total-area">13,08 (ha)</span></p>
+
                         </div>
                     </div>
                 </div>
@@ -300,8 +308,12 @@
 <script src="https://unpkg.com/geoblaze@1.5.0/dist/geoblaze.min.js"></script>
 
 <script src="https://unpkg.com/geotiff@2.0.7/dist/geotiff.min.js"></script>
-
-    <script type="module" src="./assets/js/map.js"></script>
+    <!-- Cargar primero la lógica del mapa supervisor leaflet (exposición global) -->
+    <script src="./assets/js/map-supervisor-leaflet.js"></script>
+    <!-- Luego la lógica general del supervisor (exposición global) -->
+    <script src="./assets/js/map-supervisor.js"></script>
+    <!-- Luego la utilería de rutas de archivos para supervisor (exposición global) -->
+    <script src="./assets/js/user-files-supervisor.js"></script>
   <!--  <script type="module" src="./assets/js/user-files.js"></script> -->
    <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
 
@@ -358,6 +370,50 @@
     });
     </script>
     <!-- Selección automática del cultivo según el usuario autenticado -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = window.initSupervisorMap('map');
+            const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+            window.addAllRastersToSupervisorMap(map, usuario, 'NDVI', '01');
+        });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const map = window.initSupervisorMap('map');
+        const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+        // Carga inicial
+        window.addAllRastersToSupervisorMap(map, usuario, 'NDVI', '01');
 
+        // Listener para el selector de índice espectral
+        const layerSelector = document.getElementById('layerSelector');
+        const weekSelector = document.getElementById('weekSelector');
+        if (layerSelector) {
+            layerSelector.addEventListener('change', function() {
+                // Elimina todos los rásteres del mapa antes de agregar el nuevo
+                map.eachLayer(function(layer) {
+                    if (layer instanceof window.GeoRasterLayer) {
+                        map.removeLayer(layer);
+                    }
+                });
+                const indice = layerSelector.value;
+                const semana = weekSelector ? weekSelector.value : '01';
+                window.addAllRastersToSupervisorMap(map, usuario, indice, semana);
+            });
+        }
+        // Listener para el selector de semana
+        if (weekSelector) {
+            weekSelector.addEventListener('change', function() {
+                map.eachLayer(function(layer) {
+                    if (layer instanceof window.GeoRasterLayer) {
+                        map.removeLayer(layer);
+                    }
+                });
+                const indice = layerSelector ? layerSelector.value : 'NDVI';
+                const semana = weekSelector.value;
+                window.addAllRastersToSupervisorMap(map, usuario, indice, semana);
+            });
+        }
+    });
+    </script>
 </body>
 </html>

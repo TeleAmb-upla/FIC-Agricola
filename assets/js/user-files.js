@@ -3,9 +3,25 @@
 import { cargarDatosEnGrafico } from './chart.js';
 import { initMap, loadGeoRasterLayer, calculateBounds, enableRasterValuePopup, initSideBySide, renderDualLegends, getActivePalette, syncRastersAndLegend, setDefaultPalette, updateSideBySideWithPalette } from './map.js';
 
+// Obtiene el parámetro 'predio' de la URL
+function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+const predioParam = getQueryParam('predio');
+
+// Intenta obtener el usuario del localStorage
+let usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+// Si no hay usuario en localStorage, crea uno mínimo solo con el código base
+if (!usuario) {
+    usuario = {};
+}
+if (predioParam) {
+    usuario.codigo_base = predioParam;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Mostrar el nombre del usuario autenticado
-    const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
     if (usuario && usuario.Nombre) {
         const userNameSpan = document.getElementById('user-name');
         if (userNameSpan) userNameSpan.textContent = usuario.Nombre;
@@ -60,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setDefaultPalette(); // <-- Fuerza la paleta original cada vez que se actualiza
         const capaSeleccionada = layerSelector.value;
         const semanaSeleccionada = weekSelector.value;
+        const codigo_base = usuario.codigo_base;
 
         // Actualizar el título del gráfico según el índice seleccionado
         const chartTitle = document.querySelector('.chart-title');
@@ -70,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             // Rutas TIFF: histórico (2024) y actual (2025)
             const rutas = {
-                tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2019_2024_${semanaSeleccionada}.tif`,
-                tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}_2025_2025_${semanaSeleccionada}.tif`,
-                csv: `./assets/csv/${capaSeleccionada.toUpperCase()}/${usuario.codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
+                tiffLeft: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${codigo_base}_${capaSeleccionada.toUpperCase()}_2019_2024_${semanaSeleccionada}.tif`,
+                tiffRight: `./assets/tiff/${capaSeleccionada.toUpperCase()}/${codigo_base}_${capaSeleccionada.toUpperCase()}_2025_2025_${semanaSeleccionada}.tif`,
+                csv: `./assets/csv/${capaSeleccionada.toUpperCase()}/${codigo_base}_${capaSeleccionada.toUpperCase()}.csv`
             }; 
 
             console.log("🔍 Rutas generadas:", rutas);
