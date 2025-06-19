@@ -6,8 +6,21 @@ window.mapSupervisor = window.mapSupervisor || undefined;
 
 // Inicializa el mapa supervisor en el div con id mapId
 function initSupervisorMap(mapId) {
+    // Elimina el mapa anterior si existe
     if (window.mapSupervisor) {
         window.mapSupervisor.remove();
+        window.mapSupervisor = undefined;
+    }
+    // Asegura que el div existe y está limpio
+    let mapDiv = document.getElementById(mapId);
+    if (!mapDiv) {
+        mapDiv = document.createElement('div');
+        mapDiv.id = mapId;
+        mapDiv.style.height = '500px';
+        mapDiv.style.width = '100%';
+        document.body.appendChild(mapDiv);
+    } else {
+        mapDiv.innerHTML = '';
     }
     window.mapSupervisor = L.map(mapId).setView([-33.036, -71.381], 11);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -120,7 +133,6 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
         alert('No se pudo cargar la librería georaster. Verifica tu conexión o si algún bloqueador está interfiriendo.');
         return;
     }
-    // --- Ajuste automático de bounds al cargar todos los rásteres ---
     let allBounds = [];
     let loadedCount = 0;
     rutasPorPredio.forEach(async (ruta) => {
@@ -131,18 +143,19 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                 console.warn('No se encontró el archivo TIFF:', ruta.tiff);
                 loadedCount++;
                 if (loadedCount === rutasPorPredio.length && allBounds.length > 0) {
-                    fitAllBounds(map, allBounds);
+                    safeFitBounds(map, allBounds);
                 }
                 return;
             }
             const arrayBuffer = await response.arrayBuffer();
             const raster = await parseGeo(arrayBuffer);
-            if (!raster) {
-                console.warn('El archivo TIFF no contiene datos válidos:', ruta.tiff);
-                loadedCount++;
-                if (loadedCount === rutasPorPredio.length && allBounds.length > 0) {
-                    fitAllBounds(map, allBounds);
-                }
+            // --- Refuerzo: verifica mapa y raster válidos antes de continuar ---
+            if (!map || !map.getContainer || !document.body.contains(map.getContainer())) {
+                console.warn('El mapa ya no existe, se cancela la carga de este raster.');
+                return;
+            }
+            if (!raster || !raster.width || !raster.height) {
+                console.warn('Raster inválido o corrupto:', ruta.tiff);
                 return;
             }
             const bounds = calculateBounds(raster);
@@ -180,7 +193,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                 const idx = Math.round(((v - min) / (max - min)) * steps);
                 const color = palette[Math.max(0, Math.min(steps, idx))];
                 return `#${color}`;
-            }
+              }
             // Si no hay min/max válidos, no pintes el ráster (hazlo transparente)
             if (min === null || max === null) {
                 console.warn('No hay min/max válidos para', ruta.codigo_base, capaSeleccionada, semanaSeleccionada, '- El ráster será transparente');
@@ -194,7 +207,21 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                 bounds: bounds,
                 pixelValuesToColorFn: pixelValuesToColorFn
             });
-            layer.addTo(map);
+            // --- Función segura para agregar capas ---
+            function safeAddLayer(map, layer) {
+                try {
+                    if (map && map.getContainer && document.body.contains(map.getContainer())) {
+                        layer.addTo(map);
+                    } else {
+                        console.warn('No se puede agregar la capa: el mapa o su contenedor no existen.');
+                    }
+                } catch (e) {
+                    console.error('Error agregando capa al mapa:', e);
+                }
+            }
+            safeAddLayer(map, layer);
+            // Mostrar leyenda dinámica después de agregar la capa
+            renderSupervisorLegend(map, capaSeleccionada, min, max);
             // --- Borde brillante parpadeante y popup de información ---
             if (map && map.getContainer && map.getContainer() && document.body.contains(map.getContainer())) {
                 const highlight = L.rectangle(bounds, {
@@ -255,18 +282,55 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             console.log('TIFF agregado exitosamente al mapa:', ruta.tiff);
             loadedCount++;
             if (loadedCount === rutasPorPredio.length && allBounds.length > 0) {
-                fitAllBounds(map, allBounds);
+                safeFitBounds(map, allBounds);
             }
         } catch (e) {
             console.error('Error cargando raster para', ruta.codigo_base, e);
             loadedCount++;
             if (loadedCount === rutasPorPredio.length && allBounds.length > 0) {
-                fitAllBounds(map, allBounds);
+                safeFitBounds(map, allBounds);
             }
         }
     });
     updateSupervisorDescControl(map, capaSeleccionada);
     updateSupervisorTitleControl(map, capaSeleccionada); // Llama a updateSupervisorTitleControl cada vez que se cambie el índice
+}
+
+// Leyenda dinámica para el supervisor
+function renderSupervisorLegend(map, capaSeleccionada, min, max) {
+    if (map.legendControl) map.removeControl(map.legendControl);
+    const palette = window.colorParams[capaSeleccionada]?.palette || window.colorParams['NDVI'].palette;
+    map.legendControl = L.control({ position: 'bottomright' });
+    map.legendControl.onAdd = () => {
+        const div = L.DomUtil.create('div', 'map-legend');
+        div.style.pointerEvents = 'auto';
+        // Gradiente
+        if (palette.length > 3) {
+            const gradientColors = palette.map(color => `#${color}`).join(', ');
+            div.innerHTML = `
+                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${capaSeleccionada.toUpperCase()})</span></div>
+                <div class="legend-scale-container">
+                    <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors}); height: 16px; border-radius: 4px;"></div>
+                </div>
+            `;
+        } else {
+            // 3 bloques
+            div.innerHTML = `
+                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${capaSeleccionada.toUpperCase()})</span></div>
+                <div class="legend-scale-container" style="display:flex;flex-direction:column;align-items:center;">
+                    <div style="display:flex;flex-direction:row;gap:2px;margin-bottom:4px;">
+                        <div style="width:32px;height:18px;background:#${palette[0]};border:1px solid #aaa;"></div>
+                        <div style="width:32px;height:18px;background:#${palette[1]};border:1px solid #aaa;"></div>
+                        <div style="width:32px;height:18px;background:#${palette[2]};border:1px solid #aaa;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        return div;
+    };
+    if (map && map.getContainer && document.body.contains(map.getContainer())) {
+        map.legendControl.addTo(map);
+    }
 }
 
 // Ajusta el mapa a los bounds combinados de todos los rásteres
@@ -282,7 +346,13 @@ function fitAllBounds(map, boundsArray) {
     });
     if (!isFinite(minLat) || !isFinite(minLng) || !isFinite(maxLat) || !isFinite(maxLng)) return;
     const combinedBounds = [[minLat, minLng], [maxLat, maxLng]];
-    map.fitBounds(combinedBounds, {padding: [20, 20]});
+    // --- Función segura para ajustar bounds ---
+    function safeFitBounds(map, bounds) {
+        if (map && map.getContainer && document.body.contains(map.getContainer())) {
+            map.fitBounds(bounds);
+        }
+    }
+    safeFitBounds(map, combinedBounds);
 }
 
 // Exponer funciones globalmente
