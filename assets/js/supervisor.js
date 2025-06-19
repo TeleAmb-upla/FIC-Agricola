@@ -38,10 +38,17 @@ function mostrarMapaHuerto(cod_base) {
     const indices = ['NDVI', 'EVI', 'GNDVI'];
     let botones = indices.map(indice => `<button class='btn-indice' onclick=\"cargarCapaIndice('${cod_base}','${indice}')\">${indice}</button>`).join(' ');
     contenedor.innerHTML += `<div style='margin-bottom:10px;'>${botones}</div><div id='info-indice'></div>`;
-    // --- Simular click automático en NDVI al cargar ---
+    // --- Simular doble click automático: primero EVI, luego NDVI ---
     setTimeout(() => {
-        const btn = contenedor.querySelector(".btn-indice");
-        if (btn) btn.click();
+        const btns = contenedor.querySelectorAll(".btn-indice");
+        if (btns && btns.length > 1) {
+            btns[1].click(); // EVI
+            setTimeout(() => {
+                btns[0].click(); // NDVI
+            }, 300);
+        } else if (btns && btns.length > 0) {
+            btns[0].click(); // fallback: solo NDVI
+        }
     }, 100);
 }
 
