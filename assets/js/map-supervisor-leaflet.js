@@ -75,7 +75,7 @@ function updateSupervisorDescControl(map, capaSeleccionada) {
                     <div style="font-weight:bold; font-size:1.05em; color:#2c3e50; margin-top:10px; margin-bottom:12px; text-align:center;">
                         ${capaSeleccionada.toUpperCase()}
                     </div>
-                    <button id="toggle-desc-btn" style="margin-bottom:6px; background:#e9ecef; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:0.95em; color:#2c3e50;">Mostrar/ocultar descripción</button>
+                    <button id="toggle-desc-btn" style="z-index:1001; margin-bottom:6px; background:#e9ecef; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:0.95em; color:#2c3e50;">Mostrar/ocultar descripción</button>
                     <div id="desc-text" style="font-size:0.98em; color:#333; text-align:justify; line-height:1.3; padding:0 8px; display:none;">
                         ${descripcion}
                     </div>
@@ -85,7 +85,9 @@ function updateSupervisorDescControl(map, capaSeleccionada) {
                 const btn = div.querySelector('#toggle-desc-btn');
                 const desc = div.querySelector('#desc-text');
                 if (btn && desc) {
-                    btn.addEventListener('click', () => {
+                    // Evita que el click en el botón interactúe con el mapa
+                    L.DomEvent.disableClickPropagation(btn);
+                    btn.addEventListener('click', (e) => {
                         desc.style.display = desc.style.display === 'none' ? '' : 'none';
                     });
                 }
