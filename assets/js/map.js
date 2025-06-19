@@ -35,52 +35,36 @@ const text_cont = {
 };
 
 // Paletas de colores y opacidad para cada índice
-const colorParams = {
-    NDVI: {
-      palette: ['ffffff', 'ce7e45', 'df923d', 'f1b555', 'fcd163', '99b718', '74a901', '66a000', '529400', '3e8601', '207401', '056201', '004c00', '023b01', '012e01', '011d01', '011301']
-    },
-    EVI: {
-      palette: ['ffffff', 'f7f7b0', 'e6f59b', 'c6ea7f', 'a6d96a', '86c45d', '66bd63', '46a356', '2e8b4a', '1a753e', '0a5c32']
-    },
-    SAVI: {
-      palette: ['8b4513', 'a05a2c', 'b56f45', 'ca855e', 'df9a77', 'f4b090', 'd5c293', 'b6d496', '97e699', '60c67d', '399565']
-    },
-    GNDVI: {
-      palette: ['ff0000', 'ff4500', 'ff8c00', 'ffd700', 'ffff00', 'adff2f', '69d500', '32cd32', '008000', '006400']
-    },
-    LAI: {
-      palette: ['ffffff', 'e0f3e0', 'c1e7c1', 'a2dba2', '83cf83', '64c364', '45b745', '26ab26', '068b06', '005c00']
-    },
-    NDMI: {
-      palette: ['8b0000', 'ff0000', 'ffa07a', 'ffffff', 'add8e6', '0000ff', '00008b']
-    },
-    GCI: {
-      palette: ['b2182b', 'ef8a62', 'fddbc7', 'f7f7f7', 'b5c6d0', '5890b0', '2166ac']
-    },
-    MSAVI: {
-      palette: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'b9d9d4', '80cdc1', '35978f', '01665e']
-    },
-    NDWI: {
-      palette: ["d73027", "fc8d59", "fee090", "e0f3f8", "91bfdb", "4575b4"]
-    },
-    MNDWI: {
-      palette: ['a50026', 'd75926', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4', '66bd63', '1a9850', '006837']
-    }
+if (typeof window.colorParams === 'undefined') {
+  window.colorParams = {
+    NDVI: { palette: ['ffffff', 'ce7e45', 'df923d', 'f1b555', 'fcd163', '99b718', '74a901', '66a000', '529400', '3e8601', '207401', '056201', '004c00', '023b01', '012e01', '011d01', '011301'] },
+    EVI: { palette: ['ffffff', 'f7f7b0', 'e6f59b', 'c6ea7f', 'a6d96a', '86c45d', '66bd63', '46a356', '2e8b4a', '1a753e', '0a5c32'] },
+    SAVI: { palette: ['8b4513', 'a05a2c', 'b56f45', 'ca855e', 'df9a77', 'f4b090', 'd5c293', 'b6d496', '97e699', '60c67d', '399565'] },
+    GNDVI: { palette: ['ff0000', 'ff4500', 'ff8c00', 'ffd700', 'ffff00', 'adff2f', '69d500', '32cd32', '008000', '006400'] },
+    LAI: { palette: ['ffffff', 'e0f3e0', 'c1e7c1', 'a2dba2', '83cf83', '64c364', '45b745', '26ab26', '068b06', '005c00'] },
+    NDMI: { palette: ['8b0000', 'ff0000', 'ffa07a', 'ffffff', 'add8e6', '0000ff', '00008b'] },
+    GCI: { palette: ['b2182b', 'ef8a62', 'fddbc7', 'f7f7f7', 'b5c6d0', '5890b0', '2166ac'] },
+    MSAVI: { palette: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'b9d9d4', '80cdc1', '35978f', '01665e'] },
+    NDWI: { palette: ["d73027", "fc8d59", "fee090", "e0f3f8", "91bfdb", "4575b4"] },
+    MNDWI: { palette: ['a50026', 'd75926', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4', '66bd63', '1a9850', '006837'] }
   };
-  
+}
+
 // Nueva paleta de colores alternativa (paleta corta) "ff0000", "ffff00", "006400"
-const colorParamsAlt = {
-    NDVI: { palette: ["ffffff", "fcd163", "011301"] },
-    EVI: { palette: ["ff0000", "ffff00", "006400"] },
-    SAVI: { palette: ["8b4513", "f4b090", "399565"] },
-    GNDVI: { palette: ["ff0000", "ffff00", "006400"] },
-    LAI: { palette: ["ffffff", "64c364", "005c00"] },
-    NDMI: { palette: ["8b0000", "ffffff", "00008b"] },
-    GCI: { palette: ["b2182b", "f7f7f7", "2166ac"] },
-    MSAVI: { palette: ["8c510a", "f6e8c3", "01665e"] },
-    NDWI: { palette: ["d73027", "fee090", "4575b4"] },
-    MNDWI: { palette: ["a50026", "fee08b", "006837"] }
-};
+if (typeof window.colorParamsAlt === 'undefined') {
+  window.colorParamsAlt = {
+    NDVI: { palette: ['ffffff', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '005a32'] },
+    EVI: { palette: ['ffffff', 'e0ecf4', 'bfd3e6', '9ebcda', '8c96c6', '8856a7', '810f7c'] },
+    SAVI: { palette: ['f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '005a32'] },
+    GNDVI: { palette: ['f7fcf0', 'e0f3db', 'ccebc5', 'a8ddb5', '7bccc4', '4eb3d3', '2b8cbe', '08589e'] },
+    LAI: { palette: ['ffffe5', 'f7fcb9', 'd9f0a3', 'addd8e', '78c679', '41ab5d', '238443', '005a32'] },
+    NDMI: { palette: ['f7fcfd', 'e0ecf4', 'bfd3e6', '9ebcda', '8c96c6', '8856a7', '810f7c'] },
+    GCI: { palette: ['f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '005a32'] },
+    MSAVI: { palette: ['f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '005a32'] },
+    NDWI: { palette: ["f7fcfd", "e0ecf4", "bfd3e6", "9ebcda", "8c96c6", "8856a7", "810f7c"] },
+    MNDWI: { palette: ['f7fcfd', 'e0ecf4', 'bfd3e6', '9ebcda', '8c96c6', '8856a7', '810f7c'] }
+  };
+}
 
 // Devuelve los parámetros de color para la capa seleccionada
 export function getColorParams(capaSeleccionada) {

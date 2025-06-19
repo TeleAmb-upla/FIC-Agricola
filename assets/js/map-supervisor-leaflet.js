@@ -32,7 +32,7 @@ if (typeof window.colorParams === 'undefined') {
     MNDWI: { palette: ['a50026', 'd75926', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4', '66bd63', '1a9850', '006837'] }
   };
 }
-const colorParams = window.colorParams;
+
 
 // Descripciones de índices espectrales (igual que en map.js)
 const text_cont = {
@@ -168,7 +168,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                     max = window.maxMinHData[ruta.codigo_base][capaSeleccionada]["absoluto"].max_absoluto;
                 }
             }
-            const palette = colorParams[capaSeleccionada]?.palette || colorParams['NDVI'].palette;
+            const palette = window.colorParams[capaSeleccionada]?.palette || window.colorParams['NDVI'].palette;
             const steps = palette.length - 1;
             function pixelValuesToColorFn(values) {
                 const v = values[0];
