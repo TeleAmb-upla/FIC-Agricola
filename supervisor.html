@@ -415,5 +415,54 @@
         }
     });
     </script>
+    <script>
+// Resize dinámico del gráfico y mapa (igual que en user-files.js)
+function initializeResize() {
+    const chartContainer = document.getElementById('chart-container');
+    const resizeHandle = chartContainer.querySelector('.resize-handle');
+    let isResizing = false;
+    let startY = 0;
+    let startHeight = 0;
+
+    // Eventos del mouse
+    resizeHandle.addEventListener('mousedown', startResize);
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResize);
+
+    // Eventos táctiles (para móviles)
+    resizeHandle.addEventListener('touchstart', (e) => {
+        startResize(e.touches[0]);
+    });
+    document.addEventListener('touchmove', (e) => {
+        resize(e.touches[0]);
+    });
+    document.addEventListener('touchend', stopResize);
+
+    function startResize(e) {
+        isResizing = true;
+        startY = e.clientY;
+        startHeight = chartContainer.offsetHeight;
+        chartContainer.style.transition = 'none';
+    }
+
+    function resize(e) {
+        if (!isResizing) return;
+        const deltaY = startY - e.clientY;
+        const newHeight = startHeight + deltaY;
+        const minHeight = 100;
+        const maxHeight = window.innerHeight * 0.7;
+        chartContainer.style.height = `${Math.max(minHeight, Math.min(newHeight, maxHeight))}px`;
+        // Ajusta el mapa dinámicamente
+        const map = document.getElementById('map');
+        map.style.height = `calc(100vh - ${newHeight}px)`;
+    }
+
+    function stopResize() {
+        isResizing = false;
+        chartContainer.style.transition = 'height 0.2s ease';
+    }
+}
+window.addEventListener('DOMContentLoaded', initializeResize);
+</script>
 </body>
 </html>

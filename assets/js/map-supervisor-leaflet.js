@@ -328,7 +328,7 @@ function renderSupervisorLegend(map, capaSeleccionada, min, max) {
         }
         return div;
     };
-    if (map && map.getContainer && document.body.contains(map.getContainer())) {
+        if (map && map.getContainer && document.body.contains(map.getContainer())) {
         map.legendControl.addTo(map);
     }
 }
