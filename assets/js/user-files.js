@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     weekSelector.addEventListener("change", actualizarVisualizaciones);
 
     // Seleccionar automáticamente "NDVI" y semana 01 al cargar
-    layerSelector.value = "EVI";
+    layerSelector.value = "NDVI";
     weekSelector.value = "01";
     actualizarVisualizaciones();
 });

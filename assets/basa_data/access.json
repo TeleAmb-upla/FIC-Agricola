@@ -3,9 +3,9 @@
     "usuario": "Supervisor1",
     "password": "admin1234",
     "tipo": "supervisor",
-    "acceso_codebase": ["cod_0001", "cod_0002"],
+    "acceso_codebase": ["cod_0001", "cod_0002", "cod_0003", "cod_0004", "cod_0005", "cod_0006"],
     "Nombre": "Supervisor General",
-    "localidad": "6",
+    "localidad": "1",
     "cultivo": "1"
 
   },
@@ -13,7 +13,7 @@
     "usuario": "Supervisor2",
     "password": "admin5678",
     "tipo": "supervisor",
-    "acceso_codebase": ["cod_0003", "cod_0004"],
+    "acceso_codebase": ["cod_0007", "cod_0008", "cod_0009", "cod_0010", "cod_0011", "cod_0012"],
     "Nombre": "Supervisor Regional"
   }
 ]

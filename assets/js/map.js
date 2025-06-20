@@ -70,7 +70,7 @@ const colorParams = {
   
 // Nueva paleta de colores alternativa (paleta corta) "ff0000", "ffff00", "006400"
 const colorParamsAlt = {
-    NDVI: { palette: ["ffffff", "fcd163", "011301"] },
+    NDVI: { palette: ['ff0000', 'ffff00', '00a000'] },
     EVI: { palette: ["ff0000", "ffff00", "006400"] },
     SAVI: { palette: ["8b4513", "f4b090", "399565"] },
     GNDVI: { palette: ["ff0000", "ffff00", "006400"] },

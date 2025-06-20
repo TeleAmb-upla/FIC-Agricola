@@ -4,31 +4,98 @@
     "password": "1234",
     "codigo_base": "cod_0001",
     "cultivo": "1",
-    "Nombre": "Raúl González",
-    "localidad": "6"
+    "Nombre": "MARCOS MANUEL MALDONADO MORALES",
+    "localidad": "1"
   },
   {
     "usuario": "Fic2",
     "password": "5678",
     "codigo_base": "cod_0002",
     "cultivo": "1",
-    "Nombre": "Ana Maria",
-    "localidad": "5"
+    "Nombre": "ALEXIS MORALES AGUILERA",
+    "localidad": "1"
   },
   {
     "usuario": "Fic3",
     "password": "abcd",
     "codigo_base": "cod_0003",
-    "cultivo": "3",
-    "Nombre": "Carlos Perez",
-    "localidad": "6"
+    "cultivo": "1",
+    "Nombre": "ADAN ARMANDO ESPINOZA TAPIA",
+    "localidad": "1"
   },
   {
     "usuario": "Fic4",
     "password": "efgh",
     "codigo_base": "cod_0004",
-    "cultivo": "4",
-    "Nombre": "Lucia Fernandez",
+    "cultivo": "1",
+    "Nombre": "JAIME ARTURO OLIVARES MESA",
     "localidad": "1"
+  },
+  {
+    "usuario": "Fic5",
+    "password": "ijkl",
+    "codigo_base": "cod_0005",
+    "cultivo": "1",
+    "Nombre": "CRISTIAN PEREZ GARAY",
+    "localidad": "1"
+  },
+  {
+    "usuario": "Fic6",
+    "password": "mnop",
+    "codigo_base": "cod_0006",
+    "cultivo": "1",
+    "Nombre": "NUNCIO D. PEREZ GARAY",
+    "localidad": "1"
+  },
+  {
+    "usuario": "Fic7",
+    "password": "qrst",
+    "codigo_base": "cod_0007",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 7",
+    "localidad": "3"
+  },
+  {
+    "usuario": "Fic8",
+    "password": "uvwx",
+    "codigo_base": "cod_0008",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 8",
+    "localidad": "3"
+  },
+  {
+    "usuario": "Fic9",
+    "password": "yz12",
+    "codigo_base": "cod_0009",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 9",
+    "localidad": "3"
+  },
+  {
+    "usuario": "Fic10",
+    "password": "3456",
+    "codigo_base": "cod_0010",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 10",
+    "localidad": "3"
+  },
+  {
+    "usuario": "Fic11",
+    "password": "7890",
+    "codigo_base": "cod_0011",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 11",
+    "localidad": "3"
+  },
+  {
+    "usuario": "Fic12",
+    "password": "abcd",
+    "codigo_base": "cod_0012",
+    "cultivo": "3",
+    "Nombre": "AGRICULTOR 12",
+    "localidad": "3"
   }
+
+
+
 ]

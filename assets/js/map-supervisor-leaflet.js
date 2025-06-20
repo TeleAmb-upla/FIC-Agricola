@@ -30,21 +30,14 @@ function initSupervisorMap(mapId) {
     return window.mapSupervisor;
 }
 
-// Paletas de colores por índice (protegido para evitar doble declaración)
-if (typeof window.colorParams === 'undefined') {
-  window.colorParams = {
-    NDVI: { palette: ['ffffff', 'ce7e45', 'df923d', 'f1b555', 'fcd163', '99b718', '74a901', '66a000', '529400', '3e8601', '207401', '056201', '004c00', '023b01', '012e01', '011d01', '011301'] },
-    EVI: { palette: ['ffffff', 'f7f7b0', 'e6f59b', 'c6ea7f', 'a6d96a', '86c45d', '66bd63', '46a356', '2e8b4a', '1a753e', '0a5c32'] },
-    SAVI: { palette: ['8b4513', 'a05a2c', 'b56f45', 'ca855e', 'df9a77', 'f4b090', 'd5c293', 'b6d496', '97e699', '60c67d', '399565'] },
-    GNDVI: { palette: ['ff0000', 'ff4500', 'ff8c00', 'ffd700', 'ffff00', 'adff2f', '69d500', '32cd32', '008000', '006400'] },
-    LAI: { palette: ['ffffff', 'e0f3e0', 'c1e7c1', 'a2dba2', '83cf83', '64c364', '45b745', '26ab26', '068b06', '005c00'] },
-    NDMI: { palette: ['8b0000', 'ff0000', 'ffa07a', 'ffffff', 'add8e6', '0000ff', '00008b'] },
-    GCI: { palette: ['b2182b', 'ef8a62', 'fddbc7', 'f7f7f7', 'b5c6d0', '5890b0', '2166ac'] },
-    MSAVI: { palette: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'b9d9d4', '80cdc1', '35978f', '01665e'] },
-    NDWI: { palette: ["d73027", "fc8d59", "fee090", "e0f3f8", "91bfdb", "4575b4"] },
-    MNDWI: { palette: ['a50026', 'd75926', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4', '66bd63', '1a9850', '006837'] }
-  };
-}
+// Paletas de colores y umbrales fijos por índice
+const colorThresholds = {
+  NDVI: {
+    thresholds: [-1.0, -0.3, 0.3, 1],
+    colors: ['#ff0000', '#ffff00', '#00a000'] // Bajo, Medio, Alto
+  }
+  // Puedes agregar otros índices aquí si lo deseas
+};
 
 // Descripciones de índices espectrales (igual que en map.js)
 if (typeof window.text_cont === 'undefined') {
@@ -162,7 +155,6 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             const arrayBuffer = await response.arrayBuffer();
             const raster = await parseGeo(arrayBuffer);
-            // --- Refuerzo: verifica mapa y raster válidos antes de continuar ---
             if (!map || !map.getContainer || !document.body.contains(map.getContainer())) {
                 console.warn('El mapa ya no existe, se cancela la carga de este raster.');
                 return;
@@ -173,46 +165,19 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             const bounds = calculateBounds(raster);
             allBounds.push(bounds);
-            // --- Coloreado por índice espectral usando min/max de max_min_h.json ---
-            // Buscar min/max para este cod_base, índice, año y semana
-            let min = null, max = null;
-            if (window.maxMinHData && window.maxMinHData[ruta.codigo_base] && window.maxMinHData[ruta.codigo_base][capaSeleccionada]) {
-                // Buscar por año/semana primero
-                const anio = ruta.anio || ruta.anio_semana || semanaSeleccionada?.split('_')[0];
-                const semana = ruta.semana || ruta.semana_semana || semanaSeleccionada?.split('_')[1];
-                // Buscar claves de año/semana si existen
-                let minmaxSemana = null;
-                if (anio && semana && window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio + '_' + anio] && window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio + '_' + anio][semana]) {
-                    minmaxSemana = window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio + '_' + anio][semana];
-                } else if (anio && semana && window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio] && window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio][semana]) {
-                    minmaxSemana = window.maxMinHData[ruta.codigo_base][capaSeleccionada][anio][semana];
-                }
-                if (minmaxSemana && minmaxSemana.min != null && minmaxSemana.max != null) {
-                    min = minmaxSemana.min;
-                    max = minmaxSemana.max;
-                } else if (window.maxMinHData[ruta.codigo_base][capaSeleccionada]["absoluto"]) {
-                    // Fallback a absoluto
-                    min = window.maxMinHData[ruta.codigo_base][capaSeleccionada]["absoluto"].min_absoluto;
-                    max = window.maxMinHData[ruta.codigo_base][capaSeleccionada]["absoluto"].max_absoluto;
-                }
-            }
-            const palette = window.colorParams[capaSeleccionada]?.palette || window.colorParams['NDVI'].palette;
-            const steps = palette.length - 1;
+            // --- Coloreado por umbrales fijos ---
+            const index = capaSeleccionada.toUpperCase();
+            const config = colorThresholds[index];
             function pixelValuesToColorFn(values) {
                 const v = values[0];
-                // Si no hay min/max válidos o el valor es nulo/NaN, hazlo transparente
-                if (min === null || max === null || v === null || isNaN(v)) return null;
-                // Normaliza el valor entre min y max
-                const idx = Math.round(((v - min) / (max - min)) * steps);
-                const color = palette[Math.max(0, Math.min(steps, idx))];
-                return `#${color}`;
-              }
-            // Si no hay min/max válidos, no pintes el ráster (hazlo transparente)
-            if (min === null || max === null) {
-                console.warn('No hay min/max válidos para', ruta.codigo_base, capaSeleccionada, semanaSeleccionada, '- El ráster será transparente');
-                return;
+                if (v === null || isNaN(v)) return null;
+                if (!config) return null;
+                const [min, mid1, mid2, max] = config.thresholds;
+                if (v >= min && v < mid1) return config.colors[0]; // Bajo
+                if (v >= mid1 && v < mid2) return config.colors[1]; // Medio
+                if (v >= mid2 && v <= max) return config.colors[2]; // Alto
+                return null;
             }
-            // ---
             const layer = new window.GeoRasterLayer({
                 georaster: raster,
                 opacity: 0.7,
@@ -234,7 +199,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             safeAddLayer(map, layer);
             // Mostrar leyenda dinámica después de agregar la capa
-            renderSupervisorLegend(map, capaSeleccionada, min, max);
+            renderSupervisorLegend(map, capaSeleccionada, config.thresholds[0], config.thresholds[3]);
             // --- Borde brillante parpadeante y popup de información ---
             if (map && map.getContainer && map.getContainer() && document.body.contains(map.getContainer())) {
                 const highlight = L.rectangle(bounds, {
@@ -312,36 +277,41 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
 // Leyenda dinámica para el supervisor
 function renderSupervisorLegend(map, capaSeleccionada, min, max) {
     if (map.legendControl) map.removeControl(map.legendControl);
-    const palette = window.colorParams[capaSeleccionada]?.palette || window.colorParams['NDVI'].palette;
+    // Usar la paleta y umbrales definidos en colorThresholds
+    const index = capaSeleccionada.toUpperCase();
+    const config = colorThresholds[index];
     map.legendControl = L.control({ position: 'bottomright' });
     map.legendControl.onAdd = () => {
         const div = L.DomUtil.create('div', 'map-legend');
         div.style.pointerEvents = 'auto';
-        // Gradiente
-        if (palette.length > 3) {
-            const gradientColors = palette.map(color => `#${color}`).join(', ');
+        if (config) {
+            // Leyenda de 3 bloques con etiquetas
             div.innerHTML = `
-                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${capaSeleccionada.toUpperCase()})</span></div>
-                <div class="legend-scale-container">
-                    <div class="legend-gradient" style="background: linear-gradient(to right, ${gradientColors}); height: 16px; border-radius: 4px;"></div>
-                </div>
-            `;
-        } else {
-            // 3 bloques
-            div.innerHTML = `
-                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${capaSeleccionada.toUpperCase()})</span></div>
-                <div class="legend-scale-container" style="display:flex;flex-direction:column;align-items:center;">
-                    <div style="display:flex;flex-direction:row;gap:2px;margin-bottom:4px;">
-                        <div style="width:32px;height:18px;background:#${palette[0]};border:1px solid #aaa;"></div>
-                        <div style="width:32px;height:18px;background:#${palette[1]};border:1px solid #aaa;"></div>
-                        <div style="width:32px;height:18px;background:#${palette[2]};border:1px solid #aaa;"></div>
+                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${index})</span></div>
+                <div class="legend-scale-container" style="display:flex;flex-direction:row;gap:8px;margin-bottom:4px;justify-content:center;">
+                    <div style="display:flex;flex-direction:column;align-items:center;">
+                        <div style="width:32px;height:18px;background:${config.colors[0]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Bajo</span>
+                        <span style="font-size:0.8em;">${config.thresholds[0]} a ${config.thresholds[1]}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center;">
+                        <div style="width:32px;height:18px;background:${config.colors[1]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Medio</span>
+                        <span style="font-size:0.8em;">${config.thresholds[1]} a ${config.thresholds[2]}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center;">
+                        <div style="width:32px;height:18px;background:${config.colors[2]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Alto</span>
+                        <span style="font-size:0.8em;">${config.thresholds[2]} a ${config.thresholds[3]}</span>
                     </div>
                 </div>
             `;
+        } else {
+            div.innerHTML = `<span style='color:#c00;'>No hay paleta definida para ${index}</span>`;
         }
         return div;
     };
-        if (map && map.getContainer && document.body.contains(map.getContainer())) {
+    if (map && map.getContainer && document.body.contains(map.getContainer())) {
         map.legendControl.addTo(map);
     }
 }
