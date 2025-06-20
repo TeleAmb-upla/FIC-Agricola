@@ -35,7 +35,11 @@ const colorThresholds = {
   NDVI: {
     thresholds: [-1.0, -0.3, 0.3, 1],
     colors: ['#ff0000', '#ffff00', '#00a000'] // Bajo, Medio, Alto
-  }
+  },
+  NDMI: {
+    thresholds: [-1.0, -0.2, 0.2, 1],
+    colors: ['#d73027', '#fee090', '#4575b4']
+   } // Bajo, Medio, Alto
   // Puedes agregar otros índices aquí si lo deseas
 };
 
