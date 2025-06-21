@@ -224,11 +224,11 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-           { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
-            { label: "Actual", color: COLOR_CURRENT, style: "dash" },
+           { label: "Histórico Local", color: COLOR_HISTORIC, style: "solid" },
+            { label: "Predial", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
        //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
-          { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
+      //    { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
           { label: "Semana", color: "#d32f2f", style: "circle" }
          //   
         ];
@@ -236,8 +236,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
         const legendContainer = d3.select("#legend-container");
         legendContainer.html(""); // Limpia contenido previo
 
-        const legendWidth = 150; // Más ancho para evitar corte de texto
-        const legendHeight = legendData.length * 24 + 28; // Espacio extra para el título
+        const legendWidth = 200; // Más ancho para evitar corte de texto
+        const legendHeight = legendData.length * 24 + 30; // Espacio extra para el título
         const legendSvg = legendContainer.append("svg")
             .attr("width", legendWidth)
             .attr("height", legendHeight);
@@ -269,7 +269,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     .attr("opacity", 0.3);
             } else if (item.style === "circle") {
                 entry.append("circle")
-                    .attr("cx", 16)
+                    .attr("cx", 40)
                     .attr("cy", 6)
                     .attr("r", 6)
                     .attr("fill", item.label === "Semana Seleccionada" ? "none" : item.color)
@@ -277,9 +277,9 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     .attr("stroke-width", 1.5);
             } else {
                 entry.append("line")
-                    .attr("x1", 0)
+                    .attr("x1", 20)
                     .attr("y1", 5)
-                    .attr("x2", 32)
+                    .attr("x2", 52)
                     .attr("y2", 5)
                     .attr("stroke", item.color)
                     .attr("stroke-width", 3)
@@ -289,7 +289,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     );
             }
             entry.append("text")
-                .attr("x", 40)
+                .attr("x", 60)
                 .attr("y", 12)
                 .attr("font-size", "0.8em")
                 .attr("fill", "#333")
