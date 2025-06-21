@@ -115,13 +115,13 @@ function getWeekStartEnd(year, week) {
 const year = 2025;
 
 // Función principal para cargar datos
-export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
+export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice, localidad) {
     d3.csv(rutaCSV).then(datosCrudos => {
         const datos = datosCrudos.map(d => {
             const { start, end } = getWeekStartEnd(year, +d.Week);
             return {
                 week: +d.Week,
-               // historic: +d.P50,
+                historic: +d.P50,
                 current: d.Current ? +d.Current : null,
                 Last: (
                     d.Last !== undefined &&
@@ -133,8 +133,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                     d.Last.toLowerCase?.() !== "undefined" &&
                     !isNaN(+d.Last)
                 ) ? +d.Last : null,
-                //P25: +d.P25,
-                //P75: +d.P75,
+                P25: +d.P25,
+                P75: +d.P75,
                 dateStart: start,
                 dateEnd: end,
                 month: start.getMonth(1) // 0 = enero, 1 = febrero, etc.
@@ -224,11 +224,11 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
         // --- NUEVA LEYENDA EN EL CONTENEDOR legend-container ---
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
-        //    { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
+           { label: "Histórico MD", color: COLOR_HISTORIC, style: "solid" },
             { label: "Actual", color: COLOR_CURRENT, style: "dash" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
-         //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
-         //   { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
+       //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
+          { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
          //   
         ];
 
@@ -423,7 +423,10 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
 .html(`
     <strong>Semana ${closest.week}</strong><br>
     Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
-    Último: ${closest.Last !== null ? formatShort(closest.Last) : "N/A"}<br>`)
+    Histórico: ${formatShort(closest.historic)}<br>
+    P25: ${formatShort(closest.P25)}<br>
+    P75: ${formatShort(closest.P75)}<br>
+`)
                     .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 30) + "px");
             }
@@ -436,6 +439,10 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
 
         // Título del gráfico
         let titulo = svg.select(".chart-title-svg");
+        // Construir título dinámico
+        const tituloDinamico = (cultivo && indice && localidad)
+            ? `Estado actual del cultivo ${cultivo} por el índice ${indice} vs métricas del cultivo en la ${localidad} - 2025`
+            : `${capaSeleccionada} Actual (2025)`;
         if (titulo.empty()) {
             titulo = svg.append("text")
                 .attr("class", "chart-title-svg")
@@ -443,17 +450,23 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada) {
                 .attr("y", margenSuperior / 2 + 10)
                 .attr("text-anchor", "middle")
                 .style("font-size", "1.2em")
-                .text(`${capaSeleccionada} Actual (2025)`);
+                .text(tituloDinamico);
         } else {
-            titulo.text(`${capaSeleccionada} Actual (2025)`);
+            titulo.text(tituloDinamico);
         }
 
-        // Línea de subrayado bajo el título
+        // Línea de subrayado bajo el título (mismo ancho que el texto)
         svg.selectAll(".chart-title-underline").remove();
+        // Esperar a que el texto esté en el DOM para medirlo
+        const tituloNode = titulo.node();
+        let textWidth = 200;
+        if (tituloNode && typeof tituloNode.getComputedTextLength === 'function') {
+            textWidth = tituloNode.getComputedTextLength();
+        }
         svg.append("line")
             .attr("class", "chart-title-underline")
-            .attr("x1", anchoContenedor / 2 - 100)
-            .attr("x2", anchoContenedor / 2 + 100)
+            .attr("x1", anchoContenedor / 2 - textWidth / 2)
+            .attr("x2", anchoContenedor / 2 + textWidth / 2)
             .attr("y1", margenSuperior / 2 + 16)
             .attr("y2", margenSuperior / 2 + 16)
             .attr("stroke", "#4CAF50")

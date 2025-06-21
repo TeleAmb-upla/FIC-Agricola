@@ -78,6 +78,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const semanaSeleccionada = weekSelector.value;
         const codigo_base = usuario.codigo_base;
 
+        // Obtener nombres de cultivo e índice y localidad
+        let cultivoNombre = '';
+        let indiceNombre = capaSeleccionada;
+        let localidadNombre = '';
+
+        // Obtener nombre de cultivo
+        if (usuario && usuario.cultivo) {
+            try {
+                const cultivos = await fetch('./assets/basa_data/cultivo.json').then(res => res.json());
+                cultivoNombre = cultivos[usuario.cultivo]?.nombre || '';
+            } catch {}
+        }
+        // Obtener nombre de localidad
+        if (usuario && usuario.localidad) {
+            try {
+                const localidades = await fetch('./assets/basa_data/localidad.json').then(res => res.json());
+                localidadNombre = localidades[usuario.localidad]?.nombre || '';
+            } catch {}
+        }
+
         // Actualizar el título del gráfico según el índice seleccionado
         const chartTitle = document.querySelector('.chart-title');
         if (chartTitle) {
@@ -149,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             miMapa.fitBounds(bounds);
 
-            cargarDatosEnGrafico(rutas.csv, capaSeleccionada); // Usar capaSeleccionada aquí también
+            cargarDatosEnGrafico(rutas.csv, capaSeleccionada, cultivoNombre, indiceNombre, localidadNombre); // Ahora pasa los datos dinámicos
         } catch (error) {
             console.error("🔥 Error crítico:", error.message);
             alert(`🚨 Error: ${error.message}`);
