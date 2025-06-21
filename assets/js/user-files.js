@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             miMapa.fitBounds(bounds);
 
-            cargarDatosEnGrafico(rutas.csv, capaSeleccionada, cultivoNombre, indiceNombre, localidadNombre); // Ahora pasa los datos dinámicos
+            cargarDatosEnGrafico(rutas.csv, capaSeleccionada, cultivoNombre, indiceNombre, localidadNombre, semanaSeleccionada); // Ahora pasa la semana seleccionada
         } catch (error) {
             console.error("🔥 Error crítico:", error.message);
             alert(`🚨 Error: ${error.message}`);

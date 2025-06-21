@@ -615,7 +615,9 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
             </div>
         `;
         renderPaletteLegend(div, capaSeleccionada, minRange, maxRange);
-        div.innerHTML += `<button id="toggle-palette-btn" style="margin-top:8px;padding:4px 10px;font-size:0.9em;border-radius:6px;border:1px solid #bbb;background:#f7f7f7;cursor:pointer;">Cambiar paleta</button>`;
+        // Determinar el texto del botón según la paleta activa
+        const paletteBtnText = useAltPalette ? "Índice" : "Estado";
+        div.innerHTML += `<button id="toggle-palette-btn" style="margin-top:8px;padding:4px 10px;font-size:0.9em;border-radius:6px;border:1px solid #bbb;background:#f7f7f7;cursor:pointer;">${paletteBtnText}</button>`;
         setTimeout(() => {
             const btn = div.querySelector('#toggle-palette-btn');
             if (btn) {

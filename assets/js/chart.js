@@ -115,7 +115,7 @@ function getWeekStartEnd(year, week) {
 const year = 2025;
 
 // Función principal para cargar datos
-export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice, localidad) {
+export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice, localidad, semanaSeleccionada) {
     d3.csv(rutaCSV).then(datosCrudos => {
         const datos = datosCrudos.map(d => {
             const { start, end } = getWeekStartEnd(year, +d.Week);
@@ -229,6 +229,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
        //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
           { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
+          { label: "Semana", color: "#d32f2f", style: "circle" }
          //   
         ];
 
@@ -271,8 +272,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     .attr("cx", 16)
                     .attr("cy", 6)
                     .attr("r", 6)
-                    .attr("fill", item.color)
-                    .attr("stroke", "#fff")
+                    .attr("fill", item.label === "Semana Seleccionada" ? "none" : item.color)
+                    .attr("stroke", item.label === "Semana Seleccionada" ? item.color : "#fff")
                     .attr("stroke-width", 1.5);
             } else {
                 entry.append("line")
@@ -441,7 +442,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
         let titulo = svg.select(".chart-title-svg");
         // Construir título dinámico
         const tituloDinamico = (cultivo && indice && localidad)
-            ? `Estado actual del cultivo ${cultivo} por el índice ${indice} vs métricas del cultivo en la ${localidad} - 2025`
+            ? `Estado actual del cultivo en comparación con la evolución local: ${cultivo} en ${localidad} - 2025`
             : `${capaSeleccionada} Actual (2025)`;
         if (titulo.empty()) {
             titulo = svg.append("text")
@@ -474,6 +475,24 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
 
         // Título del eje Y
         svg.select(".y-axis-label").text(`Valores de ${capaSeleccionada.toUpperCase()}`);
+
+        // --- CÍRCULO DE SEMANA SELECCIONADA (solo si hay valor current) ---
+        svg.selectAll('.semana-seleccionada-circle').remove();
+        if (semanaSeleccionada) {
+            const semanaNum = parseInt(semanaSeleccionada, 10);
+            const puntoSemana = datos.find(d => d.week === semanaNum);
+            if (puntoSemana && puntoSemana.current !== null && !isNaN(puntoSemana.current)) {
+                svg.append('circle')
+                    .attr('class', 'semana-seleccionada-circle')
+                    .attr('cx', xScale(puntoSemana.week))
+                    .attr('cy', yScale(puntoSemana.current))
+                    .attr('r', 10)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#d32f2f')
+                    .attr('stroke-width', 3)
+                    .attr('pointer-events', 'none');
+            }
+        }
 
     }).catch(error => console.error("Error al cargar datos:", error));
 }
