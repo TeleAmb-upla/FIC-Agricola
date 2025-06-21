@@ -39,7 +39,17 @@ const colorThresholds = {
   NDMI: {
     thresholds: [-1.0, -0.2, 0.2, 1],
     colors: ['#d73027', '#fee090', '#4575b4']
-   } // Bajo, Medio, Alto
+   },
+   EVI: {
+    thresholds: [-1.0, -0.2, 0.2, 1],
+    colors: ['#ffffff', '#86c45d', '#0a5c32'] // Bajo, Medio, Alto
+    },
+    MSAVI: { 
+    thresholds: [-1.0, -0.2, 0.2, 1],
+    colors: ['#8c510a', '#f6e8c3', '#01665e']
+    } // Bajo, Medio, Alto
+
+    // Bajo, Medio, Alto
   // Puedes agregar otros índices aquí si lo deseas
 };
 

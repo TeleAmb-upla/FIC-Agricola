@@ -5,7 +5,7 @@ const GeoTIFF = require('geotiff');
 // Ajusta las rutas según la estructura real de tu proyecto
 const tiffRoot = path.join(__dirname, '../../tiff');
 const outputJson = path.join(__dirname, '../../basa_data/max_min_h.json');
-const indices = ["NDVI", "NDMI"];
+const indices = ["NDVI", "NDMI", "EVI","MSAVI" ];
 //const indices = ["EVI", "GCI", "LAI", "MNDWI", "MSAVI", "NDMI", "NDVI", "NDWI", "SAVI", "GNDVI"];
 async function getMinMaxFromTiff(filePath) {
     try {
