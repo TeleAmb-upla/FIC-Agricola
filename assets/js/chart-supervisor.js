@@ -25,63 +25,74 @@ function cargarCsvYGraficarPorLocalidadCultivoInterno(localidad, cultivo, indice
         d3.select('#d3-chart').html('<p style="color:red">No se encontró localidad o cultivo</p>');
         return;
     }
-    const rutaCsv = `./assets/csv/Localidades/${localidad.toLowerCase().replace(/\s+/g, '')}_${cultivo.toLowerCase().replace(/\s+/g, '')}_${indice.toUpperCase()}.csv`;
-    d3.select('#d3-chart').html(`<div class='loader'>Cargando CSV: <code>${rutaCsv}</code></div>`);
-    console.log('[D3] Leyendo CSV:', rutaCsv);
-    d3.csv(rutaCsv).then(data => {
-        const columnas = Object.keys(data[0] || {});
-        // Siempre incluir P25, P50, P75 si existen
-        const baseStats = ['P25', 'P50', 'P75'].filter(c => columnas.includes(c));
-        // Obtener cod_base permitidos del supervisor activo
-        let codBasePermitidos = [];
-        try {
-            const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
-            if (usuarioActivo && Array.isArray(usuarioActivo.acceso_codebase)) {
-                codBasePermitidos = usuarioActivo.acceso_codebase;
-            }
-        } catch (e) { console.warn('No se pudo leer usuarioActivo:', e); }
-        // Normalizar nombres de columnas y cod_base para comparar (case-insensitive, quitar guiones bajos, ceros a la izquierda, etc)
-        const normalizar = s => {
-            if (!s) return '';
-            // Si es cod_base, extraer el número y quitar ceros a la izquierda
-            const match = s.toString().toLowerCase().replace(/[^a-z0-9]/g, '').match(/cod0*(\d+)/);
-            if (match) return 'cod' + parseInt(match[1], 10); // cod_0002 -> cod2
-            return s.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
-        };
-        const columnasNorm = columnas.map(normalizar);
-        // Buscar cod_base permitidos que existan en el CSV (robusto a ceros a la izquierda)
-        const codBaseEnCsv = codBasePermitidos.filter(cod => {
-            const codNorm = normalizar(cod);
-            return columnasNorm.includes(codNorm);
-        });
-        // Mapear a los nombres reales de columna en el CSV (pueden diferir en mayúsculas o ceros)
-        const codBaseFinal = codBaseEnCsv.map(cod => {
-            const codNorm = normalizar(cod);
-            const idx = columnasNorm.indexOf(codNorm);
-            return idx !== -1 ? columnas[idx] : null;
-        }).filter(Boolean);
-        // Unir P25, P50, P75 y cod_base válidos
-        const columnasGraficar = [...baseStats, ...codBaseFinal];
-        if (columnasGraficar.length === 0) {
-            d3.select('#d3-chart').html(`<p style='color:red'>No hay datos para graficar<br><code>${rutaCsv}</code></p>`);
-            return;
-        }
-        // Advertencia si algún cod_base permitido no está en el CSV
-        const codBaseFaltantes = codBasePermitidos.filter(cod => {
-            const codNorm = normalizar(cod);
-            return !columnasNorm.includes(codNorm);
-        });
-        if (codBaseFaltantes.length > 0) {
-            const advertencia = `<div style='color:orange;font-size:0.95em;margin-bottom:8px'>⚠️ Advertencia: Los siguientes códigos base no se encontraron en el CSV y no serán graficados:<br><b>${codBaseFaltantes.join(', ')}</b></div>`;
-            d3.select('#d3-chart').insert('div', ':first-child').html(advertencia);
-            console.warn('[D3] Cod_base permitidos no encontrados en el CSV:', codBaseFaltantes);
-        }
-        // Log para depuración
-        console.log('[D3] Columnas a graficar:', columnasGraficar);
-        dibujarGraficoD3(data, columnasGraficar, baseStats, codBaseFinal);
+    // Ruta principal (numérica)
+    const rutaCsvNum = `./assets/csv/Localidades/${localidad.toLowerCase().replace(/\s+/g, '')}_${cultivo.toLowerCase().replace(/\s+/g, '')}_${indice.toUpperCase()}.csv`;
+    // Ruta alternativa (descriptiva)
+    let localidadNombre = localidad, cultivoNombre = cultivo;
+    // Si localidad/cultivo son códigos, buscar su nombre en los JSON globales si existen
+    if (window.localidadData && window.localidadData[localidad]) localidadNombre = window.localidadData[localidad].nombre || localidad;
+    if (window.cultivosData && window.cultivosData[cultivo]) cultivoNombre = window.cultivosData[cultivo].nombre || cultivo;
+    const rutaCsvAlt = `./assets/csv/Localidades/${localidadNombre.toLowerCase().replace(/\s+/g, '_')}_${cultivoNombre.toLowerCase().replace(/\s+/g, '_')}_${indice.toUpperCase()}.csv`;
+    // Intentar cargar primero la ruta numérica, si falla intenta la alternativa
+    d3.select('#d3-chart').html(`<div class='loader'>Cargando CSV: <code>${rutaCsvNum}</code></div>`);
+    console.log('[D3] Leyendo CSV:', rutaCsvNum);
+    d3.csv(rutaCsvNum).then(data => {
+        procesarDatosCsv(data, rutaCsvNum, localidad, cultivo, indice);
     }).catch(() => {
-        d3.select('#d3-chart').html(`<p style='color:red'>No se pudo cargar el CSV<br><code>${rutaCsv}</code></p>`);
+        // Si falla, intenta la ruta alternativa
+        d3.select('#d3-chart').html(`<div class='loader'>Cargando CSV alternativo: <code>${rutaCsvAlt}</code></div>`);
+        console.log('[D3] Intentando CSV alternativo:', rutaCsvAlt);
+        d3.csv(rutaCsvAlt).then(data => {
+            procesarDatosCsv(data, rutaCsvAlt, localidad, cultivo, indice);
+        }).catch(() => {
+            d3.select('#d3-chart').html(`<p style='color:red'>No se pudo cargar el CSV<br><code>${rutaCsvNum}</code><br>ni<br><code>${rutaCsvAlt}</code></p>`);
+        });
     });
+}
+
+// Extraído la lógica de procesar y graficar para reutilizar
+function procesarDatosCsv(data, rutaCsv, localidad, cultivo, indice) {
+    const columnas = Object.keys(data[0] || {});
+    const baseStats = ['P25', 'P50', 'P75'].filter(c => columnas.includes(c));
+    let codBasePermitidos = [];
+    try {
+        const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+        if (usuarioActivo && Array.isArray(usuarioActivo.acceso_codebase)) {
+            codBasePermitidos = usuarioActivo.acceso_codebase;
+        }
+    } catch (e) { console.warn('No se pudo leer usuarioActivo:', e); }
+    const normalizar = s => {
+        if (!s) return '';
+        const match = s.toString().toLowerCase().replace(/[^a-z0-9]/g, '').match(/cod0*(\d+)/);
+        if (match) return 'cod' + parseInt(match[1], 10);
+        return s.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+    };
+    const columnasNorm = columnas.map(normalizar);
+    const codBaseEnCsv = codBasePermitidos.filter(cod => {
+        const codNorm = normalizar(cod);
+        return columnasNorm.includes(codNorm);
+    });
+    const codBaseFinal = codBaseEnCsv.map(cod => {
+        const codNorm = normalizar(cod);
+        const idx = columnasNorm.indexOf(codNorm);
+        return idx !== -1 ? columnas[idx] : null;
+    }).filter(Boolean);
+    const columnasGraficar = [...baseStats, ...codBaseFinal];
+    if (columnasGraficar.length === 0) {
+        d3.select('#d3-chart').html(`<p style='color:red'>No hay datos para graficar<br><code>${rutaCsv}</code></p>`);
+        return;
+    }
+    const codBaseFaltantes = codBasePermitidos.filter(cod => {
+        const codNorm = normalizar(cod);
+        return !columnasNorm.includes(codNorm);
+    });
+    if (codBaseFaltantes.length > 0) {
+        const advertencia = `<div style='color:orange;font-size:0.95em;margin-bottom:8px'>⚠️ Advertencia: Los siguientes códigos base no se encontraron en el CSV y no serán graficados:<br><b>${codBaseFaltantes.join(', ')}</b></div>`;
+        d3.select('#d3-chart').insert('div', ':first-child').html(advertencia);
+        console.warn('[D3] Cod_base permitidos no encontrados en el CSV:', codBaseFaltantes);
+    }
+    console.log('[D3] Columnas a graficar:', columnasGraficar);
+    dibujarGraficoD3(data, columnasGraficar, baseStats, codBaseFinal);
 }
 
 // Dibuja el gráfico de líneas usando D3 en el div #d3-chart, ahora con banda IQR, leyenda, tooltip, título, círculo semana, eje X meses
@@ -144,33 +155,21 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
         .style('text-anchor', 'middle')
         .text('Tiempo (Semanas)');
     // --- Eje Y ---
-    // El mínimo debe ser el primer valor encontrado (no el mínimo global) del cod_base con menor valor inicial
+    // Calcular el mínimo y máximo global de todos los valores graficados (P25, P50, P75 y cod_base)
     let minVal = null, maxVal = null;
-    if (codBaseFinal.length > 0) {
-        // Buscar el cod_base cuyo primer valor válido es el menor de todos los cod_base
-        let minFirstVal = Infinity;
-        let codMin = null;
-        codBaseFinal.forEach(cod => {
-            const firstVal = data.map(d => +d[cod]).find(v => !isNaN(v));
-            if (firstVal !== undefined && firstVal < minFirstVal) {
-                minFirstVal = firstVal;
-                codMin = cod;
-            }
+    const allVals = data.reduce((acc, d) => {
+        codigos.forEach(c => {
+            const v = +d[c];
+            if (!isNaN(v)) acc.push(v);
         });
-        // El mínimo es el primer valor válido del cod_base más bajo
-        minVal = minFirstVal;
-        // El máximo sigue siendo el máximo global de todos los cod_base
-        const codVals = data.flatMap(d => codBaseFinal.map(c => +d[c]).filter(v => !isNaN(v)));
-        maxVal = d3.max(codVals);
-    } else {
-        // Fallback: usar todos los valores
-        const allVals = data.reduce((acc, d) => {
-            baseStats.forEach(c => acc.push(+d[c]));
-            codBaseFinal.forEach(c => acc.push(+d[c]));
-            return acc;
-        }, []);
-        minVal = d3.min(allVals);
-        maxVal = d3.max(allVals);
+        return acc;
+    }, []);
+    minVal = d3.min(allVals);
+    maxVal = d3.max(allVals);
+    // Si todos los valores son iguales, forzar un rango mínimo
+    if (minVal === maxVal) {
+        minVal = minVal - 0.05;
+        maxVal = maxVal + 0.05;
     }
     y = d3.scaleLinear()
         .domain([minVal - (maxVal-minVal)*0.03, maxVal + (maxVal-minVal)*0.1])

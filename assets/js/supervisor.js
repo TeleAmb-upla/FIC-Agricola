@@ -112,3 +112,10 @@ window.getCodigosBaseSupervisor = function() {
 };
 // Exportar función para obtener localidad y cultivo por código base
 window.getLocalidadCultivoPorCodBase = getLocalidadCultivoPorCodBase;
+// Exportar función para obtener localidad y cultivo del supervisor activo
+window.getLocalidadCultivoSupervisor = function() {
+    const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+    return usuario && usuario.localidad && usuario.cultivo
+        ? { localidad: usuario.localidad, cultivo: usuario.cultivo }
+        : { localidad: '', cultivo: '' };
+};
