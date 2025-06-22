@@ -425,8 +425,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
     <strong>Semana ${closest.week}</strong><br>
     Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
     Histórico: ${formatShort(closest.historic)}<br>
-    P25: ${formatShort(closest.P25)}<br>
-    P75: ${formatShort(closest.P75)}<br>
+  
 `)
                     .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 30) + "px");

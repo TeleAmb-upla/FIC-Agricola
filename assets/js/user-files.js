@@ -31,9 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (usuario && usuario.localidad) {
         fetch('./assets/basa_data/localidad.json')
             .then(res => res.json())
-            .then(localidades => {
+            .then(localidad => {
                 const localidadId = usuario.localidad;
-                const localidadNombre = localidades[localidadId]?.nombre;
+                const localidadNombre = localidad[localidadId]?.nombre;
                 if (localidadNombre) {
                     const locationSpan = document.getElementById('locationSelector');
                     if (locationSpan) locationSpan.textContent = localidadNombre + ',';
@@ -93,8 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Obtener nombre de localidad
         if (usuario && usuario.localidad) {
             try {
-                const localidades = await fetch('./assets/basa_data/localidad.json').then(res => res.json());
-                localidadNombre = localidades[usuario.localidad]?.nombre || '';
+                const localidad = await fetch('./assets/basa_data/localidad.json').then(res => res.json());
+                localidadNombre = localidad[usuario.localidad]?.nombre || '';
             } catch {}
         }
 

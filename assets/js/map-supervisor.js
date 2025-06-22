@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (userNameSpan) userNameSpan.textContent = usuario.Nombre || usuario.usuario;
     if (locationSelector) {
         // Buscar nombre de la localidad
-        const localidadesData = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
+        const localidadData = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
         let localidadSupervisor = usuario.localidad;
         if (!localidadSupervisor && usuario.acceso_codebase) {
             const usuarios = await fetch('./assets/basa_data/user.json').then(r => r.json());
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return u?.localidad;
             }).filter(Boolean))].join(', ');
         }
-        locationSelector.textContent = localidadesData[localidadSupervisor]?.nombre || '-';
+        locationSelector.textContent = localidadData[localidadSupervisor]?.nombre || '-';
     }
 
     // Cargar datos de usuarios y cultivos
@@ -114,14 +114,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Mostrar lista de usuarios/predios del cultivo seleccionado
     async function mostrarListaPrediosCultivo(cultivoId) {
         const cultivosData = await fetch('./assets/basa_data/cultivo.json').then(r => r.json());
-        const localidades = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
+        const localidad = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
         const prediosFiltrados = predios.filter(u => u.cultivo === cultivoId);
         const cont = document.getElementById('lista-predios-cultivo');
         if (cont) {
             cont.innerHTML = prediosFiltrados.map(u => `
                 <div style="margin-bottom:8px;">
                     <strong>${u.Nombre || u.usuario}</strong><br>
-                    <span style="font-size:0.95em;">Cultivo: ${cultivosData[u.cultivo]?.nombre || '-'}<br>Localidad: ${localidades[u.localidad]?.nombre || '-'}</span>
+                    <span style="font-size:0.95em;">Cultivo: ${cultivosData[u.cultivo]?.nombre || '-'}<br>Localidad: ${localidad[u.localidad]?.nombre || '-'}</span>
                 </div>
                 <hr style="margin:4px 0; border:0; border-top:1px solid #ccc;">
             `).join('');
@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Mostrar solo la info individual
             const cont = document.getElementById('huerto-datos');
             const cultivosData = await fetch('./assets/basa_data/cultivo.json').then(r => r.json());
-            const localidades = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
+            const localidad = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
             if (cont && user) {
                 cont.innerHTML = `
                     <div style='margin-bottom:8px;'>
                         <strong>${user.Nombre || user.usuario}</strong><br>
-                        <span style="font-size:0.95em;">Cultivo: ${cultivosData[user.cultivo]?.nombre || '-'}<br>Localidad: ${localidades[user.localidad]?.nombre || '-'}</span>
+                        <span style="font-size:0.95em;">Cultivo: ${cultivosData[user.cultivo]?.nombre || '-'}<br>Localidad: ${localidad[user.localidad]?.nombre || '-'}</span>
                     </div>
                 `;
             }
@@ -187,7 +187,7 @@ function mostrarMapaSupervisor(cod_base, cultivoId) {
 
 // Mejorar visualización: solo mostrar nombre, localidad y cultivo
 async function cargarDatosPrediosSupervisor(usuario, usuariosData, cultivoId) {
-    const [cultivos, localidades] = await Promise.all([
+    const [cultivos, localidad] = await Promise.all([
         fetch('./assets/basa_data/cultivo.json').then(r => r.json()),
         fetch('./assets/basa_data/localidad.json').then(r => r.json())
     ]);
@@ -200,7 +200,7 @@ async function cargarDatosPrediosSupervisor(usuario, usuariosData, cultivoId) {
             <div class="predio-info">
                 <p><strong>Agricultor:</strong> ${user.Nombre || user.usuario}</p>
                 <p><strong>Cultivo:</strong> ${cultivos[user.cultivo]?.nombre || '-'}</p>
-                <p><strong>Localidad:</strong> ${localidades[user.localidad]?.nombre || '-'}</p>
+                <p><strong>Localidad:</strong> ${localidad[user.localidad]?.nombre || '-'}</p>
             </div>
         `;
     }
@@ -227,3 +227,29 @@ function cerrarSesion() {
     localStorage.clear();
     window.location.href = 'plataforma.html';
 }
+
+// --- Crear capa raster con borde del color correspondiente al cod_base ---
+function crearGeoRasterLayerConColor(geoRaster, cod_base, opcionesExtra = {}) {
+    return L.geoRasterLayer(geoRaster, {
+        // ...otros estilos que ya usas...
+        color: getColorForCodBase(cod_base), // borde igual al gráfico
+        weight: 3, // o el valor que prefieras
+        fill: true, // mantiene el relleno igual
+        ...opcionesExtra
+    });
+}
+
+// Utilidad: obtener color de cod_base desde window.codBaseColors (si existe), si no, usar dorado por defecto
+function getColorForCodBase(cod_base) {
+    if (!cod_base) return '#FFD700';
+    const key = cod_base.toLowerCase();
+    if (window.codBaseColors && window.codBaseColors[key]) {
+        return window.codBaseColors[key];
+    }
+    // Fallback: dorado
+    return '#FFD700';
+}
+
+// Ejemplo de uso: cuando dibujes el borde de un raster, usa getColorForCodBase(cod_base)
+// Por ejemplo:
+// rasterLayer.setStyle({ color: getColorForCodBase(cod_base), weight: 3 });

@@ -239,7 +239,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                     // Cargar datos si no están en memoria
                     let usuarios = window._usuariosData;
                     let cultivos = window._cultivosData;
-                    let localidades = window._localidadesData;
+                    let localidades = window._localidadData;
                     if (!usuarios) {
                         usuarios = await fetch('./assets/basa_data/user.json').then(r => r.json());
                         window._usuariosData = usuarios;
@@ -250,7 +250,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                     }
                     if (!localidades) {
                         localidades = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
-                        window._localidadesData = localidades;
+                        window._localidadData = localidades;
                     }
                     const user = usuarios.find(u => u.codigo_base === cod);
                     const cultivo = user ? cultivos[user.cultivo] : null;
