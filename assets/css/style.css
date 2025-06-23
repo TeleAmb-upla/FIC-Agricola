@@ -284,18 +284,19 @@ select, input[type="range"] {
 }
 
 
-/* REEMPLAZAR POR: */
 #chart-container {
     position: relative;
-    height: 400px;
+    height: 300px;
+    min-height: 320px;         /* Aumenta la altura mínima para dejar espacio al eje X */
     background: white;
     border-top: 2px solid #eee;
     transition: height 0.2s ease;
-    display: flex; /* Nuevo */
-    gap: 20px; /* Espacio entre gráfico y leyenda */
-    padding: 20px; /* Nuevo */
+    display: flex;
+    gap: 20px;
+    padding: 20px 20px 10px 20px; /* Reduce el padding inferior */
+    margin-bottom: 0 !important;  /* Elimina margen inferior extra */
+    box-sizing: border-box;
 }
-
 .resize-handle {
     position: absolute;
     top: -5px;
@@ -314,12 +315,17 @@ select, input[type="range"] {
     opacity: 1;
 }
   
-
-
 #d3-chart {
-    flex: 1;
-    height: 100% !important;
+    flex: 1 1 0;
+min-height: 50px;
+max-height: 100px;
+    height: 50%;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box;
 }
+
 .chart-wrapper {
     flex: 1;
     display: flex;
@@ -335,12 +341,6 @@ select, input[type="range"] {
     justify-content: center;
 }
 
-#d3-chart {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: calc(100% - 200px); /* Limita el ancho del gráfico para dejar espacio a la leyenda */
-    height: 100% !important;
-}
 
 
 .leyenda-mobile-horizontal {

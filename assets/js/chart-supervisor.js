@@ -4,6 +4,7 @@ let codBaseToNombre = {};
 function cargarDiccionarioCodBaseNombre(callback) {
     d3.json('./assets/basa_data/user.json').then(usuarios => {
         codBaseToNombre = {};
+        window.usuariosData = usuarios; // <-- Hacer global
         usuarios.forEach(u => {
             if (u.codigo_base && u.Nombre) {
                 const primeraPalabra = u.Nombre.trim().split(/\s+/)[0];
@@ -13,6 +14,7 @@ function cargarDiccionarioCodBaseNombre(callback) {
         if (callback) callback();
     }).catch(() => {
         codBaseToNombre = {};
+        window.usuariosData = [];
         if (callback) callback();
     });
 }
@@ -105,8 +107,8 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     // --- Dimensiones y márgenes ---
     const contenedor = d3.select('#d3-chart');
     const anchoContenedor = contenedor.node().getBoundingClientRect().width;
-    const altoViewBox = 400;
-    const margin = {top: 40, right: 20, bottom: 50, left: 70};
+    const altoViewBox = 265;
+    const margin = {top: 20, right: 20, bottom: 50, left: 70};
     const width = anchoContenedor - margin.left - margin.right;
     const height = altoViewBox - margin.top - margin.bottom;
     // SVG responsivo
@@ -142,18 +144,14 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     xAxis = g.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x).ticks(53).tickFormat(d => {
-            const idx = weeksInicioMes.indexOf(d);
-            if (idx !== -1) return meses[idx];
-            return '';
-        }));
+        .call(d3.axisBottom(x).ticks(53).tickFormat(d => d)); // Solo semanas
     // --- Título del eje X ---
     g.append('text')
         .attr('class', 'x-axis-label')
         .attr('x', width / 2)
         .attr('y', height + 40)
         .style('text-anchor', 'middle')
-        .text('Tiempo (Semanas)');
+        .text('Semana del año');
     // --- Eje Y ---
     // Calcular el mínimo y máximo global de todos los valores graficados (P25, P50, P75 y cod_base)
     let minVal = null, maxVal = null;
@@ -205,16 +203,18 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     const COLOR_SEMANA = '#d32f2f';
     const reservedColors = [COLOR_P50.toLowerCase(), COLOR_P25.toLowerCase(), COLOR_P75.toLowerCase(), COLOR_SEMANA.toLowerCase()];
     const codBasePalette = d3.schemeCategory10.filter(c => !reservedColors.includes(c.toLowerCase()));
+    // Función de color: para P25/P50/P75 usa color fijo, para cod_base usa índice en codBaseFinal
     const color = c => {
         if (c === 'P25') return COLOR_P25;
         if (c === 'P50') return COLOR_P50;
         if (c === 'P75') return COLOR_P75;
-        const idx = codigos.indexOf(c);
-        return codBasePalette[idx % codBasePalette.length];
+        const idx = codBaseFinal.indexOf(c);
+        return idx !== -1 ? codBasePalette[idx % codBasePalette.length] : '#888';
     };
     const linePaths = [];
     codigos.forEach((codigo, i) => {
         const isCodBase = codBaseFinal.includes(codigo);
+        const isBaseStat = ['P25', 'P50', 'P75'].includes(codigo);
         const lineGen = d3.line()
             .defined(d => d[codigo] !== undefined && d[codigo] !== null && d[codigo] !== '' && !isNaN(+d[codigo]))
             .x(d => x(+d.week))
@@ -226,15 +226,10 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
             .attr('fill', 'none')
             .attr('stroke', color(codigo))
             .attr('stroke-width', 2)
-            .attr('stroke-dasharray', isCodBase ? '7,4' : null)
             .attr('d', lineGen);
+        // --- Animación solo para cod_base, NO para P25/P50/P75 ---
         if (isCodBase) {
-            path.attr('stroke-dasharray', '7,4');
-        }
-        // Animación de trazo
-        const totalLength = path.node().getTotalLength();
-        if (isCodBase) {
-            // Mantener dasharray siempre, incluso durante la animación
+            const totalLength = path.node().getTotalLength();
             path
                 .attr('stroke-dasharray', '7,4,' + totalLength + ' ' + totalLength)
                 .attr('stroke-dashoffset', totalLength)
@@ -242,17 +237,11 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
                 .duration(900)
                 .ease(d3.easeCubic)
                 .attr('stroke-dashoffset', 0)
-                .attr('stroke-dasharray', '7,4'); // Fijar dash después de la animación
-        } else {
-            path
-                .attr('stroke-dasharray', totalLength + ' ' + totalLength)
-                .attr('stroke-dashoffset', totalLength)
-                .transition()
-                .duration(900)
-                .ease(d3.easeCubic)
-                .attr('stroke-dashoffset', 0)
-                .attr('stroke-dasharray', null);
+                .on('end', function() {
+                    d3.select(this).attr('stroke-dasharray', '7,4');
+                });
         }
+        // Para P25/P50/P75, NO animar, solo dibujar
         linePaths.push({codigo, path, lineGen});
     });
     // --- Círculo en el último valor de cada línea ---
@@ -277,6 +266,25 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
                 .attr('class', 'ultimo-valor-circulo');
         }
     });
+    // --- Óvalo vertical en la semana seleccionada ---
+    const semanaSeleccionada = document.getElementById('weekSelector')?.value;
+    if (semanaSeleccionada) {
+        const semanaNum = +semanaSeleccionada;
+        const cx = x(semanaNum);
+        const cy = height / 2;
+        const rx = 18; // radio horizontal
+        const ry = height / 2; // radio vertical para cubrir todo el gráfico
+        g.append('ellipse')
+            .attr('cx', cx)
+            .attr('cy', cy)
+            .attr('rx', rx)
+            .attr('ry', ry)
+            .attr('fill', '#fff') // relleno blanco
+            .attr('fill-opacity', 0.) // blanco translúcido
+            .attr('stroke', '#d32f2f')
+            .attr('stroke-width', 3)
+            .attr('class', 'semana-seleccionada-ovalo');
+    }
     // --- Leyenda SVG en #legend-container ---
     const legendContainer = d3.select('#legend-container');
     legendContainer.html(''); // Limpia contenido previo
@@ -393,16 +401,40 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     // --- Exponer los colores de cod_base en window para uso global (mapa, etc) ---
     window.codBaseColors = window.codBaseColors || {};
     codBaseFinal.forEach((codigo, i) => {
-        window.codBaseColors[codigo] = color(codigo);
+        // Normalizar el código base para que coincida con el formato usado en el mapa
+        let codNorm = codigo;
+        if (typeof codNorm === 'string') codNorm = codNorm.trim().toLowerCase();
+        window.codBaseColors[codNorm] = color(codigo);
     });
 }
 
 // --- Modificar leyenda y tooltip para mostrar el nombre en vez de cod_XXXX ---
 function mostrarNombreCodBase(cod) {
-    // Busca el nombre usando el diccionario, si no existe, muestra el código original
     if (!cod) return cod;
     const key = cod.toLowerCase();
-    return codBaseToNombre[key] || cod;
+    const nombreCompleto = codBaseToNombre[key];
+    if (!nombreCompleto) return cod;
+    let usuario = null;
+    if (window.usuariosData && Array.isArray(window.usuariosData)) {
+        usuario = window.usuariosData.find(u => (u.codigo_base || '').toLowerCase() === key);
+    }
+    if (usuario && usuario.Nombre) {
+        const partes = usuario.Nombre.trim().split(/\s+/);
+        let nombre = partes[0] || '';
+        let apellido = '';
+        if (partes.length === 2) {
+            apellido = partes[1];
+        } else if (partes.length >= 3) {
+            apellido = partes[2];
+        }
+        // Formatear: solo la primera letra en mayúscula, el resto en minúscula
+        nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+        apellido = apellido ? (apellido.charAt(0).toUpperCase() + apellido.slice(1).toLowerCase()) : '';
+        return apellido ? `${nombre} ${apellido}` : nombre;
+    }
+    // Fallback: solo la primera palabra, formateada
+    const primera = nombreCompleto.charAt(0).toUpperCase() + nombreCompleto.slice(1).toLowerCase();
+    return primera;
 }
 
 // Permite actualizar el gráfico al cambiar el índice desde un select con id 'layerSelector' o la semana desde 'weekSelector'

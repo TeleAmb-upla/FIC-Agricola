@@ -33,25 +33,33 @@ function initSupervisorMap(mapId) {
 // Paletas de colores y umbrales fijos por índice
 const colorThresholds = {
   NDVI: {
-    thresholds: [-1.0, -0.3, 0.3, 1],
-    colors: ['#ff0000', '#ffff00', '#00a000'] // Bajo, Medio, Alto
+    thresholds: [-1, 1],
+    colors: [ '#00a000'] // Bajo, Medio, Alto
   },
   NDMI: {
-    thresholds: [-1.0, -0.2, 0.2, 1],
-    colors: ['#d73027', '#fee090', '#4575b4']
+    thresholds: [-1, 1],
+    colors: ['#fee090']
    },
    EVI: {
-    thresholds: [-1.0, -0.2, 0.2, 1],
-    colors: ['#ffffff', '#86c45d', '#0a5c32'] // Bajo, Medio, Alto
+    thresholds: [-1, 1],
+    colors: ['#0a5c32'] // Bajo, Medio, Alto
     },
     MSAVI: { 
-    thresholds: [-1.0, -0.2, 0.2, 1],
-    colors: ['#8c510a', '#f6e8c3', '#01665e']
+      thresholds: [-1, 1],
+    colors: ['#01665e']
     } // Bajo, Medio, Alto
 
     // Bajo, Medio, Alto
   // Puedes agregar otros índices aquí si lo deseas
 };
+
+const colorslegend = {
+  NDVI: ['#ff0000', '#ffff00', '#00a000'],
+    NDMI: ['#d73027', '#fee090', '#4575b4'],
+    EVI: ['#ffffff', '#86c45d', '#0a5c32'],
+    MSAVI: ['#8c510a', '#f6e8c3', '#01665e']
+};
+
 
 // Descripciones de índices espectrales (igual que en map.js)
 if (typeof window.text_cont === 'undefined') {
@@ -142,6 +150,8 @@ function calculateBounds(georaster) {
 
 // Carga y agrega múltiples rásteres (GeoTIFF) al mapa supervisor y ajusta el mapa a los bounds combinados
 function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSeleccionada) {
+    // Inicializa el diccionario global de capas de predio
+    window.codBaseLayerMap = {};
     if (!window.getRutasPorPredio) {
         console.error('getRutasPorPredio no está definido');
         return;
@@ -155,6 +165,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
     }
     let allBounds = [];
     let loadedCount = 0;
+    let userColorList = [];
     rutasPorPredio.forEach(async (ruta) => {
         try {
             console.log('Intentando cargar TIFF:', ruta.tiff);
@@ -179,18 +190,38 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             const bounds = calculateBounds(raster);
             allBounds.push(bounds);
-            // --- Coloreado por umbrales fijos ---
+            // --- Coloreado por mediana y paleta de colorslegend ---
             const index = capaSeleccionada.toUpperCase();
-            const config = colorThresholds[index];
+            const legendColors = colorslegend[index];
+            // Calcular la mediana de los valores del ráster
+            let values = [];
+            if (raster && raster.readRasters) {
+                // Extraer todos los valores válidos (no nulos, no NaN)
+                const data = await raster.readRasters();
+                for (let i = 0; i < data[0].length; i++) {
+                    const v = data[0][i];
+                    if (v !== null && !isNaN(v)) values.push(v);
+                }
+            }
+            let mediana = 0;
+            if (values.length > 0) {
+                values.sort((a, b) => a - b);
+                const mid = Math.floor(values.length / 2);
+                mediana = values.length % 2 !== 0 ? values[mid] : (values[mid - 1] + values[mid]) / 2;
+            }
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            // Definir función de color por rango: [min, mediana, max]
             function pixelValuesToColorFn(values) {
                 const v = values[0];
-                if (v === null || isNaN(v)) return null;
-                if (!config) return null;
-                const [min, mid1, mid2, max] = config.thresholds;
-                if (v >= min && v < mid1) return config.colors[0]; // Bajo
-                if (v >= mid1 && v < mid2) return config.colors[1]; // Medio
-                if (v >= mid2 && v <= max) return config.colors[2]; // Alto
-                return null;
+                if (v === null || isNaN(v) || !legendColors) return null;
+                if (v < mediana) {
+                    // Bajo
+                    return v < (min + (mediana - min) / 2) ? legendColors[0] : legendColors[1];
+                } else {
+                    // Alto
+                    return v < (mediana + (max - mediana) / 2) ? legendColors[1] : legendColors[2];
+                }
             }
             const layer = new window.GeoRasterLayer({
                 georaster: raster,
@@ -213,26 +244,14 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             safeAddLayer(map, layer);
             // Mostrar leyenda dinámica después de agregar la capa
-            renderSupervisorLegend(map, capaSeleccionada, config.thresholds[0], config.thresholds[3]);
-            // --- Borde brillante parpadeante y popup de información ---
-            if (map && map.getContainer && map.getContainer() && document.body.contains(map.getContainer())) {
-                const highlight = L.rectangle(bounds, {
-                    color: '#ff0', // Amarillo brillante
-                    weight: 4,
-                    dashArray: '10,10',
-                    opacity: 1,
-                    fillOpacity: 0,
-                    className: 'raster-highlight'
-                }).addTo(map);
-                let visible = true;
-                const intervalId = setInterval(() => {
-                    visible = !visible;
-                    highlight.setStyle({ color: visible ? '#ff0' : '#fff' });
-                }, 500);
-                if (!map._rasterHighlightIntervals) map._rasterHighlightIntervals = [];
-                map._rasterHighlightIntervals.push(intervalId);
-
-                // --- Popup de información al hacer click ---
+            renderSupervisorLegend(map, capaSeleccionada, min, mediana, max);
+            // --- Borde brillante y popup de información ---
+            const codNorm = (ruta.codigo_base || '').trim().toLowerCase();
+            const bordeColor = (window.codBaseColors && window.codBaseColors[codNorm]) ? window.codBaseColors[codNorm] : '#ff0';
+            const highlight = addRasterHighlight(map, bounds, bordeColor);
+            if (highlight) {
+                // --- Guardar referencia global para zoom/resaltado ---
+                window.codBaseLayerMap[codNorm] = highlight;
                 highlight.on('click', async function() {
                     // Buscar info del predio
                     const cod = ruta.codigo_base;
@@ -268,13 +287,26 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                     `;
                     highlight.bindPopup(popupHtml).openPopup();
                 });
-                // ---
+            }
+            // Agregar a la lista de usuarios para la leyenda
+            let usuarios = window._usuariosData;
+            if (!usuarios) {
+                usuarios = await fetch('./assets/basa_data/user.json').then(r => r.json());
+                window._usuariosData = usuarios;
+            }
+            const user = usuarios.find(u => u.codigo_base === ruta.codigo_base);
+            const nombre = user ? (user.Nombre || user.usuario) : ruta.codigo_base;
+            // Evitar duplicados
+            if (!userColorList.some(u => u.codigo_base === ruta.codigo_base)) {
+                userColorList.push({ codigo_base: ruta.codigo_base, nombre, color: bordeColor });
             }
             // ---
             console.log('TIFF agregado exitosamente al mapa:', ruta.tiff);
             loadedCount++;
             if (loadedCount === rutasPorPredio.length && allBounds.length > 0) {
                 safeFitBounds(map, allBounds);
+                // Mostrar la leyenda de usuarios y colores
+                renderUserColorLegend(map, userColorList);
             }
         } catch (e) {
             console.error('Error cargando raster para', ruta.codigo_base, e);
@@ -294,29 +326,27 @@ function renderSupervisorLegend(map, capaSeleccionada, min, max) {
     // Usar la paleta y umbrales definidos en colorThresholds
     const index = capaSeleccionada.toUpperCase();
     const config = colorThresholds[index];
+    const legendColors = colorslegend[index] || (config ? config.colors : undefined);
     map.legendControl = L.control({ position: 'bottomright' });
     map.legendControl.onAdd = () => {
         const div = L.DomUtil.create('div', 'map-legend');
         div.style.pointerEvents = 'auto';
-        if (config) {
+        if (legendColors) {
             // Leyenda de 3 bloques con etiquetas
             div.innerHTML = `
-                <div class="legend-title-container"><span class="legend-main-title">Paleta de colores (${index})</span></div>
+                <div class="legend-title-container"><span class="legend-main-title">Estado Predial   (${index})</span></div>
                 <div class="legend-scale-container" style="display:flex;flex-direction:row;gap:8px;margin-bottom:4px;justify-content:center;">
                     <div style="display:flex;flex-direction:column;align-items:center;">
-                        <div style="width:32px;height:18px;background:${config.colors[0]};border:1px solid #aaa;"></div>
-                        <span style="font-size:0.85em;">Bajo</span>
-                        <span style="font-size:0.8em;">${config.thresholds[0]} a ${config.thresholds[1]}</span>
+                        <div style="width:32px;height:18px;background:${legendColors[0]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Malo</span>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:center;">
-                        <div style="width:32px;height:18px;background:${config.colors[1]};border:1px solid #aaa;"></div>
-                        <span style="font-size:0.85em;">Medio</span>
-                        <span style="font-size:0.8em;">${config.thresholds[1]} a ${config.thresholds[2]}</span>
+                        <div style="width:32px;height:18px;background:${legendColors[1]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Regular</span>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:center;">
-                        <div style="width:32px;height:18px;background:${config.colors[2]};border:1px solid #aaa;"></div>
-                        <span style="font-size:0.85em;">Alto</span>
-                        <span style="font-size:0.8em;">${config.thresholds[2]} a ${config.thresholds[3]}</span>
+                        <div style="width:32px;height:18px;background:${legendColors[2]};border:1px solid #aaa;"></div>
+                        <span style="font-size:0.85em;">Bueno</span>
                     </div>
                 </div>
             `;
@@ -328,6 +358,39 @@ function renderSupervisorLegend(map, capaSeleccionada, min, max) {
     if (map && map.getContainer && document.body.contains(map.getContainer())) {
         map.legendControl.addTo(map);
     }
+}
+
+// Leyenda de usuarios y colores de borde
+function renderUserColorLegend(map, userColorList) {
+    if (map.userColorLegendControl) map.removeControl(map.userColorLegendControl);
+    map.userColorLegendControl = L.control({ position: 'bottomleft' });
+    map.userColorLegendControl.onAdd = function() {
+        const div = L.DomUtil.create('div', 'user-color-legend');
+        div.style.background = '#fff';
+        div.style.padding = '8px 12px';
+        div.style.borderRadius = '8px';
+        div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        div.style.fontSize = '0.97em';
+        div.innerHTML = `<div style='font-weight:bold; margin-bottom:6px;'>Predios a cargo</div>
+            <button id="toggle-user-legend-btn" style="z-index:1001; margin-bottom:6px; background:#e9ecef; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:0.95em; color:#2c3e50;">Mostrar/ocultar leyenda</button>
+            <div id="user-legend-content" style="display:none;">${userColorList.map(u => `
+                <div style='display:flex;align-items:center;gap:8px;margin-bottom:2px;'>
+                    <span style='display:inline-block;width:18px;height:12px;background:${u.color};border:1px solid #888;border-radius:3px;'></span>
+                    <span>${u.nombre}</span>
+                </div>`).join('')}</div>`;
+        setTimeout(() => {
+            const btn = div.querySelector('#toggle-user-legend-btn');
+            const content = div.querySelector('#user-legend-content');
+            if (btn && content) {
+                L.DomEvent.disableClickPropagation(btn);
+                btn.addEventListener('click', () => {
+                    content.style.display = content.style.display === 'none' ? '' : 'none';
+                });
+            }
+        }, 0);
+        return div;
+    };
+    map.userColorLegendControl.addTo(map);
 }
 
 // Función segura para ajustar bounds (debe estar al inicio del archivo)
@@ -351,6 +414,24 @@ function fitAllBounds(map, boundsArray) {
     if (!isFinite(minLat) || !isFinite(minLng) || !isFinite(maxLat) || !isFinite(maxLng)) return;
     const combinedBounds = [[minLat, minLng], [maxLat, maxLng]];
     safeFitBounds(map, combinedBounds);
+}
+
+// Función para agregar un borde resaltado a un ráster
+function addRasterHighlight(map, bounds, color = '#ff0') {
+    if (map && map.getContainer && map.getContainer() && document.body.contains(map.getContainer())) {
+        const highlight = L.rectangle(bounds, {
+            color: color, // Color personalizado
+            weight: 4,
+            dashArray: '10,10',
+            opacity: 1,
+            fillOpacity: 0,
+            className: 'raster-highlight'
+        }).addTo(map);
+        // Eliminar parpadeo: dejar el color fijo
+        // (No usar setInterval para alternar color)
+        return highlight;
+    }
+    return null;
 }
 
 // Exponer funciones globalmente

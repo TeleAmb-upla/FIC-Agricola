@@ -4,7 +4,7 @@ import { obtenerEscalaColor } from './color-ranges-chart.js';
 
 // Variables globales
 let svg, xScale, yScale, lineHistoric, lineCurrent;
-let altoViewBox = 400;
+let altoViewBox = 295;
 
 // Función para aplicar gradiente
 function aplicarGradiente(svg, datos, escalaColor, idGradiente, valorAccessor) {

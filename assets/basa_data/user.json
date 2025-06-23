@@ -4,7 +4,7 @@
     "password": "1234",
     "codigo_base": "cod_0001",
     "cultivo": "1",
-    "Nombre": "MARCOS MANUEL MALDONADO MORALES",
+    "Nombre": "Marcos Manuel Maldonado Morales",
     "localidad": "1"
   },
   {
@@ -12,7 +12,7 @@
     "password": "5678",
     "codigo_base": "cod_0002",
     "cultivo": "1",
-    "Nombre": "ALEXIS MORALES AGUILERA",
+    "Nombre": "Alexis Morales Aguilera",
     "localidad": "1"
   },
   {
@@ -20,7 +20,7 @@
     "password": "abcd",
     "codigo_base": "cod_0003",
     "cultivo": "1",
-    "Nombre": "ADAN ARMANDO ESPINOZA TAPIA",
+    "Nombre": "Adan Armando Espinoza Tapia",
     "localidad": "1"
   },
   {
@@ -28,7 +28,7 @@
     "password": "efgh",
     "codigo_base": "cod_0004",
     "cultivo": "1",
-    "Nombre": "JAIME ARTURO OLIVARES MESA",
+    "Nombre": "Jaime Arturo Olivares Mesa",
     "localidad": "1"
   },
   {
@@ -36,7 +36,7 @@
     "password": "ijkl",
     "codigo_base": "cod_0005",
     "cultivo": "1",
-    "Nombre": "CRISTIAN PEREZ GARAY",
+    "Nombre": "Cristian Perez Garay",
     "localidad": "1"
   },
   {
@@ -44,7 +44,7 @@
     "password": "mnop",
     "codigo_base": "cod_0006",
     "cultivo": "1",
-    "Nombre": "NUNCIO D. PEREZ GARAY",
+    "Nombre": "Nuncio D. Perez Garay",
     "localidad": "1"
   },
   {
@@ -52,7 +52,7 @@
     "password": "qrst",
     "codigo_base": "cod_0007",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 7",
+    "Nombre": "Agricultor Siete",
     "localidad": "3"
   },
   {
@@ -60,7 +60,7 @@
     "password": "uvwx",
     "codigo_base": "cod_0008",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 8",
+    "Nombre": "Agricultor Ocho",
     "localidad": "3"
   },
   {
@@ -68,7 +68,7 @@
     "password": "yz12",
     "codigo_base": "cod_0009",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 9",
+    "Nombre": "Agricultor Nueve",
     "localidad": "3"
   },
   {
@@ -76,7 +76,7 @@
     "password": "3456",
     "codigo_base": "cod_0010",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 10",
+    "Nombre": "Agricultor Diez",
     "localidad": "3"
   },
   {
@@ -84,7 +84,7 @@
     "password": "7890",
     "codigo_base": "cod_0011",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 11",
+    "Nombre": "Agricultor Once",
     "localidad": "3"
   },
   {
@@ -92,7 +92,7 @@
     "password": "abcd",
     "codigo_base": "cod_0012",
     "cultivo": "3",
-    "Nombre": "AGRICULTOR 12",
+    "Nombre": "Agricultor Doce",
     "localidad": "3"
   }
 

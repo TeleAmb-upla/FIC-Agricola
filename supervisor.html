@@ -22,7 +22,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="./assets/js/user-files-supervisor.js"></script>
-    <script src="./assets/js/chart-supervisor.js"></script>
+
     <style>
         /* Modal styles */
         #fake-data-modal {
@@ -311,7 +311,7 @@
     <script src="./assets/js/map-supervisor.js"></script>
     <!-- Luego la utilería de rutas de archivos para supervisor (exposición global) -->
     <script src="./assets/js/user-files-supervisor.js"></script>
-    <script src="./assets/js/chart-supervisor.js"></script>
+
   <!--  <script type="module" src="./assets/js/user-files.js"></script> -->
    <!-- <script type="module" src="./assets/js/area-calculator.js"></script> -->
 
@@ -320,8 +320,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Función para actualizar la opacidad de las capas raster (GeoRasterLayer)
         function updateRasterOpacity(val) {
-            // Usa la variable global 'map' que expone la instancia real de Leaflet
-            const mapInstance = window.map;
+            // Usa la variable global 'mapSupervisor' para el supervisor
+            const mapInstance = window.mapSupervisor;
             if (mapInstance && mapInstance.eachLayer) {
                 mapInstance.eachLayer(function(layer) {
                     // Identifica GeoRasterLayer por la presencia de setOpacity y pixelValuesToColorFn
@@ -452,7 +452,7 @@ function initializeResize() {
         chartContainer.style.height = `${Math.max(minHeight, Math.min(newHeight, maxHeight))}px`;
         // Ajusta el mapa dinámicamente
         const map = document.getElementById('map');
-        map.style.height = `calc(100vh - ${newHeight}px)`;
+        map.style.height = `calc(500vh - ${newHeight}px)`;
     }
 
     function stopResize() {
@@ -463,5 +463,70 @@ function initializeResize() {
 window.addEventListener('DOMContentLoaded', initializeResize);
 </script>
 <script type="module" src="./assets/js/chart-supervisor.js"></script>
+<script>
+// --- Vincular selector de predio con el mapa Leaflet ---
+document.addEventListener('DOMContentLoaded', function() {
+    const selectCodebase = document.getElementById('select-codebase');
+    if (!selectCodebase) return;
+    let lastSelectedLayer = null;
+    let lastOriginalStyle = null;
+    selectCodebase.addEventListener('change', function() {
+        // Restaurar el borde anterior si existe
+        if (lastSelectedLayer && lastOriginalStyle) {
+            lastSelectedLayer.setStyle(lastOriginalStyle);
+        }
+        const selectedCodBase = this.value;
+        // Buscar la capa correspondiente en el mapa
+        const map = window.mapSupervisor;
+        if (!map || !window.codBaseLayerMap) return;
+        const layer = window.codBaseLayerMap[selectedCodBase.toLowerCase()];
+        if (layer) {
+            // Guardar el estilo original antes de resaltar
+            lastSelectedLayer = layer;
+            lastOriginalStyle = {
+                color: layer.options.color || '#000',
+                weight: layer.options.weight || 3,
+                dashArray: layer.options.dashArray || null,
+                opacity: layer.options.opacity || 1
+            };
+            // Cambiar el estilo para resaltar
+            layer.setStyle({
+                color: '#ffeb3b', // Amarillo
+                weight: 6,
+                dashArray: '6,3',
+                opacity: 1
+            });
+            // Parpadeo: alterna entre resaltado y original
+            let blinkCount = 0;
+            const maxBlinks = 4;
+            const blinkInterval = setInterval(() => {
+                if (blinkCount % 2 === 0) {
+                    layer.setStyle({ color: '#ffeb3b', weight: 6, dashArray: '6,3', opacity: 1 });
+                } else if (lastOriginalStyle) {
+                    layer.setStyle(lastOriginalStyle);
+                }
+                blinkCount++;
+                if (blinkCount > maxBlinks) {
+                    clearInterval(blinkInterval);
+                    // Restaurar estilo original
+                    if (lastOriginalStyle) {
+                        layer.setStyle(lastOriginalStyle);
+                    }
+                }
+            }, 250);
+            // --- Zoom al predio ---
+            if (layer.getBounds) {
+                map.fitBounds(layer.getBounds(), { maxZoom: 17, animate: true });
+            }
+        }
+    });
+    // Restaurar borde original si se deselecciona (opción vacía)
+    selectCodebase.addEventListener('blur', function() {
+        if (lastSelectedLayer && lastOriginalStyle) {
+            lastSelectedLayer.setStyle(lastOriginalStyle);
+        }
+    });
+});
+</script>
 </body>
 </html>
