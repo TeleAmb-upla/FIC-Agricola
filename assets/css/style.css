@@ -390,35 +390,35 @@ max-height: 100px;
         border-top: 2px solid #eee;
         margin-top: 20px;
         flex-direction: column;
-        padding: 8px; /* Reducir padding para más espacio */
-        gap: 8px;     /* Menor espacio entre gráfico y leyenda */
+        padding: 8px;
+        gap: 8px;
+        display: flex;
     }
+#d3-chart {
+    width: 370px;
+    max-width: 100vw;
+    min-width: 220px;
+    height: 275px;
+    max-height: 75vh;
+    background: white;
+    border-radius: 10px;
+    padding: 6px;
+    margin: 0 auto 32px auto; /* Espacio debajo del gráfico */
+    box-sizing: border-box;
+    order: 1;
+}
+#legend-container {
+    order: 2;
+    width: 100%;
+    max-width: 420px;
+    margin: 24px auto 0 auto;
+    padding: 250px 0px 0px 0px; /* padding-top mayor */
+    justify-content: center;
+    align-items: flex-start;   /* Alinea el contenido arriba */
+    display: flex;
 
-    .chart-wrapper {
-        flex-direction: column;
-        height: auto;
-        width: 100%;
-    }
-    #d3-chart {
-        width: 370px;
-        max-width: 98vw;
-        min-width: 220px;
-        height: 275px;
-        max-height: 75vh;
-        background: white;
-        border-radius: 10px;
-        padding: 6px;
-        margin: 0 auto;
-        box-sizing: border-box;
-    }
 
-    #legend-container {
-        order: 1;
-        width: 100%;
-        height: auto;
-        margin: 10px 0 0 0;
-        padding: 6px;
-    }
+}
     /* Estilos específicos para la leyenda horizontal */
     .leyenda-mobile-horizontal {
         display: flex;
@@ -892,4 +892,5 @@ input[type="range"].control-input:focus,
         height: 22px;
     }
 }
+
 
