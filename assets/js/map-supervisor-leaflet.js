@@ -277,6 +277,59 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
                     const nombre = user ? (user.Nombre || user.usuario) : cod;
                     const cultivoNombre = cultivo ? cultivo.nombre : '-';
                     const localidadNombre = localidad ? localidad.nombre : '-';
+                    // Actualizar datos individuales en la barra lateral
+                    // Actualizar datos individuales en la barra lateral (asegura que se actualicen en el documento principal, no solo en el popup)
+                    if (window.parent && window.parent !== window && window.parent.document) {
+                        try {
+                            if (window.parent.document.getElementById('user-name')) {
+                                window.parent.document.getElementById('user-name').textContent = nombre;
+                            }
+                            if (window.parent.document.getElementById('locationSelector')) {
+                                window.parent.document.getElementById('locationSelector').textContent = localidadNombre;
+                            }
+                            if (window.parent.document.getElementById('crop-type')) {
+                                window.parent.document.getElementById('crop-type').textContent = cultivoNombre;
+                            }
+                            if (window.parent.document.getElementById('total-area')) {
+                                try {
+                                    const res = await fetch('./assets/basa_data/max_min_ha.json');
+                                    const data = await res.json();
+                                    if (data[cod] && data[cod].areaHa) {
+                                        const area = Number(data[cod].areaHa).toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:2});
+                                        window.parent.document.getElementById('total-area').textContent = area + ' (ha)';
+                                    } else {
+                                        window.parent.document.getElementById('total-area').textContent = 'N/D';
+                                    }
+                                } catch (e) {
+                                    window.parent.document.getElementById('total-area').textContent = 'N/D';
+                                }
+                            }
+                        } catch (e) {}
+                    }
+                    // También intenta actualizar en el documento actual
+                    if (document.getElementById('user-name')) {
+                        document.getElementById('user-name').textContent = nombre;
+                    }
+                    if (document.getElementById('locationSelector')) {
+                        document.getElementById('locationSelector').textContent = localidadNombre;
+                    }
+                    if (document.getElementById('crop-type')) {
+                        document.getElementById('crop-type').textContent = cultivoNombre;
+                    }
+                    if (document.getElementById('total-area')) {
+                        try {
+                            const res = await fetch('./assets/basa_data/max_min_ha.json');
+                            const data = await res.json();
+                            if (data[cod] && data[cod].areaHa) {
+                                const area = Number(data[cod].areaHa).toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:2});
+                                document.getElementById('total-area').textContent = area + ' (ha)';
+                            } else {
+                                document.getElementById('total-area').textContent = 'N/D';
+                            }
+                        } catch (e) {
+                            document.getElementById('total-area').textContent = 'N/D';
+                        }
+                    }
                     // Popup HTML
                     const popupHtml = `
                         <div style='min-width:180px;'>

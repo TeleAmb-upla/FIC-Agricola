@@ -113,15 +113,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Mostrar lista de usuarios/predios del cultivo seleccionado
     async function mostrarListaPrediosCultivo(cultivoId) {
-        const cultivosData = await fetch('./assets/basa_data/cultivo.json').then(r => r.json());
-        const localidad = await fetch('./assets/basa_data/localidad.json').then(r => r.json());
         const prediosFiltrados = predios.filter(u => u.cultivo === cultivoId);
         const cont = document.getElementById('lista-predios-cultivo');
         if (cont) {
             cont.innerHTML = prediosFiltrados.map(u => `
                 <div style="margin-bottom:8px;">
-                    <strong>${u.Nombre || u.usuario}</strong><br>
-                    <span style="font-size:0.95em;">Cultivo: ${cultivosData[u.cultivo]?.nombre || '-'}<br>Localidad: ${localidad[u.localidad]?.nombre || '-'}</span>
+                    <strong>${u.Nombre || u.usuario}</strong>
                 </div>
                 <hr style="margin:4px 0; border:0; border-top:1px solid #ccc;">
             `).join('');

@@ -560,9 +560,9 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
                         <div style="width:32px;height:18px;background:#${palette[2]};border:1px solid #aaa;"></div>
                     </div>
                     <div class="legend-values" style="font-size:0.85em;display:flex;flex-direction:column;align-items:center;width:100%;">
-                        <span>Min: <span style="font-size:0.95em;">${(min ?? 'N/A').toFixed ? min.toFixed(2) : min}</span></span>
-                        <span>Medio: <span style="font-size:0.95em;">${(step ?? 'N/A').toFixed ? step.toFixed(2) : step}</span></span>
-                        <span>Max: <span style="font-size:0.95em;">${(maxAlt ?? 'N/A').toFixed ? maxAlt.toFixed(2) : maxAlt}</span></span>
+                        <span>Malo: <span style="font-size:0.95em;">${(min ?? 'N/A').toFixed ? min.toFixed(2) : min}</span></span>
+                        <span>Regular: <span style="font-size:0.95em;">${(step ?? 'N/A').toFixed ? step.toFixed(2) : step}</span></span>
+                        <span>Bueno: <span style="font-size:0.95em;">${(maxAlt ?? 'N/A').toFixed ? maxAlt.toFixed(2) : maxAlt}</span></span>
                     </div>
                 </div>
             `;

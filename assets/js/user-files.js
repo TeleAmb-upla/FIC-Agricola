@@ -12,12 +12,26 @@ const predioParam = getQueryParam('predio');
 
 // Intenta obtener el usuario del localStorage
 let usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
-// Si no hay usuario en localStorage, crea uno mínimo solo con el código base
-if (!usuario) {
-    usuario = {};
+async function actualizarUsuarioPorPredio(predioParam) {
+    // Buscar en user.json el usuario con ese codigo_base
+    const usuarios = await fetch('./assets/basa_data/user.json').then(r => r.json());
+    const encontrado = usuarios.find(u => u.codigo_base === predioParam);
+    if (encontrado) {
+        localStorage.setItem('usuarioActivo', JSON.stringify(encontrado));
+        // Refresca la página para que los datos se muestren correctamente
+        window.location.reload();
+    } else {
+        // Si no se encuentra, solo actualiza el codigo_base
+        let temp = usuario || {};
+        temp.codigo_base = predioParam;
+        localStorage.setItem('usuarioActivo', JSON.stringify(temp));
+        window.location.reload();
+    }
 }
 if (predioParam) {
-    usuario.codigo_base = predioParam;
+    if (!usuario || usuario.codigo_base !== predioParam) {
+        actualizarUsuarioPorPredio(predioParam);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

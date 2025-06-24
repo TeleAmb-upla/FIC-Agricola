@@ -217,7 +217,8 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
 
         // Define colores fijos para cada línea (mover aquí, antes de cualquier uso)
         const COLOR_HISTORIC = "#1f77b4";   // azul
-        const COLOR_CURRENT  = "#ff7f0e";   // naranja
+        const COLOR_CURRENT  = "#d32f2f";
+           // naranja d32f2f
         const COLOR_LAST     = "#2ca02c";   // verde
         const COLOR_IQR      = "#999";      // gris para banda intercuartílica
 
@@ -225,11 +226,11 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
         // Limpia el contenedor y crea un SVG para la leyenda
         const legendData = [
            { label: "Histórico Local", color: COLOR_HISTORIC, style: "solid" },
-            { label: "Predial", color: COLOR_CURRENT, style: "dash" },
+            { label: "Predial", color: COLOR_CURRENT, style: "solid" },
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
        //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
       //    { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
-          { label: "Semana", color: "#d32f2f", style: "circle" }
+          { label: "Semana", color: "#ff7f0e", style: "circle" }
          //   
         ];
 
@@ -340,7 +341,6 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
             .attr("class", "linea-current")
             .attr("fill", "none")
             .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "5,5")
             .style("stroke", COLOR_CURRENT)
             .attr("d", lineCurrent);
 
@@ -419,7 +419,10 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                 const weekStart = weekToDate(year, week);
                 const thursday = new Date(weekStart);
                 thursday.setDate(thursday.getDate() + 3); // jueves
-                const month = thursday.getMonth(); // 0=enero
+                let month = thursday.getMonth(); // 0=enero
+                // Corrección: si la semana es la 1, forzar enero; si es la última, forzar diciembre
+                if (week === 1) month = 0;
+                if (week >= 52) month = 11;
                 // Calcular la semana 1 de ese mes (semana ISO que contiene el 1er día del mes)
                 const firstDay = new Date(year, month, 1);
                 const temp = new Date(firstDay.getTime());
@@ -513,7 +516,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     .attr('cy', yScale(puntoSemana.current))
                     .attr('r', 10)
                     .attr('fill', 'none')
-                    .attr('stroke', '#d32f2f')
+                    .attr('stroke', '#ff7f0e')
                     .attr('stroke-width', 3)
                     .attr('pointer-events', 'none');
             }

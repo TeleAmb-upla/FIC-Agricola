@@ -160,7 +160,7 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
         .attr('x', width / 2)
         .attr('y', height + 40)
         .style('text-anchor', 'middle')
-        .text('Semana del año');
+        .text('Tiempo (Semanas)');
     // --- Eje Y ---
     // Calcular el mínimo y máximo global de todos los valores graficados (P25, P50, P75 y cod_base)
     let minVal = null, maxVal = null;
