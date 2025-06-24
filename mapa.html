@@ -94,7 +94,7 @@
             <h1 class="app-title">Monitoreo Satelital Agrícola</h1>
         </div>
         <div class="control-group">
-            <div class="section-title">Tipo de cultivo </div>
+            <div class="section-title">Cultivo </div>
             <div class="cultivo-options">
                 <!-- Mostrar el cultivo como texto fijo -->
                 <span id="cropSelector" ></span>
@@ -137,17 +137,17 @@
                 <option value="12">Semana 12</option>
                 <option value="13">Semana 13</option>
                 <option value="14">Semana 14</option>
-                <option value="15">Semana 15</option>
-                <option value="16">Semana 16</option>
-                <option value="17">Semana 17</option>
-                <option value="18">Semana 18</option>
-                <option value="19">Semana 19</option>
-                <option value="20">Semana 20</option>
-                <option value="21">Semana 21</option>
-                <option value="22">Semana 22</option>
-                <option value="23">Semana 23</option>
-                <option value="24">Semana 24</option>
-                <option value="25">Semana 25</option>
+                <option value="15" disabled style="color: gray;">Semana 15</option>
+                <option value="16" disabled style="color: gray;">Semana 16</option>
+                <option value="17" disabled style="color: gray;">Semana 17</option>
+                <option value="18" disabled style="color: gray;">Semana 18</option>
+                <option value="19" disabled style="color: gray;">Semana 19</option>
+                <option value="20" disabled style="color: gray;">Semana 20</option>
+                <option value="21" disabled style="color: gray;">Semana 21</option>
+                <option value="22" disabled style="color: gray;">Semana 22</option>
+                <option value="23" disabled style="color: gray;">Semana 23</option>
+                <option value="24" disabled style="color: gray;">Semana 24</option>
+                <option value="25" disabled style="color: gray;">Semana 25</option>
                 <option value="26" disabled style="color: gray;">Semana 26</option>
                 <option value="27" disabled style="color: gray;">Semana 27</option>
                 <option value="28" disabled style="color: gray;">Semana 28</option>
@@ -175,23 +175,8 @@
                 <option value="50" disabled style="color: gray;">Semana 50</option>
                 <option value="51" disabled style="color: gray;">Semana 51</option>
                 <option value="52" disabled style="color: gray;">Semana 52</option>
+            </select>
         </div>
-
-        
-        <!--
-        <div class="control-group">
-            <div class="section-title">Exportar Datos</div>
-            <div class="download-options">
-                <select id="formatSelector" class="control-input">
-                    <option value="false">Seleccione que descargar</option> <option value="csv" disabled style="color: gray;">CSV</option>
-                    <option value="geotiff"disabled style="color: gray;">GeoTIFF</option>
-                    <option value="shp" disabled style="color: gray;">Shapefile</option>
-                </select>
-                <button id="downloadButton" class="download-button">Descargar</button>
-            </div>
-        </div>
-        -->
-
 
         <div class="control-group opacity-desktop">
             <div class="section-title">Opacidad del mapa</div>
@@ -222,7 +207,8 @@
                         <h3 class="card-title">Datos del Cultivo</h3>
                         <div class="card-content">
                             <p><strong>Cultivo:</strong> <span id="crop-type"></span></p>
-                            <p><strong>Área Total:</strong> <span id="total-area">13,08 (ha)</span></p>
+                            <p><strong>Área Total:</strong> <span id="total-area">N/D</span></p>
+
                         </div>
                     </div>
                 </div>
@@ -358,6 +344,79 @@
     });
     </script>
     <!-- Selección automática del cultivo según el usuario autenticado -->
+<script>
+// Cargar y mostrar el área total según el cod seleccionado
+async function setAreaTotalPorCod(cod) {
+    try {
+        const res = await fetch('./assets/basa_data/max_min_ha.json');
+        const data = await res.json();
+        if (data[cod] && data[cod].areaHa) {
+            // Redondear a 2 decimales y usar coma como separador decimal
+            const area = Number(data[cod].areaHa).toLocaleString('es-CL', {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('total-area').textContent = area + ' (ha)';
+        } else {
+            document.getElementById('total-area').textContent = 'N/D';
+        }
+    } catch (e) {
+        document.getElementById('total-area').textContent = 'N/D';
+    }
+}
+// Detectar el cod base actual automáticamente y actualizar el área
+// Suponiendo que el cod base se obtiene de la capa activa en el mapa (por ejemplo, del nombre del archivo raster)
+// Aquí un ejemplo básico para conectar con la lógica de Leaflet/GeoRasterLayer
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Intenta detectar el cod base del raster activo
+    function getCodBaseActivo() {
+        // 1. Intenta extraer el cod_xxxx de la variable de usuario activo (localStorage)
+        try {
+            const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+            if (usuarioActivo && usuarioActivo.codigo_base) {
+                return usuarioActivo.codigo_base;
+            }
+        } catch (e) {}
+        // 2. Intenta extraer el cod_xxxx de la ruta tiffLeft si existe
+        if (window.tiffLeft) {
+            const match = window.tiffLeft.match(/(cod_\d+)/i);
+            if (match) {
+                return match[1];
+            }
+        }
+        // 3. Intenta extraer el cod_xxxx de las capas del mapa
+        if (window.map && window.map.eachLayer) {
+            let cod = null;
+            window.map.eachLayer(function(layer) {
+                if (layer && layer.options && layer.options.name) {
+                    const match = layer.options.name.match(/(cod_\d+)/i);
+                    if (match) cod = match[1];
+                }
+            });
+            if (cod) {
+                console.log('[DEBUG] cod detectado desde capa:', cod);
+                return cod;
+            }
+        }
+        return null;
+    }
+    // Actualiza el área al cargar y cada vez que cambie la capa
+    function actualizarAreaTotal() {
+        const cod = getCodBaseActivo();
+        console.log('[DEBUG] cod detectado:', cod); // <-- DEBUG
+        if (cod) setAreaTotalPorCod(cod);
+        else document.getElementById('total-area').textContent = 'N/D';
+    }
+    // Llama al cargar
+    actualizarAreaTotal();
+    // Si tienes un evento cuando cambias de capa, llama también actualizarAreaTotal()
+    // Por ejemplo, si usas un control de capas:
+    if (window.map && window.map.on) {
+        window.map.on('layeradd', actualizarAreaTotal);
+        window.map.on('layerremove', actualizarAreaTotal);
+    }
+});
+// Ejemplo: cambiar el cod aquí por el que corresponda dinámicamente
+// setAreaTotalPorCod('cod_0001');
+// Para producción, llama setAreaTotalPorCod(cod) cuando cambie el usuario/cultivo/capa
+</script>
 </body>
 </html>

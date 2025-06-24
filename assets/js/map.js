@@ -414,12 +414,12 @@ export function initSideBySide(mapInstance, leftLayer, rightLayer) {
             // Etiqueta izquierda (Histórico)
             const leftLabel = document.createElement('div');
             leftLabel.className = 'sbs-label-historico';
-            leftLabel.innerText = 'Histórico';
+            leftLabel.innerText = 'Temporada Histórica';
             leftLabel.setAttribute('style', labelBaseStyle + 'left: 500px; right: auto;');
             // Etiqueta derecha (Actual)
             const rightLabel = document.createElement('div');
             rightLabel.className = 'sbs-label-actual';
-            rightLabel.innerText = 'Actual';
+            rightLabel.innerText = 'Temporada Actual';
             rightLabel.setAttribute('style', labelBaseStyle + 'right: 500px; left: auto;');
             // Agrega al contenedor del mapa
             mapContainer.appendChild(leftLabel);

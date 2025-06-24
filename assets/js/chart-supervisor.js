@@ -120,8 +120,8 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
 
     // --- Eje X/Y y escalas base ---
     let x, y, xAxis, yAxis;
-    const semanas = data.map(d => +d.week);
-    const year = new Date().getFullYear();
+    // --- Eje X igual a chart.js: semanas 1-53, letras de meses ---
+    const year = 2025; // Fijar año igual que chart.js
     const meses = ['E','F','M','A','M','J','J','A','S','O','N','D'];
     function getWeeksInicioMes(year) {
         const weeks = [];
@@ -139,12 +139,21 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     const weeksInicioMes = getWeeksInicioMes(year);
     // --- Eje X ---
     x = d3.scaleLinear()
-        .domain(d3.extent(semanas))
+        .domain([1, 53])
         .range([0, width]);
     xAxis = g.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x).ticks(53).tickFormat(d => d)); // Solo semanas
+        .call(d3.axisBottom(x)
+            .ticks(53)
+            .tickFormat(function(d) {
+                const idx = weeksInicioMes.indexOf(d);
+                if (idx !== -1) {
+                    return meses[idx];
+                }
+                return '';
+            })
+        );
     // --- Título del eje X ---
     g.append('text')
         .attr('class', 'x-axis-label')
@@ -266,24 +275,19 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
                 .attr('class', 'ultimo-valor-circulo');
         }
     });
-    // --- Óvalo vertical en la semana seleccionada ---
+    // --- Línea vertical en la semana seleccionada ---
     const semanaSeleccionada = document.getElementById('weekSelector')?.value;
     if (semanaSeleccionada) {
         const semanaNum = +semanaSeleccionada;
         const cx = x(semanaNum);
-        const cy = height / 2;
-        const rx = 18; // radio horizontal
-        const ry = height / 2; // radio vertical para cubrir todo el gráfico
-        g.append('ellipse')
-            .attr('cx', cx)
-            .attr('cy', cy)
-            .attr('rx', rx)
-            .attr('ry', ry)
-            .attr('fill', '#fff') // relleno blanco
-            .attr('fill-opacity', 0.) // blanco translúcido
+        g.append('line')
+            .attr('x1', cx)
+            .attr('x2', cx)
+            .attr('y1', 0)
+            .attr('y2', height)
             .attr('stroke', '#d32f2f')
             .attr('stroke-width', 3)
-            .attr('class', 'semana-seleccionada-ovalo');
+            .attr('class', 'semana-seleccionada-linea');
     }
     // --- Leyenda SVG en #legend-container ---
     const legendContainer = d3.select('#legend-container');
@@ -293,7 +297,7 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
         // Solo P50, renombrado a "Histórico Local"
         ...(baseStats.includes('P50') ? [{label: 'Histórico Local', color: COLOR_P50, style: 'solid'}] : []),
         ...codBaseFinal.map((c,i) => ({label: mostrarNombreCodBase(c), color: codBasePalette[i % codBasePalette.length], style: 'dash'})),
-        {label: 'Semana seleccionada', color: COLOR_SEMANA, style: 'circle'}
+        {label: 'Semana seleccionada', color: COLOR_SEMANA, style: 'line'}
     ];
     const legendWidth = 220;
     const legendHeight = legendData.length * 24 + 30;
@@ -350,16 +354,55 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
         d3.select('body').append('div').attr('id','d3-tooltip').style('position','absolute').style('pointer-events','none').style('background','#fff').style('border','1px solid #ccc').style('padding','7px 12px').style('border-radius','7px').style('font-size','0.95em').style('box-shadow','0 2px 8px rgba(0,0,0,0.12)').style('opacity',0);
     }
     // --- Tooltip personalizado ---
+    // Función robusta para obtener mes y semana dentro del mes según ISO 8601
+    function getISOWeek(date) {
+        // Copia y ajusta a jueves de la semana ISO
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+        const yearStart = new Date(Date.UTC(d.getFullYear(),0,1));
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+        return weekNo;
+    }
+    function getMonthAndWeekInMonth(year, week) {
+        // Obtener el jueves de la semana ISO (día central)
+        const thursday = new Date(year, 0, 1 + (week - 1) * 7);
+        const day = thursday.getDay();
+        // Ajustar al jueves de la semana
+        thursday.setDate(thursday.getDate() + (4 - (day === 0 ? 7 : day)));
+        let month = thursday.getMonth();
+        // Corrección: si la semana es la 1, forzar enero; si es la última, forzar diciembre
+        if (week === 1) month = 0;
+        if (week >= 52) month = 11;
+        // Calcular la semana ISO del primer día del mes
+        const firstOfMonth = new Date(year, month, 1);
+        const weekOfMonthStart = getISOWeek(firstOfMonth);
+        const weekOfCurrent = getISOWeek(thursday);
+        let weekInMonth = weekOfCurrent - weekOfMonthStart + 1;
+        if (weekInMonth < 1) weekInMonth = 1;
+        return { month, weekInMonth };
+    }
+    const mesesLargos = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     svg.on('mousemove', function(event){
         const [mx] = d3.pointer(event, g.node());
         const weekX = Math.round(x.invert(mx));
         const closest = data.find(d => +d.week === weekX);
+        let month, weekInMonth;
+        // Si el mouse está sobre una semana de inicio de mes, forzar semana 1 de ese mes
+        const idxMes = weeksInicioMes.indexOf(weekX);
+        if (idxMes !== -1) {
+            month = idxMes;
+            weekInMonth = 1;
+        } else {
+            const res = getMonthAndWeekInMonth(year, weekX);
+            month = res.month;
+            weekInMonth = res.weekInMonth;
+        }
         if(closest){
             focusGroup.style('display',null);
             focusGroup.select('.hover-line')
                 .attr('x1',x(weekX)).attr('x2',x(weekX));
             const tooltip = d3.select('#d3-tooltip');
-            let html = `<strong>Semana ${closest.week}</strong><br>`;
+            let html = `<strong>${mesesLargos[month]}, semana ${weekInMonth}</strong><br>`;
             // Solo mostrar P50 (como Histórico Local), no P25 ni P75
             if (baseStats.includes('P50')) {
                 html += `Histórico Local: ${closest['P50']!==undefined?Number(closest['P50']).toFixed(2):'N/A'}<br>`;

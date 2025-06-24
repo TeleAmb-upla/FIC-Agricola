@@ -413,16 +413,42 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                 return Number(val).toFixed(2);
             }
 
+            // --- NUEVO TOOLTIP: MES Y SEMANA DENTRO DEL MES ---
+            function getMonthAndWeekInMonth(year, week) {
+                // Usar el jueves de la semana ISO para determinar el mes
+                const weekStart = weekToDate(year, week);
+                const thursday = new Date(weekStart);
+                thursday.setDate(thursday.getDate() + 3); // jueves
+                const month = thursday.getMonth(); // 0=enero
+                // Calcular la semana 1 de ese mes (semana ISO que contiene el 1er día del mes)
+                const firstDay = new Date(year, month, 1);
+                const temp = new Date(firstDay.getTime());
+                temp.setHours(0, 0, 0, 0);
+                temp.setDate(temp.getDate() + 3 - ((temp.getDay() + 6) % 7));
+                const week1 = new Date(temp.getFullYear(), 0, 4);
+                const weekNumberFirst = 1 + Math.round(((temp.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+                // Si la semana actual es la de inicio de mes, siempre es semana 1
+                if (weeksInicioMes[month] === week) return { month, weekInMonth: 1 };
+                // Si no, calcular la semana dentro del mes
+                const weekInMonth = week - weeksInicioMes[month] + 1;
+                return { month, weekInMonth: weekInMonth > 0 ? weekInMonth : 1 };
+            }
+            const mesesLargos = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
             if (closest) {
                 focusGroup.style("display", null);
                 focusGroup.select(".hover-line")
                     .attr("x1", xScale(weekX))
                     .attr("x2", xScale(weekX));
 
+                // Obtener mes y semana dentro del mes
+                const { month, weekInMonth } = getMonthAndWeekInMonth(year, weekX);
+                const mesNombre = mesesLargos[month];
+
                 tooltipBox
                     .style("opacity", 1)
-.html(`
-    <strong>Semana ${closest.week}</strong><br>
+                    .html(`
+    <strong>${mesNombre}, semana ${weekInMonth}</strong><br>
     Actual: ${closest.current !== null ? formatShort(closest.current) : "N/A"}<br>
     Histórico: ${formatShort(closest.historic)}<br>
   
