@@ -114,7 +114,36 @@ export async function loadGeoRasterLayer(url) {
 // Modifica createRasterLayerWithPalette para aceptar min/max personalizados
 export function createRasterLayerWithPalette(georaster, minRange, maxRange, palette) {
     // Si minRange o maxRange son null o undefined, pinta todo transparente
-    if (minRange == null || maxRange == null || isNaN(minRange) || isNaN(maxRange)) {
+    if (minRange == null || maxRange == null) {
+        return new GeoRasterLayer({
+            georaster,
+            resolution: 256,
+            pixelValuesToColorFn: () => "transparent",
+            opacity: 1
+        });
+    }
+    // Si es paleta alternativa, permitir objeto de umbrales
+    if (palette.length === 3 && typeof minRange === 'object' && minRange !== null && 'min' in minRange) {
+        return new GeoRasterLayer({
+            georaster,
+            resolution: 256,
+            pixelValuesToColorFn: values => {
+                const value = values[0];
+                if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
+                    return "transparent";
+                }
+                const { min, umbral_1, umbral_2, max } = minRange;
+                if (value < min) return `#${palette[0]}`; // Rojo (Malo)
+                if (value < umbral_1) return `#${palette[0]}`; // Rojo (Malo)
+                if (value < umbral_2) return `#${palette[1]}`; // Amarillo (Regular)
+                if (value <= max) return `#${palette[2]}`; // Verde (Bueno)
+                return `#${palette[2]}`; // Verde (Bueno) para valores mayores a max
+            },
+            opacity: 1
+        });
+    }
+    // Paleta normal (gradiente)
+    if (isNaN(minRange) || isNaN(maxRange)) {
         return new GeoRasterLayer({
             georaster,
             resolution: 256,
@@ -130,23 +159,6 @@ export function createRasterLayerWithPalette(georaster, minRange, maxRange, pale
             if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
                 return "transparent";
             }
-            // Si la paleta es la alternativa de 3 colores (Estado)
-            if (palette.length === 3) {
-                if (value < minRange) {
-                    return `#${palette[0]}`; // Rojo (Malo)
-                }
-                if (value > maxRange) {
-                    return `#${palette[2]}`; // Verde (Bueno)
-                }
-                // Rango intermedio: amarillo (Regular)
-                const d = (maxRange - minRange) / 3;
-                const umbral_1 = minRange + d;
-                const umbral_2 = minRange + 2 * d;
-                if (value < umbral_1) return `#${palette[0]}`; // Malo
-                if (value < umbral_2) return `#${palette[1]}`; // Regular
-                return `#${palette[2]}`; // Bueno
-            }
-            // Paleta normal (gradiente)
             const clampedValue = Math.max(minRange, Math.min(value, maxRange));
             const normalized = (clampedValue - minRange) / (maxRange - minRange);
             const index = Math.floor(normalized * (palette.length - 1));
@@ -234,8 +246,6 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
             rangeInput.addEventListener('mouseleave', function(e) {
                 setTimeout(() => { isDraggingSlider = false; }, 10);
             });
-            // Eliminar el cierre automático del popup al soltar el slider
-            // (No cerrar el popup aquí)
         }
     }, 200);
 
@@ -245,72 +255,79 @@ export function enableRasterValuePopup(mapInstance, rasterLayer, layerName, geor
 
         const { lat, lng } = e.latlng;
         try {
-            // Obtiene el valor del raster actual en la ubicación clickeada
-            let value1 = null, value2 = null;
-            let value1Text = "", value2Text = "";
-
-            // Valor actual
-            if (
-                lng >= georaster.xmin && lng <= georaster.xmax &&
-                lat >= georaster.ymin && lat <= georaster.ymax
-            ) {
-                const x = (lng - georaster.xmin) / georaster.pixelWidth;
-                const y = (georaster.ymax - lat) / georaster.pixelHeight;
-                const pixelX = Math.round(x);
-                const pixelY = Math.round(y);
-                if (
-                    georaster.values[0][pixelY] &&
-                    typeof georaster.values[0][pixelY][pixelX] !== "undefined"
-                ) {
-                    value1 = georaster.values[0][pixelY][pixelX];
+            // Determinar el ancho del mapa y la posición del slider
+            const mapContainer = mapInstance.getContainer();
+            const rect = mapContainer.getBoundingClientRect();
+            const slider = document.querySelector('.leaflet-sbs-divider');
+            let isLeft = true; // Por defecto, lado izquierdo (histórico)
+            if (slider) {
+                const sliderRect = slider.getBoundingClientRect();
+                if (e.originalEvent && e.originalEvent.clientX > sliderRect.left) {
+                    isLeft = false;
                 }
-                if (value1 === undefined || value1 === null) {
-                    value1Text = "Sin datos en esta ubicación";
-                } else if (isNaN(value1)) {
-                    value1Text = "Imagen con un 50% de Nubosidad";
-                } else {
-                    value1Text = value1.toFixed(3);
-                }
-            } else {
-                value1Text = "Fuera de los límites del raster";
             }
 
-            // Valor histórico (si existe)
-            if (georaster2 && georaster2.values && georaster2.values[0]) {
+            // Función para obtener valor y coordenadas de un raster en lat/lng
+            function getValueAt(georaster) {
+                if (!georaster) return { value: null, pixelX: null, pixelY: null };
                 if (
-                    lng >= georaster2.xmin && lng <= georaster2.xmax &&
-                    lat >= georaster2.ymin && lat <= georaster2.ymax
+                    lng >= georaster.xmin && lng <= georaster.xmax &&
+                    lat >= georaster.ymin && lat <= georaster.ymax
                 ) {
-                    const x2 = (lng - georaster2.xmin) / georaster2.pixelWidth;
-                    const y2 = (georaster2.ymax - lat) / georaster2.pixelHeight;
-                    const pixelX2 = Math.round(x2);
-                    const pixelY2 = Math.round(y2);
+                    const x = (lng - georaster.xmin) / georaster.pixelWidth;
+                    const y = (georaster.ymax - lat) / georaster.pixelHeight;
+                    const pixelX = Math.round(x);
+                    const pixelY = Math.round(y);
+                    // Validación reforzada para evitar valores fuera de rango
                     if (
-                        georaster2.values[0][pixelY2] &&
-                        typeof georaster2.values[0][pixelY2][pixelX2] !== "undefined"
+                        pixelY < 0 || pixelY >= georaster.values[0].length ||
+                        pixelX < 0 || pixelX >= georaster.values[0][0].length
                     ) {
-                        value2 = georaster2.values[0][pixelY2][pixelX2];
+                        console.warn('[getValueAt] Fuera de rango:', { lat, lng, pixelX, pixelY, xmin: georaster.xmin, xmax: georaster.xmax, ymin: georaster.ymin, ymax: georaster.ymax });
+                        return { value: null, pixelX: null, pixelY: null };
                     }
-                    if (value2 === undefined || value2 === null) {
-                        value2Text = "Sin datos en esta ubicación";
-                    } else if (isNaN(value2)) {
-                        value2Text = "Imagen con un 50% de Nubosidad";
-                    } else {
-                        value2Text = value2.toFixed(3);
+                    let value = null;
+                    if (
+                        georaster.values[0][pixelY] &&
+                        typeof georaster.values[0][pixelY][pixelX] !== "undefined"
+                    ) {
+                        value = georaster.values[0][pixelY][pixelX];
+                        // Validación extra: si el valor es nulo, undefined, NaN o noData, se considera fuera de rango
+                        if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
+                            return { value: null, pixelX: null, pixelY: null };
+                        }
                     }
-                } else {
-                    value2Text = "Fuera de los límites del raster";
+                    return { value, pixelX, pixelY };
                 }
-            } else {
-                value2Text = "No disponible";
+                return { value: null, pixelX: null, pixelY: null };
             }
 
-            // Contenido del popup con ambos valores
+            // Según el lado, el valor principal es de uno u otro raster
+            let main, secondary, labelPrincipal, labelSecundario;
+            if (isLeft) {
+                main = getValueAt(georaster2); // histórico
+                secondary = getValueAt(georaster); // actual
+                labelPrincipal = 'Histórico';
+                labelSecundario = 'Actual';
+            } else {
+                main = getValueAt(georaster); // actual
+                secondary = getValueAt(georaster2); // histórico
+                labelPrincipal = 'Actual';
+                labelSecundario = 'Histórico';
+            }
+
+            function formatValue(val) {
+                if (val === undefined || val === null) return "Sin datos en esta ubicación";
+                if (isNaN(val)) return "Imagen con un 50% de Nubosidad";
+                return Number(val).toFixed(3);
+            }
+
+            // Contenido del popup con ambos valores, mejor alineado
             let content = `
-                <div class="legend-title-container">
-                    <span class="legend-main-title">Valores</span>
-                    <span>Actual: <span class="legend-layer-name">${isNaN(value1Text) ? value1Text : Number(value1Text).toFixed(2)}</span></span>
-                    <span>Histórico: <span class="legend-layer-name">${isNaN(value2Text) ? value2Text : Number(value2Text).toFixed(2)}</span></span>
+                <div class="legend-title-container" style="min-width:120px;">
+                    <div class="legend-main-title" style="font-weight:bold; margin-bottom:2px;">Valores</div>
+                    <div style="margin-bottom:2px;"><span style="color:#888;">${labelPrincipal}:</span> <span class="legend-layer-name" style="font-weight:bold; color:#2c3e50;">${formatValue(main.value)}</span></div>
+                    <div><span style="color:#888;">${labelSecundario}:</span> <span class="legend-layer-name" style="color:#2c3e50;">${formatValue(secondary.value)}</span></div>
                 </div>
             `;
             // Muestra el popup (no se cierra con otro click, solo con doble click)
@@ -689,8 +706,9 @@ export async function updateSideBySideWithPalette(mapInstance, capaSeleccionada,
         const alt = getAltPaletteMinMax(georasterActual, georasterHistorico);
         minRange = alt;
         maxRange = alt; // Se pasa el objeto completo para la leyenda
-        mapInstance.rasterLayerLeft = createRasterLayerWithPalette(georasterHistorico, alt.min, alt.max, palette);
-        mapInstance.rasterLayerRight = createRasterLayerWithPalette(georasterActual, alt.min, alt.max, palette);
+        // Pasa el objeto de umbrales completo a la función de pintado
+        mapInstance.rasterLayerLeft = createRasterLayerWithPalette(georasterHistorico, alt, alt, palette);
+        mapInstance.rasterLayerRight = createRasterLayerWithPalette(georasterActual, alt, alt, palette);
     } else {
         // Paleta normal: usar min/max del JSON
         try {
