@@ -107,7 +107,7 @@ function dibujarGraficoD3(data, codigos, baseStats, codBaseFinal) {
     // --- Dimensiones y márgenes ---
     const contenedor = d3.select('#d3-chart');
     const anchoContenedor = contenedor.node().getBoundingClientRect().width;
-    const altoViewBox = 265;
+    const altoViewBox = 245;
     const margin = {top: 20, right: 20, bottom: 50, left: 70};
     const width = anchoContenedor - margin.left - margin.right;
     const height = altoViewBox - margin.top - margin.bottom;

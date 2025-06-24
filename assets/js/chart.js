@@ -4,7 +4,7 @@ import { obtenerEscalaColor } from './color-ranges-chart.js';
 
 // Variables globales
 let svg, xScale, yScale, lineHistoric, lineCurrent;
-let altoViewBox = 295;
+let altoViewBox = 265;
 
 // Función para aplicar gradiente
 function aplicarGradiente(svg, datos, escalaColor, idGradiente, valorAccessor) {
@@ -419,10 +419,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                 const weekStart = weekToDate(year, week);
                 const thursday = new Date(weekStart);
                 thursday.setDate(thursday.getDate() + 3); // jueves
-                let month = thursday.getMonth(); // 0=enero
-                // Corrección: si la semana es la 1, forzar enero; si es la última, forzar diciembre
-                if (week === 1) month = 0;
-                if (week >= 52) month = 11;
+                const month = thursday.getMonth(); // 0=enero
                 // Calcular la semana 1 de ese mes (semana ISO que contiene el 1er día del mes)
                 const firstDay = new Date(year, month, 1);
                 const temp = new Date(firstDay.getTime());
