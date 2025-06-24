@@ -568,7 +568,7 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
         const palette = getActivePalette(capa);
         // Paleta alternativa: muestra los umbrales especiales
         if (palette.length === 3 && typeof minRange === 'object' && minRange !== null && 'min' in minRange) {
-            const { min, umbral_min, step, umbral_max, max: maxAlt } = minRange;
+            const { min, umbral_1, umbral_2, step, max: maxAlt } = minRange;
             div.innerHTML += `
                 <div class="legend-scale-container" style="display:flex;flex-direction:column;align-items:center;">
                     <div style="display:flex;flex-direction:row;gap:2px;margin-bottom:4px;">
@@ -578,8 +578,8 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
                     </div>
                     <div class="legend-values" style="font-size:0.85em;display:flex;flex-direction:column;align-items:center;width:100%;">
                         <span>Malo: <span style="font-size:0.95em;">${(min ?? 'N/A').toFixed ? min.toFixed(2) : min}</span></span>
-                        <span>Regular: <span style="font-size:0.95em;">${(step ?? 'N/A').toFixed ? step.toFixed(2) : step}</span></span>
-                        <span>Bueno: <span style="font-size:0.95em;">${(maxAlt ?? 'N/A').toFixed ? maxAlt.toFixed(2) : maxAlt}</span></span>
+                        <span>Regular: <span style="font-size:0.95em;">${(umbral_1 ?? 'N/A').toFixed ? umbral_1.toFixed(2) : umbral_1}</span></span>
+                        <span>Bueno: <span style="font-size:0.95em;">${(umbral_2 ?? 'N/A').toFixed ? umbral_2.toFixed(2) : umbral_2}</span></span>
                     </div>
                 </div>
             `;
