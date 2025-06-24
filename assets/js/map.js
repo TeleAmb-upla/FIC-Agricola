@@ -130,6 +130,23 @@ export function createRasterLayerWithPalette(georaster, minRange, maxRange, pale
             if (value === null || value === undefined || isNaN(value) || value === georaster.noDataValue) {
                 return "transparent";
             }
+            // Si la paleta es la alternativa de 3 colores (Estado)
+            if (palette.length === 3) {
+                if (value < minRange) {
+                    return `#${palette[0]}`; // Rojo (Malo)
+                }
+                if (value > maxRange) {
+                    return `#${palette[2]}`; // Verde (Bueno)
+                }
+                // Rango intermedio: amarillo (Regular)
+                const d = (maxRange - minRange) / 3;
+                const umbral_1 = minRange + d;
+                const umbral_2 = minRange + 2 * d;
+                if (value < umbral_1) return `#${palette[0]}`; // Malo
+                if (value < umbral_2) return `#${palette[1]}`; // Regular
+                return `#${palette[2]}`; // Bueno
+            }
+            // Paleta normal (gradiente)
             const clampedValue = Math.max(minRange, Math.min(value, maxRange));
             const normalized = (clampedValue - minRange) / (maxRange - minRange);
             const index = Math.floor(normalized * (palette.length - 1));
