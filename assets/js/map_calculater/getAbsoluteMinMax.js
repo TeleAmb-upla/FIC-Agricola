@@ -47,3 +47,6 @@ export function getAltPaletteMinMax(georasterHistorico) {
         d           // Tamaño de cada tramo
     };
 }
+
+// Al final del archivo, expón la función al global para uso en otros scripts
+window.getAltPaletteMinMax = getAltPaletteMinMax;

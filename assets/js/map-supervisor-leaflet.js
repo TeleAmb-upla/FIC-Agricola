@@ -190,37 +190,32 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             const bounds = calculateBounds(raster);
             allBounds.push(bounds);
-            // --- Coloreado por mediana y paleta de colorslegend ---
+            // --- Coloreado por umbrales de getAltPaletteMinMax ---
             const index = capaSeleccionada.toUpperCase();
             const legendColors = colorslegend[index];
-            // Calcular la mediana de los valores del ráster
-            let values = [];
-            if (raster && raster.readRasters) {
-                // Extraer todos los valores válidos (no nulos, no NaN)
-                const data = await raster.readRasters();
-                for (let i = 0; i < data[0].length; i++) {
-                    const v = data[0][i];
-                    if (v !== null && !isNaN(v)) values.push(v);
-                }
+            // Asegúrate de que la función getAltPaletteMinMax esté disponible globalmente
+            // Si no existe, muestra un error claro en consola
+            let min = null, umbral_1 = null, umbral_2 = null, max = null;
+            if (typeof window.getAltPaletteMinMax === 'function') {
+                ({ min, umbral_1, umbral_2, max } = window.getAltPaletteMinMax(raster));
+            } else {
+                console.error('getAltPaletteMinMax no está definida en window. Verifica que el script getAbsoluteMinMax.js se cargue antes que este archivo.');
+                // Fallback: usa min/max del raster si existe
+                min = raster.mins ? raster.mins[0] : raster.min;
+                max = raster.maxs ? raster.maxs[0] : raster.max;
+                const d = (max - min) / 3;
+                umbral_1 = min + d;
+                umbral_2 = min + 2 * d;
             }
-            let mediana = 0;
-            if (values.length > 0) {
-                values.sort((a, b) => a - b);
-                const mid = Math.floor(values.length / 2);
-                mediana = values.length % 2 !== 0 ? values[mid] : (values[mid - 1] + values[mid]) / 2;
-            }
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            // Definir función de color por rango: [min, mediana, max]
             function pixelValuesToColorFn(values) {
                 const v = values[0];
                 if (v === null || isNaN(v) || !legendColors) return null;
-                if (v < mediana) {
-                    // Bajo
-                    return v < (min + (mediana - min) / 2) ? legendColors[0] : legendColors[1];
+                if (v < umbral_1) {
+                    return legendColors[0]; // Bajo
+                } else if (v < umbral_2) {
+                    return legendColors[1]; // Medio
                 } else {
-                    // Alto
-                    return v < (mediana + (max - mediana) / 2) ? legendColors[1] : legendColors[2];
+                    return legendColors[2]; // Alto
                 }
             }
             const layer = new window.GeoRasterLayer({
@@ -244,7 +239,7 @@ function addAllRastersToSupervisorMap(map, usuario, capaSeleccionada, semanaSele
             }
             safeAddLayer(map, layer);
             // Mostrar leyenda dinámica después de agregar la capa
-            renderSupervisorLegend(map, capaSeleccionada, min, mediana, max);
+            renderSupervisorLegend(map, capaSeleccionada, min, max);
             // --- Borde brillante y popup de información ---
             const codNorm = (ruta.codigo_base || '').trim().toLowerCase();
             const bordeColor = (window.codBaseColors && window.codBaseColors[codNorm]) ? window.codBaseColors[codNorm] : '#ff0';
@@ -472,16 +467,22 @@ function fitAllBounds(map, boundsArray) {
 // Función para agregar un borde resaltado a un ráster
 function addRasterHighlight(map, bounds, color = '#ff0') {
     if (map && map.getContainer && map.getContainer() && document.body.contains(map.getContainer())) {
+        // Por defecto: invisible
         const highlight = L.rectangle(bounds, {
             color: color, // Color personalizado
-            weight: 4,
-            dashArray: '10,10',
-            opacity: 1,
+            weight: 0,    // Invisible
+            opacity: 0,   // Invisible
             fillOpacity: 0,
             className: 'raster-highlight'
         }).addTo(map);
-        // Eliminar parpadeo: dejar el color fijo
-        // (No usar setInterval para alternar color)
+        // Método para activar el borde
+        highlight.setVisible = function(visible) {
+            if (visible) {
+                this.setStyle({ weight: 4, opacity: 1, color });
+            } else {
+                this.setStyle({ weight: 0, opacity: 0 });
+            }
+        };
         return highlight;
     }
     return null;
