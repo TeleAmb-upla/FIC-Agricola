@@ -55,9 +55,9 @@ const colorThresholds = {
 
 const colorslegend = {
   NDVI: ['#ff0000', '#ffff00', '#00a000'],
-    NDMI: ['#d73027', '#fee090', '#4575b4'],
-    EVI: ['#ffffff', '#86c45d', '#0a5c32'],
-    MSAVI: ['#8c510a', '#f6e8c3', '#01665e']
+    NDMI: ['#ff0000', '#ffff00', '#00a000'],
+    EVI: ['#ff0000', '#ffff00', '#00a000'],
+    MSAVI:['#ff0000', '#ffff00', '#00a000']
 };
 
 

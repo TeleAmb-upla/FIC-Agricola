@@ -71,15 +71,15 @@ const colorParams = {
 // Nueva paleta de colores alternativa (paleta corta) "ff0000", "ffff00", "006400"
 const colorParamsAlt = {
     NDVI: { palette: ['ff0000', 'ffff00', '00a000'] },
-    EVI: { palette: ["ff0000", "ffff00", "006400"] },
-    SAVI: { palette: ["8b4513", "f4b090", "399565"] },
-    GNDVI: { palette: ["ff0000", "ffff00", "006400"] },
-    LAI: { palette: ["ffffff", "64c364", "005c00"] },
-    NDMI: { palette: ["8b0000", "ffffff", "00008b"] },
-    GCI: { palette: ["b2182b", "f7f7f7", "2166ac"] },
-    MSAVI: { palette: ["8c510a", "f6e8c3", "01665e"] },
-    NDWI: { palette: ["d73027", "fee090", "4575b4"] },
-    MNDWI: { palette: ["a50026", "fee08b", "006837"] }
+    EVI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    SAVI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    GNDVI:{ palette: ['ff0000', 'ffff00', '00a000'] },
+    LAI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    NDMI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    GCI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    MSAVI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    NDWI: { palette: ['ff0000', 'ffff00', '00a000'] },
+    MNDWI: { palette: ['ff0000', 'ffff00', '00a000'] }
 };
 
 // Devuelve los parámetros de color para la capa seleccionada
@@ -587,18 +587,18 @@ export function renderDualLegends(mapInstance, capaSeleccionada, georasterActual
         if (palette.length === 3 && typeof minRange === 'object' && minRange !== null && 'min' in minRange) {
             const { min, umbral_1, umbral_2, step, max: maxAlt } = minRange;
             div.innerHTML += `
-                <div class="legend-scale-container" style="display:flex;flex-direction:column;align-items:center;">
-                    <div style="display:flex;flex-direction:row;gap:2px;margin-bottom:4px;">
-                        <div style="width:32px;height:18px;background:#${palette[0]};border:1px solid #aaa;"></div>
-                        <div style="width:32px;height:18px;background:#${palette[1]};border:1px solid #aaa;"></div>
-                        <div style="width:32px;height:18px;background:#${palette[2]};border:1px solid #aaa;"></div>
-                    </div>
-                    <div class="legend-values" style="font-size:0.85em;display:flex;flex-direction:column;align-items:center;width:100%;">
-                        <span>Malo: <span style="font-size:0.95em;">${(min ?? 'N/A').toFixed ? min.toFixed(2) : min}</span></span>
-                        <span>Regular: <span style="font-size:0.95em;">${(umbral_1 ?? 'N/A').toFixed ? umbral_1.toFixed(2) : umbral_1}</span></span>
-                        <span>Bueno: <span style="font-size:0.95em;">${(umbral_2 ?? 'N/A').toFixed ? umbral_2.toFixed(2) : umbral_2}</span></span>
-                    </div>
-                </div>
+<div class="legend-scale-container" style="display:flex;flex-direction:column;align-items:center;">
+    <div style="display:flex;flex-direction:row;gap:2px;margin-bottom:4px;">
+        <div style="width:32px;height:18px;background:#${palette[0]};border:1px solid #aaa;"></div>
+        <div style="width:32px;height:18px;background:#${palette[1]};border:1px solid #aaa;"></div>
+        <div style="width:32px;height:18px;background:#${palette[2]};border:1px solid #aaa;"></div>
+    </div>
+    <div class="legend-values" style="font-size:0.85em;display:flex;flex-direction:row;justify-content:center;gap:6px;width:100%;">
+        <span>Malo</span>
+        <span>Regular</span>
+        <span>Bueno</span>
+    </div>
+</div>
             `;
             return;
         }

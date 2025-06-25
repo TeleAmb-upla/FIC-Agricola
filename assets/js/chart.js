@@ -230,7 +230,7 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
              { label: "Último Valor", color: COLOR_CURRENT, style: "circle" },
        //   { label: "Último Año", color: COLOR_LAST, style: "solid" },
       //    { label: "IQR (P25-P75)", color: COLOR_IQR, style: "area" },
-          { label: "Semana", color: "#ff7f0e", style: "circle" }
+          { label: "Semana", color: "#ff7f0e", style: "circle-borde" }
          //   
         ];
 
@@ -268,6 +268,14 @@ export function cargarDatosEnGrafico(rutaCSV, capaSeleccionada, cultivo, indice,
                     .attr("height", 8)
                     .attr("fill", item.color)
                     .attr("opacity", 0.3);
+            } else if (item.style === "circle-borde") {
+                entry.append("circle")
+                    .attr("cx", 40)
+                    .attr("cy", 6)
+                    .attr("r", 6)
+                    .attr("fill", "#fff")
+                    .attr("stroke", item.color)
+                    .attr("stroke-width", 2);
             } else if (item.style === "circle") {
                 entry.append("circle")
                     .attr("cx", 40)
