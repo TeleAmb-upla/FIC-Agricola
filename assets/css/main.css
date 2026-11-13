@@ -2500,14 +2500,14 @@ section,
   width: max-content;
 }
 
-.swiper-wrapper {
+.clients-slider .swiper-wrapper {
   display: flex !important;
   gap: 15px; /* Reducido el espacio entre logos */
   padding: 10px 0;
   margin: 0 -8px; /* Compensa el espacio negativo */
 }
 
-.swiper-slide {
+.clients-slider .swiper-slide {
   flex-shrink: 0;
   width: auto !important;
   padding: 0 8px; /* Espaciado interno reducido */
@@ -2549,12 +2549,12 @@ section,
     height: 150px;
   }
   
-  .swiper-wrapper {
+  .clients-slider .swiper-wrapper {
     gap: 10px;
     margin: 0 -5px;
   }
   
-  .swiper-slide {
+  .clients-slider .swiper-slide {
     padding: 0 5px;
   }
   

@@ -4,47 +4,39 @@
 <head>
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9EDSYTWZCC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EDSYTWZCC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-9EDSYTWZCC');
-</script>
+    gtag('config', 'G-9EDSYTWZCC');
+  </script>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Monitoreo Agricola</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>Monitoreo Agrícola | Plataforma de Monitoreo Satelital Agrícola</title>
+  <meta name="description" content="Plataforma de Monitoreo Satelital Agrícola para la Adaptación al Cambio Climático, Región de Valparaíso. Iniciativa FIC-R 2023 ejecutada por TeleAmb, Universidad de Playa Ancha.">
+  <meta name="keywords" content="monitoreo satelital, agricultura, índices espectrales, NDVI, Región de Valparaíso, TeleAmb">
 
   <!-- Favicons -->
   <link href="assets/img/satellite.png" rel="icon">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
 
-   <!-- Swiper CSS -->
-<link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
-/>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-
-  <!-- Main CSS File -->
+  <!-- Main CSS Files -->
   <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/site.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: Active
@@ -60,31 +52,22 @@ href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-<a href="index.html" class="logo-superior" aria-label="Logos institucionales">
-  <!-- Logo de 150x150px -->
-  <div class="superior-container" role="img" aria-label="Logo TeleAmb">
-    <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo TeleAmb" />
-  </div>
-
-  <!-- Texto ajustado a 150px -->
-  <div class="superior-text">
-    <p>
-      Plataforma de <strong>Monitoreo Satelital Agrícola</strong>
-    </p>
-    <p>
-      para la Adaptación al <strong>Cambio Climático</strong>
-    </p>
-  </div>
-</a>
-
-
+      <a href="index.html" class="logo-superior" aria-label="Plataforma de Monitoreo Satelital Agrícola - Inicio">
+        <div class="superior-container" role="img" aria-label="Logo TeleAmb">
+          <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo TeleAmb">
+        </div>
+        <div class="superior-text">
+          <p>Plataforma de <strong>Monitoreo Satelital Agrícola</strong></p>
+          <p>para la Adaptación al <strong>Cambio Climático</strong></p>
+        </div>
+      </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="./index.html" class="active">Inicio</a></li>
+          <li><a href="./metodologia.html">Metodología</a></li>
           <li><a href="./team.html">Equipo</a></li>
-           <li><a href="./plataforma.html">Plataforma</a></li>
-          
+          <li><a href="./plataforma.html" class="nav-cta">Plataforma</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -92,161 +75,232 @@ href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
     </div>
   </header>
 
-
   <main class="main">
 
-    <!-- About Section style="padding-left: 25%;"-->
-    <section id="about" class="about section about-custom">
-
+    <!-- Hero / Presentación -->
+    <section id="about" class="hero">
       <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-lg-7 mb-5 mb-lg-0 order-lg-2" data-aos="fade-up" data-aos-delay="400">
-            <div class="swiper init-swiper">
-              <script type="application/json" class="swiper-config">
-                {
-                  "loop": true,
-                  "speed": 600,
-                  "autoplay": {
-                    "delay": 5000
-                  },
-                  "slidesPerView": "auto",
-                  "pagination": {
-                    "el": ".swiper-pagination",
-                    "type": "bullets",
-                    "clickable": true
-                  },
-                  "breakpoints": {
-                    "320": {
-                      "slidesPerView": 1,
-                      "spaceBetween": 40
-                    },
-                    "1200": {
-                      "slidesPerView": 1,
-                      "spaceBetween": 1
-                    }
-                  }
-                }
-              </script>
-              <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                  <img src="./assets/img/img_prueba.png" alt="Image" class="img-portada" >
-                </div>
-               </div>
-              <div class="swiper-pagination"></div>
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6" data-aos="fade-right">
+            <span class="eyebrow"><i class="bi bi-geo-alt-fill"></i> Región de Valparaíso</span>
+            <h1>Plataforma de <span>Monitoreo Satelital Agrícola</span> para la Adaptación al Cambio Climático</h1>
+            <p>
+              La <strong>Plataforma de Monitoreo Satelital Agrícola para la Adaptación al Cambio Climático</strong> pone la tecnología satelital al servicio de agricultores y asesores agrícolas de la Región de Valparaíso. A través de indicadores espectrales, gráficos y mapas, permite conocer el comportamiento de los cultivos, observar su evolución semanal y reconocer diferencias dentro de cada predio.
+            </p>
+            <p>
+              Compara los cultivos con su propio historial y con otros similares de la misma zona, identifica sectores que requieren atención y utiliza información objetiva para orientar el seguimiento y las visitas a terreno. Siendo una herramienta de apoyo para avanzar hacia una agricultura más informada, eficiente y preparada frente al cambio climático.
+            </p>
+            <p>
+              Esta plataforma es el resultado de una iniciativa financiada con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso (FIC-R 2023) y ejecutada por el Laboratorio de Teledetección Ambiental (TeleAmb), perteneciente a la Facultad de Ciencias Naturales y Exactas de la Universidad de Playa Ancha.
+            </p>
+            <div class="hero-actions">
+              <a href="./metodologia.html" class="btn-sx primary">Conocer la metodología <i class="bi bi-arrow-right"></i></a>
+              <a href="./plataforma.html" class="btn-sx ghost">Ingresar a la plataforma <i class="bi bi-box-arrow-in-right"></i></a>
             </div>
           </div>
-          <div class="col-lg-4 order-lg-1"  style="font-family: Arial, sans-serif; text-align: justify;">
-            <p data-aos="fade-up">
-              La <strong>Plataforma de Monitoreo Satelital Agrícola para la Adaptación al Cambio Climático</strong> es una herramienta innovadora diseñada para mejorar la gestión agrícola mediante el uso de imágenes satelitales. La plataforma proporciona información sobre el estado de los cultivos en la Región de Valparaíso, permitiendo a agricultores, consultores y organizaciones monitorear sus cultivos, optimizar el uso del agua, reducir pérdidas por estrés hídrico, aumentar la eficiencia productiva entre otros. Con perfiles de usuario individuales y grupales, ofrece imágenes semanales para una evaluación constante de los cultivos.
-            </p>
-            <p data-aos="fade-up">
-              La propuesta es una iniciativa con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso año 2023 (FIC-R 2023) y ejecutada por el Laboratorio de Teledetección Ambiental (TeleAmb) de la Facultad de Ciencias Naturales y Exactas de la Universidad de Playa Ancha e integrante del HUB Ambiental.
-            </p>
-            
+
+          <div class="col-lg-6" data-aos="fade-left" data-aos-delay="150">
+            <div class="hero-media">
+              <img src="./assets/img/hero_terreno.jpg" alt="Vista aérea de un viñedo en la Región de Valparaíso, capturada con dron" width="595" height="380" fetchpriority="high" decoding="async">
+              <div class="hero-chip" aria-hidden="true">
+                <i class="bi bi-calendar-week"></i>
+                <div><strong>Imágenes semanales</strong><span>Seguimiento continuo</span></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section><!-- /About Section -->
+    </section><!-- /Hero -->
 
+    <!-- El proyecto en números -->
+    <section id="numeros" class="sx-section sky">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up">
+          <span class="eyebrow"><i class="bi bi-bar-chart-line"></i> Resultados</span>
+          <h2>El proyecto en números</h2>
+          <p>Haz clic en cada cuadro para conocer más detalles del monitoreo.</p>
+        </div>
 
-    <script>
-      // Activar tooltips de Bootstrap
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-      })
-      </script>
-    
- <!-- ======= Instituciones Section ======= -->
-  <!-- ======= Clients Section ======= -->
-  <section id="clients" class="clients">
-    <div class="container" >
-         <div class="" style="text-align: center;">
-            <h2>Instituciones</h2>
-          
+        <div class="row g-4 justify-content-center">
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="50">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalCultivos">
+              <span class="stat-icon"><i class="bi bi-flower1"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="8" data-purecounter-duration="1.6">0</span></div>
+              <div class="stat-label">Cultivos monitoreados</div>
+              <span class="stat-more">Ver lista de cultivos <i class="bi bi-arrow-right"></i></span>
+            </button>
           </div>
 
-      <div class="clients-slider swiper">
-        <div class="swiper-wrapper align-items-center">
-          <div class="swiper-slide"> <a title="UPLA" href="http://www.upla.cl"><img src="assets/img/Upla_Inst.png" class="img-fluid" alt="UPLA" ></a></div>
-          <div class="swiper-slide"> <a title="TELEAMB" href="http://www.teleamb.cl"><img src="assets/img/TeleAmb-vec.png" class="img-fluid" alt="TELEAMB"></div>
-            <div class="swiper-slide"> <a title="GORE" href="https://www.gobiernovalparaiso.cl/"><img src="assets/img/logo_regional.png" class="img-fluid" alt="GORE" ></a></div>
-            <div class="swiper-slide"> <a title="SEREMI" href="https://minagri.gob.cl/region-de-valparaiso/"><img src="assets/img/seremi_agricultira_v.png" class="img-fluid" alt="Seremi" ></a></div>
-            <div class="swiper-slide"> <a title="ERI" href="#"><img src="assets/img/logo_eri.jpg" class="img-fluid" alt="ERI"></a></div>
-            <div class="swiper-slider"> <a title= "CORE" href=#><img src= "assets/img/logo_core.png"class="img-fluid" alt="CORE"></a></div>
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalAgricultores">
+              <span class="stat-icon"><i class="bi bi-people"></i></span>
+              <!-- Reemplazar XXX por la cifra definitiva de agricultores participantes -->
+              <div class="stat-value" id="statAgricultores">XXX</div>
+              <div class="stat-label">Agricultores participantes</div>
+              <span class="stat-more">Ver imágenes de monitoreo <i class="bi bi-arrow-right"></i></span>
+            </button>
           </div>
+
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalSuperficie">
+              <span class="stat-icon"><i class="bi bi-bounding-box-circles"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1.8">0</span><small>ha</small></div>
+              <div class="stat-label">Superficie monitoreada</div>
+              <span class="stat-more">Ver mapa de la zona <i class="bi bi-arrow-right"></i></span>
+            </button>
+          </div>
+        </div>
       </div>
+    </section><!-- /Números -->
 
-      <p style="text-align:center; font-size: 0.9em; margin-top: 10px;">
-    Esta iniciativa ha sido financiada con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso año 2023 "Código BIP N° 40060933"
-</p>
+    <!-- Instituciones -->
+    <section id="clients" class="sx-section partners">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up" style="margin-bottom:28px">
+          <h2>Instituciones</h2>
+        </div>
 
-    </div>
-</section><!-- End Clients Section -->
+        <div class="partners-grid" data-aos="fade-up" data-aos-delay="100">
+          <a title="UPLA" href="http://www.upla.cl" target="_blank" rel="noopener"><img src="assets/img/Upla_Inst.png" alt="Universidad de Playa Ancha" loading="lazy" decoding="async"></a>
+          <a title="TELEAMB" href="http://www.teleamb.cl" target="_blank" rel="noopener"><img src="assets/img/TeleAmb-vec.png" alt="TeleAmb" loading="lazy" decoding="async"></a>
+          <a title="GORE" href="https://www.gobiernovalparaiso.cl/" target="_blank" rel="noopener"><img src="assets/img/logo_regional.png" alt="Gobierno Regional de Valparaíso" loading="lazy" decoding="async"></a>
+          <a title="SEREMI" href="https://minagri.gob.cl/region-de-valparaiso/" target="_blank" rel="noopener"><img src="assets/img/seremi_agricultira_v.png" alt="Seremi de Agricultura" loading="lazy" decoding="async"></a>
+          <a title="ERI" href="#"><img src="assets/img/logo_eri.jpg" alt="ERI" loading="lazy" decoding="async"></a>
+          <a title="CORE" href="#"><img src="assets/img/logo_core.png" alt="CORE" loading="lazy" decoding="async"></a>
+        </div>
 
-
-
-
+        <p class="funding-note">
+          Esta iniciativa ha sido financiada con aportes del Fondo de Innovación para la Competitividad del Gobierno Regional de Valparaíso año 2023 "Código BIP N° 40060933"
+        </p>
+      </div>
+    </section><!-- /Instituciones -->
 
   </main>
+
+  <!-- Modal: cultivos -->
+  <div class="modal fade" id="modalCultivos" tabindex="-1" aria-labelledby="modalCultivosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-flower1"></i></span>
+          <div>
+            <h3 id="modalCultivosLabel">Cultivos monitoreados</h3>
+            <p>8 cultivos presentes en la plataforma</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <div class="crop-grid" id="cropGrid">
+            <!-- Se completa desde assets/basa_data/cultivo.json (con respaldo local) -->
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Palto</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Limonero</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Nogal</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Uva de mesa</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Durazno tipo conservero</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Naranjo</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Uva vinífera</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Manzano</div>
+          </div>
+          <p class="modal-note">Los cultivos se monitorean semanalmente a nivel de agricultor, predio y cuartel.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: agricultores -->
+  <div class="modal fade" id="modalAgricultores" tabindex="-1" aria-labelledby="modalAgricultoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-people"></i></span>
+          <div>
+            <h3 id="modalAgricultoresLabel">Agricultores participantes</h3>
+            <p>Imágenes de los monitoreos</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <!-- Reemplazar cada .gallery-ph por: <a class="glightbox" href="ruta.jpg"><img src="ruta.jpg" alt="..."></a> -->
+          <div class="gallery-grid" id="farmerGallery">
+            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
+            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
+            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
+          </div>
+          <p class="modal-note">Aquí se mostrarán las imágenes de seguimiento de los predios de los agricultores participantes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: superficie -->
+  <div class="modal fade" id="modalSuperficie" tabindex="-1" aria-labelledby="modalSuperficieLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-bounding-box-circles"></i></span>
+          <div>
+            <h3 id="modalSuperficieLabel">Superficie monitoreada</h3>
+            <p>300 hectáreas en la Región de Valparaíso</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <div id="mapSuperficie" role="img" aria-label="Mapa de las comunas con superficie monitoreada"></div>
+          <p class="modal-note">Ubicaciones referenciales de las comunas donde se encuentran los predios monitoreados: Petorca, La Ligua, Los Andes, Quillota, La Calera y Casablanca.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer id="footer" class="footer light-background">
     <div class="container">
       <div class="row g-4">
         <div class="col-md-6 col-lg-3 mb-3 mb-md-0">
           <div class="widget">
-
             <div class="image-container-bottom">
-              <img src="assets/img/TeleAmb.png" alt="Nuestro equipo" class="stacked-image-top">
+              <img src="assets/img/TeleAmb.png" alt="TeleAmb - Universidad de Playa Ancha" class="stacked-image-top" loading="lazy">
             </div>
           </div>
         </div>
         <div class="col-md-6 col-lg-3 ps-lg-5 mb-3 mb-md-0">
           <div class="widget">
             <h3 class="widget-heading">Navegación</h3>
-            <ul class="list-unstyled float-start me-5">
+            <ul class="list-unstyled">
               <li><a href="./index.html">Inicio</a></li>
-              <li><a href="./plataforma.html">Plataforma</a></li>
+              <li><a href="./metodologia.html">Metodología</a></li>
               <li><a href="./team.html">Equipo</a></li>
+              <li><a href="./plataforma.html">Plataforma</a></li>
             </ul>
           </div>
         </div>
-        <div class="col-md-6 col-lg-3 pl-lg-5">
+        <div class="col-md-6 col-lg-4 pl-lg-5">
           <div class="widget">
             <h3 class="widget-heading">Contactos</h3>
             <ul class="list-unstyled footer-blog-entry">
               <li>
                 <span class="d-block date">Ubicación</span>
-                <p>Subida Leopoldo Carvallo 270,
-                  2360004 Playa Ancha
-                  Valparaíso, Chile<p>
+                <p>Subida Leopoldo Carvallo 270, 2360004 Playa Ancha, Valparaíso, Chile</p>
               </li>
-              <li>
+              <li class="mail">
                 <span class="d-block date">Contacto</span>
-                <p>
-                  <a href="mailto:Teleamb@upla.cl" style="color: #0066cc; text-decoration: none;">
-                    teleamb@upla.cl
-                </a>
-              </p>
+                <p><a href="mailto:teleamb@upla.cl">teleamb@upla.cl</a></p>
               </li>
             </ul>
           </div>
         </div>
-
       </div>
 
       <div class="copyright d-flex flex-column flex-md-row align-items-center justify-content-md-between">
         <p>© <span>Copyright</span> <strong class="px-1 sitename">TeleAmb.</strong> <span>Todos los derechos reservados</span></p>
         <div class="credits">
-          Diseñado por <a>TERRAVIEW </a>
-             </div>
-    </div>
-
+          Diseñado por <a>TERRAVIEW</a>
+        </div>
+      </div>
     </div>
   </footer>
 
   <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center" aria-label="Volver arriba"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Preloader -->
   <div id="preloader"></div>
@@ -255,14 +309,15 @@ href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-  <!-- Main JS File -->
+  <!-- Main JS Files -->
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/site.js"></script>
 
 </body>
 

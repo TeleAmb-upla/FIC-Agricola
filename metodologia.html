@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EDSYTWZCC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-9EDSYTWZCC');
+  </script>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Metodología | Monitoreo Agrícola</title>
+  <meta name="description" content="Metodología de la Plataforma de Monitoreo Satelital Agrícola: proceso, índices espectrales y cómo interpretar la información.">
+  <meta name="keywords" content="metodología, índices espectrales, NDVI, EVI, NDMI, Sentinel-2, monitoreo agrícola">
+
+  <!-- Favicons -->
+  <link href="assets/img/satellite.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS Files -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/css/site.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Active
+  * Template URL: https://bootstrapmade.com/active-bootstrap-website-template/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="methodology-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo-superior" aria-label="Plataforma de Monitoreo Satelital Agrícola - Inicio">
+        <div class="superior-container" role="img" aria-label="Logo TeleAmb">
+          <img src="./assets/img/Logo_FIC_Teleamb.png" alt="Logo TeleAmb">
+        </div>
+        <div class="superior-text">
+          <p>Plataforma de <strong>Monitoreo Satelital Agrícola</strong></p>
+          <p>para la Adaptación al <strong>Cambio Climático</strong></p>
+        </div>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="./index.html">Inicio</a></li>
+          <li><a href="./metodologia.html" class="active">Metodología</a></li>
+          <li><a href="./team.html">Equipo</a></li>
+          <li><a href="./plataforma.html" class="nav-cta">Plataforma</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Encabezado -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10" data-aos="fade-up">
+            <span class="eyebrow"><i class="bi bi-diagram-3"></i> Cómo trabajamos</span>
+            <h1>Nuestra Metodología</h1>
+            <p>
+              La Plataforma de Monitoreo Satelital Agrícola para la Adaptación al Cambio Climático integra imágenes satelitales, indicadores espectrales y análisis espacial y temporal para proporcionar información periódica sobre los cultivos de la Región de Valparaíso.
+            </p>
+            <p style="margin-top:14px">
+              Su metodología organiza los datos en tres niveles —agricultor, predio y cuartel—, analiza la evolución semanal de la vegetación y permite comparar sus resultados con referencias históricas o con cuarteles similares de la misma zona y cultivo.
+            </p>
+            <div class="levels" aria-label="Niveles de organización de los datos">
+              <span class="level"><i class="bi bi-person-badge"></i> Agricultor</span>
+              <i class="bi bi-chevron-right level-sep"></i>
+              <span class="level"><i class="bi bi-map"></i> Predio</span>
+              <i class="bi bi-chevron-right level-sep"></i>
+              <span class="level"><i class="bi bi-grid-3x3-gap"></i> Cuartel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Subnavegación -->
+    <nav class="subnav" aria-label="Secciones de la página">
+      <div class="container">
+        <a href="#proceso">¿Cómo es el proceso?</a>
+        <a href="#indices">Índices espectrales</a>
+        <a href="#guia">¿Qué índice utilizar?</a>
+        <a href="#informacion">¿Cómo se muestra la información?</a>
+      </div>
+    </nav>
+
+    <!-- ¿Cómo es el proceso? -->
+    <section id="proceso" class="sx-section">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up">
+          <h2>¿Cómo es el proceso?</h2>
+          <p>De la imagen satelital a la decisión agrícola. Pasa el cursor sobre cada etapa para verla en detalle.</p>
+        </div>
+
+        <div class="steps">
+
+          <!-- 1 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="0" tabindex="0">
+            <div class="step-top"><span class="step-num">1</span><h3>Observación satelital</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Satélite observando un campo agrícola">
+                <rect width="160" height="100" fill="#eaf3f9"/>
+                <polygon class="pulse" points="80,36 34,76 126,76" fill="#bfe0f2"/>
+                <path d="M0 74 Q30 60 62 70 T122 66 T160 72 V100 H0Z" fill="#8fcf8a"/>
+                <g stroke="#5fae5b" stroke-width="1.6" fill="none">
+                  <path d="M0 80 Q80 70 160 80"/><path d="M0 87 Q80 77 160 87"/><path d="M0 94 Q80 84 160 94"/>
+                </g>
+                <g transform="translate(80 24) rotate(-18)">
+                  <rect x="-30" y="-4" width="20" height="8" fill="#0b5a86"/>
+                  <rect x="10" y="-4" width="20" height="8" fill="#0b5a86"/>
+                  <g stroke="#8cc3e0" stroke-width="1"><line x1="-20" y1="-4" x2="-20" y2="4"/><line x1="20" y1="-4" x2="20" y2="4"/></g>
+                  <line x1="-10" y1="0" x2="10" y2="0" stroke="#033e60" stroke-width="2"/>
+                  <rect x="-6" y="-6" width="12" height="12" rx="2.5" fill="#033e60"/>
+                  <circle cx="0" cy="7" r="2" fill="#34bf49"/>
+                </g>
+              </svg>
+            </div>
+            <p>Imágenes Sentinel-2 organizadas por semana.</p>
+          </article>
+
+          <!-- 2 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="100" tabindex="0">
+            <div class="step-top"><span class="step-num">2</span><h3>Indicadores espectrales</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Gráfico de índices espectrales sobre plantas en crecimiento">
+                <rect width="160" height="100" fill="#f1f7f2"/>
+                <path d="M20 12 V66 H146" fill="none" stroke="#9fb3c4" stroke-width="1.5"/>
+                <g stroke="#dfe8ee" stroke-width="1"><line x1="20" y1="26" x2="146" y2="26"/><line x1="20" y1="46" x2="146" y2="46"/></g>
+                <polyline points="26,60 46,54 66,56 86,40 106,32 128,20" fill="none" stroke="#34bf49" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="26,63 46,60 66,56 86,52 106,44 128,38" fill="none" stroke="#0b5a86" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <g fill="#34bf49" stroke="#23983a" stroke-width="1.6">
+                  <g transform="translate(46 96)"><path d="M0 0V-9" fill="none"/><ellipse cx="-4" cy="-10" rx="4" ry="2.4" transform="rotate(-25 -4 -10)"/><ellipse cx="4" cy="-11" rx="4" ry="2.4" transform="rotate(25 4 -11)"/></g>
+                  <g transform="translate(80 96)"><path d="M0 0V-14" fill="none"/><ellipse cx="-5" cy="-15" rx="5" ry="3" transform="rotate(-25 -5 -15)"/><ellipse cx="5" cy="-17" rx="5" ry="3" transform="rotate(25 5 -17)"/></g>
+                  <g transform="translate(114 96)"><path d="M0 0V-19" fill="none"/><ellipse cx="-6" cy="-20" rx="6" ry="3.4" transform="rotate(-25 -6 -20)"/><ellipse cx="6" cy="-23" rx="6" ry="3.4" transform="rotate(25 6 -23)"/></g>
+                </g>
+              </svg>
+            </div>
+            <p>NDVI, EVI, NDMI y otros índices.</p>
+          </article>
+
+          <!-- 3 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="200" tabindex="0">
+            <div class="step-top"><span class="step-num">3</span><h3>Información por cuartel</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Predio dividido en cuarteles con un marcador de ubicación">
+                <rect width="160" height="100" fill="#eef4e6"/>
+                <polygon points="14,22 100,12 132,42 118,88 28,92" fill="#d7e9bd" stroke="#7fb069" stroke-width="2" stroke-linejoin="round"/>
+                <polygon points="34,32 76,27 80,58 36,62" fill="#a8d27a"/>
+                <polygon points="80,27 108,42 104,62 80,58" fill="#e3e88f"/>
+                <polygon points="36,62 80,58 104,62 98,82 40,84" fill="#6fae63" stroke="#23983a" stroke-width="2" stroke-linejoin="round"/>
+                <g transform="translate(92 38)">
+                  <path d="M0 0c-8-9-10-14-10-19a10 10 0 0 1 20 0c0 5-2 10-10 19z" fill="#033e60"/>
+                  <circle cx="0" cy="-19" r="4" fill="#fff"/>
+                </g>
+              </svg>
+            </div>
+            <p>Agricultor → Predio → Cuartel.</p>
+          </article>
+
+          <!-- 4 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="0" tabindex="0">
+            <div class="step-top"><span class="step-num">4</span><h3>Comparaciones</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Gráfico que compara un cuartel con su historial y con cuarteles similares">
+                <rect width="160" height="100" fill="#f3f6fb"/>
+                <path d="M20 12 V80 H146" fill="none" stroke="#9fb3c4" stroke-width="1.5"/>
+                <polygon points="26,42 50,34 74,44 98,32 122,28 140,26 140,48 122,52 98,56 74,64 50,60 26,62" fill="#cdd9e3" opacity=".8"/>
+                <polyline points="26,52 50,46 74,52 98,44 122,36 140,30" fill="none" stroke="#7a8ea0" stroke-width="2" stroke-dasharray="4 4"/>
+                <polyline points="26,58 50,50 74,56 98,42 122,34 140,22" fill="none" stroke="#033e60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="140" cy="22" r="4" fill="#34bf49" stroke="#fff" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="chips"><span>Histórico propio</span><span>Pares</span><span>Histórico pares</span></div>
+          </article>
+
+          <!-- 5 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="100" tabindex="0">
+            <div class="step-top"><span class="step-num">5</span><h3>Herramientas de consulta</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Computador portátil con un panel de gráficos y un mapa">
+                <rect width="160" height="100" fill="#eef3f8"/>
+                <rect x="30" y="12" width="100" height="62" rx="6" fill="#033e60"/>
+                <rect x="35" y="17" width="90" height="52" rx="3" fill="#fbfdff"/>
+                <rect x="40" y="22" width="22" height="6" rx="3" fill="#34bf49"/>
+                <rect x="66" y="22" width="14" height="6" rx="3" fill="#dbe6ee"/>
+                <polyline points="40,60 50,52 60,55 72,44 82,38" fill="none" stroke="#0b5a86" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="40,62 50,58 60,58 72,54 82,50" fill="none" stroke="#34bf49" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="90" y="24" width="30" height="40" rx="3" fill="#d7e9bd"/>
+                <polygon points="94,30 112,28 116,44 96,46" fill="#a8d27a"/>
+                <polygon points="96,46 116,44 112,60 94,58" fill="#e3e88f"/>
+                <path d="M14 80 H146 L136 74 H24Z" fill="#9fb3c4"/>
+              </svg>
+            </div>
+            <p>Dashboard · Gráficos temporales · Mapas.</p>
+            <div class="roles">
+              <span><b>Agricultor:</b> seguimiento de sus cultivos.</span>
+              <span><b>Asesor:</b> análisis de su cartera.</span>
+            </div>
+          </article>
+
+          <!-- 6 -->
+          <article class="step" data-aos="fade-up" data-aos-delay="200" tabindex="0">
+            <div class="step-top"><span class="step-num">6</span><h3>Aplicación en terreno</h3></div>
+            <div class="step-art">
+              <svg viewBox="0 0 160 100" role="img" aria-label="Tableta con un mapa del cultivo frente a un campo con cerros">
+                <rect width="160" height="100" fill="#e6f1f8"/>
+                <path d="M0 58 Q24 34 50 54 T100 50 T160 56 V100 H0Z" fill="#9fcf9a"/>
+                <path d="M0 70 Q40 58 80 68 T160 66 V100 H0Z" fill="#6fae63"/>
+                <g stroke="#4e9a52" stroke-width="1.4" fill="none">
+                  <path d="M0 82 Q80 72 160 82"/><path d="M0 90 Q80 80 160 90"/>
+                </g>
+                <rect x="46" y="16" width="68" height="52" rx="6" fill="#033e60"/>
+                <rect x="51" y="21" width="58" height="42" rx="3" fill="#d7e9bd"/>
+                <polygon points="56,26 84,24 88,40 58,42" fill="#a8d27a"/>
+                <polygon points="88,40 84,24 104,30 102,44" fill="#e3e88f"/>
+                <polygon points="58,42 88,40 102,44 98,58 60,58" fill="#6fae63"/>
+                <circle cx="82" cy="40" r="7" fill="none" stroke="#033e60" stroke-width="2"/>
+                <g stroke="#033e60" stroke-width="2"><line x1="82" y1="29" x2="82" y2="33"/><line x1="82" y1="47" x2="82" y2="51"/><line x1="71" y1="40" x2="75" y2="40"/><line x1="89" y1="40" x2="93" y2="40"/></g>
+              </svg>
+            </div>
+            <div class="chips"><span>Detectar</span><span>Comparar</span><span>Localizar</span><span>Verificar</span></div>
+          </article>
+
+        </div>
+
+        <p class="process-note"><i class="bi bi-info-circle"></i> Los índices muestran señales, no diagnósticos automáticos.</p>
+      </div>
+    </section>
+
+    <!-- ¿Qué son los índices espectrales? -->
+    <section id="indices" class="sx-section alt">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up">
+          <h2>¿Qué son los índices espectrales?</h2>
+        </div>
+
+        <div class="prose" data-aos="fade-up">
+          <p>
+            Los índices espectrales son indicadores que se calculan a partir de imágenes satelitales y permiten obtener información sobre el estado y comportamiento de los cultivos. Para ello, se utilizan distintas bandas espectrales, que registran cómo la vegetación refleja la energía solar en diferentes longitudes de onda. Mediante la combinación de estas bandas es posible estimar características de los cultivos, como su vigor, cobertura vegetal, contenido de clorofila y condiciones relacionadas con el agua presente en la vegetación.
+          </p>
+          <p>
+            En agricultura, estos índices permiten observar cómo cambian los cultivos a lo largo del tiempo e identificar diferencias dentro de un mismo predio o cuartel. Estas variaciones pueden estar relacionadas con el crecimiento de las plantas, la disponibilidad de agua, las condiciones ambientales o las prácticas de manejo agrícola. De esta manera, los índices espectrales proporcionan información útil para el seguimiento de los cultivos y ayudan a identificar sectores que podrían requerir mayor atención. Sin embargo, sus valores no permiten determinar por sí solos la causa de un problema, por lo que deben interpretarse considerando el tipo de cultivo, su etapa de desarrollo y las observaciones realizadas en terreno.
+          </p>
+        </div>
+
+        <div class="sx-head" style="margin: 36px auto 24px" data-aos="fade-up">
+          <h2 style="font-size:1.5rem">Índices que considera la plataforma</h2>
+          <p>Haz clic en un índice para conocer qué permite observar, su fórmula y su uso agronómico.</p>
+        </div>
+
+        <div class="index-filters" id="indexFilters" role="group" aria-label="Filtrar índices por categoría"></div>
+        <div class="index-grid" id="indexGrid"></div>
+      </div>
+    </section>
+
+    <!-- ¿Qué índice utilizar? -->
+    <section id="guia" class="sx-section">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up">
+          <h2>¿Qué índice utilizar?</h2>
+        </div>
+
+        <div class="guide-wrap" data-aos="fade-up">
+          <table class="guide-table">
+            <thead>
+              <tr><th scope="col">Si necesitas observar…</th><th scope="col">Índices recomendados</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cobertura vegetal y actividad general del cultivo</td><td><div class="tags"><span>NDVI</span><span>EVI</span></div></td></tr>
+              <tr><td>Vegetación en cultivos de cobertura densa</td><td><div class="tags"><span>EVI</span><span>NDVI</span></div></td></tr>
+              <tr><td>Diferencias relacionadas con clorofila</td><td><div class="tags"><span>GNDVI</span><span>MCARI</span><span>REP</span></div></td></tr>
+              <tr><td>Vegetación con mucho suelo visible</td><td><div class="tags"><span>MSAVI</span></div></td></tr>
+              <tr><td>Cambios relacionados con el agua de la vegetación</td><td><div class="tags"><span>NDMI</span></div></td></tr>
+              <tr><td>Presencia de agua superficial</td><td><div class="tags"><span>NDWI</span><span>MNDWI</span></div></td></tr>
+              <tr><td>Senescencia y cambios de pigmentos</td><td><div class="tags"><span>PSRI</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="important guide-note" data-aos="fade-up">
+          <i class="bi bi-exclamation-triangle"></i>
+          <div>
+            <strong>Importante</strong>
+            <span>Esta tabla orienta la elección de índices, pero ninguno de ellos determina por sí solo si un cultivo necesita riego, fertilización o tratamiento fitosanitario.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ¿Cómo se muestra la información? -->
+    <section id="informacion" class="sx-section alt">
+      <div class="container">
+        <div class="sx-head" data-aos="fade-up">
+          <h2>¿Cómo se muestra la información?</h2>
+          <p>Cada gráfico de la plataforma sigue la misma lógica. Haz clic en la imagen para ampliarla.</p>
+        </div>
+
+        <figure class="figure-card" data-aos="fade-up" style="margin:0">
+          <a href="./assets/img/metodologia/como_se_muestra.png" class="glightbox" data-gallery="info" data-title="Cómo leer un gráfico de la plataforma">
+            <img src="./assets/img/metodologia/como_se_muestra.png" alt="Gráfico de ejemplo del índice EVI por semana ISO, con líneas por cuartel, banda de comparación P05-P95, semana seleccionada y notas explicativas" width="1005" height="626" loading="lazy" decoding="async">
+          </a>
+          <figcaption>
+            Ejemplo del índice EVI por semana ISO: líneas por cuartel, línea y banda de comparación (P05–P95 de cuarteles similares), semana seleccionada, leyenda y semanas sin información, generalmente por presencia de nubes.
+          </figcaption>
+        </figure>
+
+        <div class="cta-band" data-aos="fade-up">
+          <div>
+            <h3>Explora los datos de tus cultivos</h3>
+            <p>Ingresa a la plataforma para ver mapas, gráficos y comparaciones semanales.</p>
+          </div>
+          <a href="./plataforma.html" class="btn-sx primary">Ingresar a la plataforma <i class="bi bi-box-arrow-in-right"></i></a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal ficha de índice -->
+  <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content" id="indexModalContent"></div>
+    </div>
+  </div>
+
+  <footer id="footer" class="footer light-background">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3 mb-3 mb-md-0">
+          <div class="widget">
+            <div class="image-container-bottom">
+              <img src="assets/img/TeleAmb.png" alt="TeleAmb - Universidad de Playa Ancha" class="stacked-image-top" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 ps-lg-5 mb-3 mb-md-0">
+          <div class="widget">
+            <h3 class="widget-heading">Navegación</h3>
+            <ul class="list-unstyled">
+              <li><a href="./index.html">Inicio</a></li>
+              <li><a href="./metodologia.html">Metodología</a></li>
+              <li><a href="./team.html">Equipo</a></li>
+              <li><a href="./plataforma.html">Plataforma</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 pl-lg-5">
+          <div class="widget">
+            <h3 class="widget-heading">Contactos</h3>
+            <ul class="list-unstyled footer-blog-entry">
+              <li>
+                <span class="d-block date">Ubicación</span>
+                <p>Subida Leopoldo Carvallo 270, 2360004 Playa Ancha, Valparaíso, Chile</p>
+              </li>
+              <li class="mail">
+                <span class="d-block date">Contacto</span>
+                <p><a href="mailto:teleamb@upla.cl">teleamb@upla.cl</a></p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="copyright d-flex flex-column flex-md-row align-items-center justify-content-md-between">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">TeleAmb.</strong> <span>Todos los derechos reservados</span></p>
+        <div class="credits">
+          Diseñado por <a>TERRAVIEW</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center" aria-label="Volver arriba"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS Files -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/metodologia.js"></script>
+
+</body>
+
+</html>
