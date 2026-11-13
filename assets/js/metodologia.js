@@ -34,32 +34,37 @@
     pigmentos: ["pigmentos"]
   };
 
+  // Descripciones, fórmulas y bandas basadas en Sentinel Hub Custom Scripts
+  // (https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel/sentinel-2/).
+  const FUENTE =
+    "Fuente: Sentinel Hub Custom Scripts — Sentinel-2 (custom-scripts.sentinel-hub.com).";
+
   const IMPORTANTE_BASE =
-    "Un valor bajo o alto de este índice no determina por sí solo la causa de un problema. Las variaciones también pueden responder a podas, cambios estacionales, suelo visible y otras condiciones, por lo que deben interpretarse junto con el cultivo, su etapa de desarrollo y las observaciones en terreno.";
+    "Un valor bajo o alto de este índice no determina por sí solo la causa de un problema. Las variaciones también pueden responder a podas, cambios estacionales, suelo visible y otras condiciones, por lo que deben interpretarse junto con el cultivo, su etapa de desarrollo y las observaciones en terreno. " + FUENTE;
 
   const INDICES = [
     {
       id: "ndvi", nombre: "NDVI", full: "Índice de Vegetación de Diferencia Normalizada", cat: "vegetacion",
       rango: "-1 a +1",
-      observa: "El NDVI es el índice de vegetación más utilizado en teledetección. Permite observar la cobertura y actividad de la vegetación verde, identificar diferencias dentro de los cultivos y realizar un seguimiento de sus cambios a lo largo del tiempo.",
-      funciona: "El NDVI compara la luz roja y la infrarroja cercana reflejadas por la vegetación. Las plantas verdes absorben gran parte de la luz roja para realizar la fotosíntesis y reflejan una mayor proporción del infrarrojo cercano.",
+      observa: "El NDVI es un índice simple y efectivo para cuantificar la vegetación verde. Normaliza la dispersión de las hojas verdes en el infrarrojo cercano con la absorción de clorofila en el rojo, y es un buen indicador de vegetación viva.",
+      funciona: "Se calcula como la diferencia normalizada entre el infrarrojo cercano (NIR) y el rojo. En Sentinel-2 se usan las bandas B08 (NIR) y B04 (rojo).",
       formula: { lhs: "NDVI", num: "NIR − Rojo", den: "NIR + Rojo" },
       s2: "(B08 − B04) / (B08 + B04)",
       scale: { tipo: "veg", labels: ["−1", "0", "0,5", "+1"] },
-      interpreta: "Los valores bajos suelen asociarse a suelo descubierto o vegetación escasa, mientras que los valores altos generalmente indican mayor cobertura y actividad vegetal. Estos rangos son orientativos y dependen del cultivo y la etapa de desarrollo.",
-      agro: "Permite monitorear el desarrollo de los cultivos, comparar su comportamiento entre temporadas e identificar cuarteles o sectores que presentan cambios en su actividad vegetal.",
+      interpreta: "Valores cercanos a −1 suelen corresponder a agua. Valores próximos a cero (−0,1 a 0,1) se asocian a suelo desnudo, roca, arena o nieve. Valores bajos positivos (aprox. 0,2 a 0,4) representan matorrales y pastizales, y valores altos (acercándose a 1) indican vegetación densa, como bosques templados y tropicales.",
+      agro: "Permite monitorear la cobertura y la actividad de los cultivos, comparar su comportamiento entre temporadas e identificar cuarteles o sectores con cambios en su vegetación.",
       ejemplo: "en un huerto de paltos, una disminución persistente del NDVI respecto de su historial puede ayudar a identificar sectores que requieren una revisión en terreno.",
-      importante: "Un valor bajo de NDVI no significa necesariamente estrés hídrico o una enfermedad. Las variaciones también pueden responder a podas, cambios estacionales, suelo visible y otras condiciones del cultivo."
+      importante: "Un valor bajo de NDVI no significa necesariamente estrés hídrico o una enfermedad. Las variaciones también pueden responder a podas, cambios estacionales, suelo visible y otras condiciones del cultivo. " + FUENTE
     },
     {
       id: "evi", nombre: "EVI", full: "Índice de Vegetación Mejorado", cat: "vegetacion",
-      rango: "-1 a +1 (en vegetación, típicamente 0 a 1)",
-      observa: "El EVI permite observar la actividad de la vegetación en cultivos de cobertura densa, donde el NDVI tiende a saturarse. Incorpora la banda azul para reducir la influencia de la atmósfera y del suelo.",
-      funciona: "Combina las bandas infrarroja cercana, roja y azul con coeficientes de ajuste. De esta forma mantiene sensibilidad en coberturas densas y reduce el efecto de la atmósfera y del fondo de suelo.",
+      rango: "-1 a +1 (vegetación sana, típicamente 0,20 a 0,80)",
+      observa: "El EVI mejora la estimación de la vegetación en áreas de dosel denso, donde el índice de área foliar (LAI) es alto y el NDVI tiende a saturarse. Incorpora la banda azul para corregir señales del suelo y de la atmósfera.",
+      funciona: "Combina NIR, rojo y azul con coeficientes de ajuste. En Sentinel-2 se usa: EVI = 2,5 × (B08 − B04) / (B08 + 6 × B04 − 7,5 × B02 + 1).",
       formula: { expr: "EVI = 2,5 × (NIR − Rojo) / (NIR + 6 × Rojo − 7,5 × Azul + 1)" },
       s2: "2,5 × (B08 − B04) / (B08 + 6 × B04 − 7,5 × B02 + 1)",
       scale: { tipo: "veg", labels: ["−1", "0", "0,5", "+1"] },
-      interpreta: "Los valores bajos suelen asociarse a suelo descubierto o vegetación escasa; los valores altos, a follaje denso y activo. Los rangos son orientativos y dependen del cultivo y de su etapa de desarrollo.",
+      interpreta: "El rango es −1 a +1. La vegetación sana suele situarse alrededor de 0,20 a 0,80. Valores bajos se asocian a suelo descubierto o vegetación escasa; valores altos, a follaje denso y activo.",
       agro: "Es útil para seguir cultivos de follaje denso, como huertos adultos o viñedos en pleno desarrollo, y para comparar cuarteles cuando el NDVI ya no distingue diferencias.",
       ejemplo: "en un viñedo en plena temporada, el EVI permite distinguir cuarteles con distinto vigor aun cuando el NDVI muestre valores similares.",
       importante: IMPORTANTE_BASE
@@ -67,22 +72,22 @@
     {
       id: "gndvi", nombre: "GNDVI", full: "Índice de Vegetación de Diferencia Normalizada Verde", cat: "clorofila",
       rango: "-1 a +1",
-      observa: "El GNDVI permite observar diferencias en el contenido de clorofila de la vegetación. Es más sensible que el NDVI a variaciones en el estado nutricional y fotosintético de las hojas.",
-      funciona: "Reemplaza la banda roja del NDVI por la banda verde. La clorofila refleja una parte importante de la luz verde, y esa reflectancia cambia con la concentración de pigmentos en la hoja.",
+      observa: "El GNDVI es más sensible a las variaciones del contenido de clorofila que el NDVI (Gitelson et al., 1996), por lo que permite observar diferencias en el estado fotosintético de la vegetación.",
+      funciona: "Usa la misma lógica del NDVI, pero reemplaza la banda roja por la verde (aprox. 540–570 nm). En Sentinel-2 se calculan B08 (NIR) y B03 (verde).",
       formula: { lhs: "GNDVI", num: "NIR − Verde", den: "NIR + Verde" },
       s2: "(B08 − B03) / (B08 + B03)",
       scale: { tipo: "veg", labels: ["−1", "0", "0,5", "+1"] },
-      interpreta: "Los valores mayores se asocian a vegetación con más clorofila y mayor actividad fotosintética; los valores bajos, a vegetación escasa, senescente o suelo visible. Los rangos son orientativos.",
+      interpreta: "Los valores mayores se asocian a vegetación con más clorofila y mayor actividad fotosintética; los valores bajos, a vegetación escasa, senescente o suelo visible. Los rangos son orientativos y dependen del cultivo.",
       agro: "Apoya el seguimiento del vigor y del contenido de clorofila, y ayuda a detectar cuarteles con diferencias en su condición nutricional para orientar las visitas a terreno.",
       ejemplo: "en un huerto de nogales, un cuartel con GNDVI menor que el de sus pares puede priorizarse para una revisión de su condición en terreno.",
       importante: IMPORTANTE_BASE
     },
     {
-      id: "mcari", nombre: "MCARI", full: "Índice de Absorción de Clorofila Modificado", cat: "clorofila",
-      rango: "Sin límites fijos (valores positivos; dependen del cultivo)",
-      observa: "El MCARI permite estimar la concentración relativa de clorofila en las hojas y reduce el efecto del fondo de suelo y de la cobertura vegetal parcial.",
-      funciona: "Utiliza las bandas verde, roja y de borde rojo (red-edge). Mide cuánto aumenta la reflectancia del borde rojo respecto de la roja, ajustada por la verde, lo que lo hace sensible a la absorción de clorofila.",
-      formula: { expr: "MCARI = [(R705 − R670) − 0,2 × (R705 − R550)] × (R705 / R670)" },
+      id: "mcari", nombre: "MCARI", full: "Índice de Absorción de Clorofila en Reflectancia Modificado", cat: "clorofila",
+      rango: "Sin límites fijos (depende del cultivo y de la escena)",
+      observa: "El MCARI mide la profundidad de la absorción de clorofila y es muy sensible a variaciones en las concentraciones de clorofila y en el índice de área foliar (LAI).",
+      funciona: "Utiliza las bandas de borde rojo (≈700 nm), rojo (≈670 nm) y verde (≈550 nm). En Sentinel-2: ((B05 − B04) − 0,2 × (B05 − B03)) × (B05 / B04). Sus valores no se ven afectados por las condiciones de iluminación ni por la reflectancia de fondo del suelo y de materiales no fotosintéticos.",
+      formula: { expr: "MCARI = [(R700 − R670) − 0,2 × (R700 − R550)] × (R700 / R670)" },
       s2: "[(B05 − B04) − 0,2 × (B05 − B03)] × (B05 / B04)",
       scale: { tipo: "veg", labels: ["Bajo", "Medio", "Alto"] },
       interpreta: "Los valores bajos suelen indicar menor concentración de clorofila y los altos, mayor concentración. Al no tener un rango fijo, conviene compararlo con el historial del mismo cultivo y con cuarteles similares.",
@@ -91,27 +96,27 @@
       importante: IMPORTANTE_BASE
     },
     {
-      id: "rep", nombre: "REP", full: "Posición del borde rojo (Red-edge position)", cat: "clorofila",
-      rango: "Aproximadamente 700 a 750 nm",
-      observa: "El REP indica la longitud de onda en que la reflectancia de la vegetación cambia con mayor rapidez entre el rojo y el infrarrojo cercano. Esa posición se desplaza según el contenido de clorofila y el estado de la vegetación.",
-      funciona: "Se calcula por interpolación lineal con las bandas del borde rojo. A mayor contenido de clorofila, el borde rojo se desplaza hacia longitudes de onda mayores.",
-      formula: { expr: "REP = 705 + 35 × [((R670 + R783) / 2 − R705) / (R740 − R705)]" },
-      s2: "705 + 35 × [((B04 + B07) / 2 − B05) / (B06 − B05)]  (nm)",
-      scale: { tipo: "veg", labels: ["700 nm", "725 nm", "750 nm"] },
-      interpreta: "Los valores más bajos se asocian a menor contenido de clorofila o a vegetación senescente; los valores más altos, a vegetación con mayor clorofila y vigor.",
+      id: "rep", nombre: "REP", full: "Posición del borde rojo (Red Edge Position)", cat: "clorofila",
+      rango: "Aproximadamente 690 a 725 nm",
+      observa: "El índice de posición del borde rojo (REP o REPO) es sensible a cambios en las concentraciones de clorofila: a mayor clorofila, la vegetación absorbe longitudes de onda más largas y la posición del borde rojo se desplaza.",
+      funciona: "Se calcula por interpolación lineal a cuatro puntos (4PLI), según Gholizadeh et al. (2016). En Sentinel-2: 700 + 40 × (((B04 + B07) / 2 − B05) / (B06 − B05)).",
+      formula: { expr: "REP = 700 + 40 × [((R670 + R780) / 2 − R700) / (R740 − R700)]" },
+      s2: "700 + 40 × [((B04 + B07) / 2 − B05) / (B06 − B05)]  (nm)",
+      scale: { tipo: "veg", labels: ["690 nm", "707 nm", "725 nm"] },
+      interpreta: "Los valores más bajos se asocian a menor contenido de clorofila o a vegetación senescente; los valores más altos, a vegetación con mayor clorofila. En visualizaciones de Sentinel Hub se suele considerar un rango cercano a 690–725 nm.",
       agro: "Es útil para detectar cambios tempranos en el contenido de clorofila, que a menudo aparecen antes de que sean evidentes en índices como el NDVI.",
       ejemplo: "en un huerto de paltos, un desplazamiento del REP hacia valores menores respecto de su historial puede indicar un cambio de condición que conviene verificar en terreno.",
       importante: IMPORTANTE_BASE
     },
     {
       id: "msavi", nombre: "MSAVI", full: "Índice de Vegetación Ajustado al Suelo Modificado", cat: "vegetacion",
-      rango: "-1 a +1",
-      observa: "El MSAVI permite observar la vegetación en cultivos con cobertura parcial, donde el suelo visible altera la señal de otros índices.",
-      funciona: "Ajusta el efecto del brillo del suelo mediante un factor que se calcula a partir de la propia imagen, sin necesidad de definir un valor fijo de corrección.",
+      rango: "Aprox. −0,4 a 0,6 (depende de la escena)",
+      observa: "El MSAVI (Modified Soil Adjusted Vegetation Index) es un índice de vegetación que reduce el efecto del brillo del suelo, útil cuando hay cobertura vegetal parcial y suelo visible entre las plantas.",
+      funciona: "A diferencia del SAVI, no requiere definir un factor L de corrección del suelo: el ajuste se obtiene a partir de las propias bandas NIR y rojo. En Sentinel-2 se usa B08 y B04, según la base Index Database incluida en Sentinel Hub.",
       formula: { expr: "MSAVI = [2 × NIR + 1 − √((2 × NIR + 1)² − 8 × (NIR − Rojo))] / 2" },
       s2: "[2 × B08 + 1 − √((2 × B08 + 1)² − 8 × (B08 − B04))] / 2",
-      scale: { tipo: "veg", labels: ["−1", "0", "0,5", "+1"] },
-      interpreta: "Los valores bajos se asocian a suelo descubierto o vegetación escasa; los valores altos, a mayor cobertura y actividad vegetal. Los rangos son orientativos y dependen del cultivo.",
+      scale: { tipo: "veg", labels: ["−0,4", "0", "0,6"] },
+      interpreta: "Los valores bajos se asocian a suelo descubierto o vegetación escasa; los valores altos, a mayor cobertura y actividad vegetal. Los rangos son orientativos y dependen del cultivo y de la escena.",
       agro: "Es adecuado para cultivos jóvenes, huertos con hileras separadas o inicios de temporada, donde hay mucho suelo visible entre las plantas.",
       ejemplo: "en un huerto joven con suelo expuesto entre hileras, el MSAVI entrega una señal de vegetación menos afectada por el suelo que la del NDVI.",
       importante: IMPORTANTE_BASE
@@ -119,54 +124,54 @@
     {
       id: "ndmi", nombre: "NDMI", full: "Índice de Diferencia Normalizada de Humedad", cat: "agua",
       rango: "-1 a +1",
-      observa: "El NDMI permite observar cambios en el contenido de agua de la vegetación.",
-      funciona: "Compara el infrarrojo cercano con el infrarrojo de onda corta (SWIR). El SWIR es absorbido por el agua presente en las hojas, mientras que el infrarrojo cercano responde a la estructura del follaje.",
+      observa: "El NDMI se usa para monitorear cambios en el contenido de agua de las hojas. Combina NIR y SWIR: el SWIR refleja cambios en el agua de la vegetación y en la estructura del mesófilo, mientras que el NIR responde a la estructura interna de la hoja y a la materia seca, pero no al contenido de agua.",
+      funciona: "Al combinar NIR con SWIR se reducen las variaciones inducidas por la estructura interna de la hoja y la materia seca, y mejora la estimación del contenido de agua de la vegetación. La reflectancia SWIR se relaciona de forma negativa con el agua foliar. En Sentinel-2: (B08 − B11) / (B08 + B11).",
       formula: { lhs: "NDMI", num: "NIR − SWIR", den: "NIR + SWIR" },
       s2: "(B08 − B11) / (B08 + B11)",
       scale: { tipo: "water", labels: ["−1", "0", "+1"] },
       interpreta: "Los valores bajos se asocian a vegetación con menor contenido de agua o a suelo descubierto; los valores altos, a vegetación con mayor contenido de agua. Los rangos son orientativos.",
       agro: "Permite seguir los cambios en el estado hídrico de la vegetación a lo largo de la temporada y comparar cuarteles entre sí.",
       ejemplo: "una caída persistente del NDMI de un cuartel respecto de sus pares puede orientar una revisión del riego en terreno.",
-      importante: "Un valor bajo de NDMI no determina por sí solo que el cultivo necesite riego. Debe interpretarse junto con el tipo de cultivo, su etapa de desarrollo y las observaciones en terreno."
+      importante: "Un valor bajo de NDMI no determina por sí solo que el cultivo necesite riego. Debe interpretarse junto con el tipo de cultivo, su etapa de desarrollo y las observaciones en terreno. " + FUENTE
     },
     {
       id: "ndwi", nombre: "NDWI", full: "Índice de Diferencia Normalizada de Agua", cat: "superficial",
       rango: "-1 a +1",
-      observa: "El NDWI permite identificar la presencia de agua superficial, como embalses, tranques o canales.",
-      funciona: "Compara la luz verde, que el agua refleja, con el infrarrojo cercano, que el agua absorbe casi por completo.",
+      observa: "El NDWI (McFeeters, 1996) se usa para monitorear cambios relacionados con el contenido de agua en cuerpos de agua. Como el agua absorbe fuertemente la luz visible e infrarroja, el índice usa las bandas verde e infrarroja cercana para resaltar cuerpos de agua.",
+      funciona: "Compara la banda verde con el NIR. En Sentinel-2: (B03 − B08) / (B03 + B08). Es sensible a superficies construidas y puede sobrestimar la extensión de agua.",
       formula: { lhs: "NDWI", num: "Verde − NIR", den: "Verde + NIR" },
       s2: "(B03 − B08) / (B03 + B08)",
       scale: { tipo: "water", labels: ["−1", "0", "+1"] },
-      interpreta: "Los valores altos (positivos) suelen corresponder a agua; los valores cercanos a cero o negativos, a suelo y vegetación.",
+      interpreta: "Valores mayores a 0,5 suelen corresponder a cuerpos de agua. La vegetación suele mostrar valores mucho menores, y las áreas construidas valores entre 0 y 0,2.",
       agro: "Apoya la identificación de cuerpos de agua y de la infraestructura de acumulación de agua dentro y cerca de los predios.",
       ejemplo: "permite ubicar tranques de acumulación y seguir su extensión a lo largo del año.",
-      importante: "El NDWI detecta agua superficial; no mide la humedad del suelo ni el estado hídrico de las plantas."
+      importante: "El NDWI detecta agua superficial; no mide la humedad del suelo ni el estado hídrico de las plantas. En la literatura a veces se confunde con el NDMI (NIR–SWIR); aquí se mantiene la separación usada por Sentinel Hub. " + FUENTE
     },
     {
       id: "mndwi", nombre: "MNDWI", full: "Índice de Agua de Diferencia Normalizada Modificado", cat: "superficial",
       rango: "-1 a +1",
-      observa: "El MNDWI mejora la identificación de agua superficial al reducir la confusión con superficies construidas y con el suelo.",
-      funciona: "Reemplaza el infrarrojo cercano del NDWI por el infrarrojo de onda corta (SWIR), región donde el agua absorbe más y el suelo y las construcciones reflejan más.",
+      observa: "El MNDWI se usa para detectar superficies de agua abierta. En los scripts de mapeo de cuerpos de agua de Sentinel Hub se combina con el NDWI para mejorar la identificación de agua.",
+      funciona: "Reemplaza el NIR del NDWI por el SWIR1, lo que reduce la confusión con suelo y superficies construidas. En Sentinel-2: (B03 − B11) / (B03 + B11).",
       formula: { lhs: "MNDWI", num: "Verde − SWIR", den: "Verde + SWIR" },
       s2: "(B03 − B11) / (B03 + B11)",
       scale: { tipo: "water", labels: ["−1", "0", "+1"] },
-      interpreta: "Los valores altos (positivos) suelen corresponder a agua; los valores cercanos a cero o negativos, a suelo, construcciones y vegetación.",
+      interpreta: "Los valores altos (positivos) suelen corresponder a agua; los valores cercanos a cero o negativos, a suelo, construcciones y vegetación. En scripts de Sentinel Hub se usan umbrales orientativos (por ejemplo, alrededor de 0,1 a 0,42), que pueden requerir calibración por escena.",
       agro: "Es útil para delimitar tranques, embalses y canales con mayor precisión, y para seguir los cambios en su superficie.",
       ejemplo: "permite estimar variaciones en la extensión de un tranque de riego entre distintas semanas.",
-      importante: "El MNDWI detecta agua superficial; no mide la humedad del suelo ni el estado hídrico de las plantas."
+      importante: "El MNDWI detecta agua superficial; no mide la humedad del suelo ni el estado hídrico de las plantas. " + FUENTE
     },
     {
       id: "psri", nombre: "PSRI", full: "Índice de Reflectancia de Senescencia de las Plantas", cat: "pigmentos",
-      rango: "-1 a +1",
-      observa: "El PSRI permite observar el cambio en la proporción de pigmentos de la vegetación, en particular el aumento de carotenoides frente a la clorofila que se asocia a la senescencia y la maduración.",
-      funciona: "Relaciona la diferencia entre la reflectancia roja y la azul con la del borde rojo. Cuando la clorofila disminuye y aumentan los carotenoides, el valor del índice crece.",
+      rango: "Aprox. −0,2 a 0,4 (rango típico de visualización)",
+      observa: "El PSRI (Plant Senescence Reflectance Index) se usa para estudiar la vegetación y, en particular, procesos asociados a la senescencia y a cambios en los pigmentos de las plantas.",
+      funciona: "Se define como la razón entre la diferencia rojo−azul y el borde rojo. En Sentinel-2: PSRI = (B04 − B02) / B06.",
       formula: { lhs: "PSRI", num: "Rojo − Azul", den: "Borde rojo" },
       s2: "(B04 − B02) / B06",
-      scale: { tipo: "pigment", labels: ["−1", "0", "+1"] },
-      interpreta: "Los valores bajos se asocian a vegetación verde y activa; los valores crecientes, a maduración o senescencia de la vegetación o del fruto. Los rangos son orientativos.",
+      scale: { tipo: "pigment", labels: ["−0,2", "0", "0,4"] },
+      interpreta: "Los valores bajos se asocian a vegetación verde y activa; los valores crecientes, a maduración o senescencia de la vegetación. Los rangos son orientativos y dependen del cultivo y de la etapa de desarrollo.",
       agro: "Es útil para seguir la maduración y el término del ciclo, y para identificar cuarteles que entran en senescencia antes o después que sus pares.",
       ejemplo: "en un viñedo, el PSRI ayuda a seguir el avance de la maduración entre cuarteles.",
-      importante: "Un aumento del PSRI puede ser normal hacia el final de la temporada. Debe distinguirse de otras causas considerando el cultivo, su etapa de desarrollo y la observación en terreno."
+      importante: "Un aumento del PSRI puede ser normal hacia el final de la temporada. Debe distinguirse de otras causas considerando el cultivo, su etapa de desarrollo y la observación en terreno. " + FUENTE
     }
   ];
 
