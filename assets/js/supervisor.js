@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
     if (!usuario || !usuario.acceso_codebase) {
-        window.location.href = 'plataforma.html';
+        window.location.href = 'https://fic-agro.chompipes.com/login';
         return;
     }
     document.getElementById('supervisor-nombre').textContent = usuario.Nombre || usuario.usuario;
@@ -102,7 +102,7 @@ function cargarCapaIndice(cod_base, indice) {
 
 function cerrarSesion() {
     localStorage.clear();
-    window.location.href = 'plataforma.html';
+    window.location.href = 'https://fic-agro.chompipes.com/login';
 }
 
 // Exportar función para obtener los códigos base válidos para el supervisor

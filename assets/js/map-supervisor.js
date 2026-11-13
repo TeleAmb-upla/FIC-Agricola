@@ -27,7 +27,7 @@ async function cargarMaxMinH() {
 document.addEventListener('DOMContentLoaded', async function() {
     const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
     if (!usuario || usuario.tipo !== 'supervisor' || !usuario.acceso_codebase) {
-        window.location.href = 'plataforma.html';
+        window.location.href = 'https://fic-agro.chompipes.com/login';
         return;
     }
     // Mostrar nombre del supervisor
@@ -222,7 +222,7 @@ if (window.cultivoSelector) {
 
 function cerrarSesion() {
     localStorage.clear();
-    window.location.href = 'plataforma.html';
+    window.location.href = 'https://fic-agro.chompipes.com/login';
 }
 
 // --- Crear capa raster con borde del color correspondiente al cod_base ---
