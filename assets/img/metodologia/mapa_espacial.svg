@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-label="Mapa de cuartel con índice espectral">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d9ecf7"/>
+      <stop offset="100%" stop-color="#eef6ef"/>
+    </linearGradient>
+    <linearGradient id="veg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d9e88a"/>
+      <stop offset="45%" stop-color="#7fb069"/>
+      <stop offset="100%" stop-color="#276b3c"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#033e60" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="960" height="600" fill="url(#sky)"/>
+  <rect x="48" y="48" width="864" height="504" rx="28" fill="#fff" filter="url(#soft)"/>
+  <text x="80" y="100" font-family="Lato, Arial, sans-serif" font-size="28" font-weight="800" fill="#033e60">Distribución espacial</text>
+  <text x="80" y="134" font-family="Lato, Arial, sans-serif" font-size="16" fill="#5d6b7a">Índice dentro del cuartel · vista de mapa</text>
+
+  <!-- Map panel -->
+  <rect x="80" y="168" width="560" height="340" rx="18" fill="#1a3a28"/>
+  <polygon points="120,220 300,190 520,230 560,420 340,470 140,430" fill="url(#veg)" opacity="0.95"/>
+  <polygon points="220,250 340,235 360,330 230,345" fill="#e3e88f" opacity="0.85"/>
+  <polygon points="360,235 470,255 450,360 360,330" fill="#4f892d" opacity="0.9"/>
+  <polygon points="230,345 360,330 450,360 400,440 250,430" fill="#0f540a" opacity="0.9"/>
+  <g stroke="#fff" stroke-width="2" fill="none" opacity="0.55">
+    <path d="M180 280 L500 310"/>
+    <path d="M200 360 L470 380"/>
+    <path d="M260 230 L280 450"/>
+    <path d="M380 220 L400 450"/>
+  </g>
+  <circle cx="340" cy="330" r="18" fill="none" stroke="#fff" stroke-width="3"/>
+  <circle cx="340" cy="330" r="6" fill="#ffeb3b"/>
+
+  <!-- Legend -->
+  <rect x="680" y="168" width="200" height="340" rx="18" fill="#f6f8f5" stroke="#e3e9ef"/>
+  <text x="700" y="210" font-family="Lato, Arial, sans-serif" font-size="15" font-weight="700" fill="#033e60">Leyenda NDVI</text>
+  <rect x="700" y="230" width="22" height="180" rx="6" fill="url(#veg)"/>
+  <text x="735" y="245" font-family="Lato, Arial, sans-serif" font-size="13" fill="#5d6b7a">Alto</text>
+  <text x="735" y="325" font-family="Lato, Arial, sans-serif" font-size="13" fill="#5d6b7a">Medio</text>
+  <text x="735" y="405" font-family="Lato, Arial, sans-serif" font-size="13" fill="#5d6b7a">Bajo</text>
+  <text x="700" y="450" font-family="Lato, Arial, sans-serif" font-size="13" fill="#5d6b7a">Punto de interés</text>
+  <text x="700" y="472" font-family="Lato, Arial, sans-serif" font-size="13" fill="#5d6b7a">dentro del cuartel</text>
+</svg>

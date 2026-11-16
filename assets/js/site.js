@@ -28,13 +28,13 @@
   const mapModal = document.getElementById("modalSuperficie");
   let map = null;
 
-  const comunas = [
+  // Cinco provincias de la Región de Valparaíso con predios monitoreados
+  const provincias = [
     { nombre: "Petorca", coords: [-32.2517, -70.9306] },
-    { nombre: "La Ligua", coords: [-32.4525, -71.2306] },
-    { nombre: "Los Andes", coords: [-32.8337, -70.5984] },
     { nombre: "Quillota", coords: [-32.8795, -71.2488] },
-    { nombre: "La Calera", coords: [-32.7872, -71.1946] },
-    { nombre: "Casablanca", coords: [-33.3187, -71.4094] }
+    { nombre: "San Felipe de Aconcagua", coords: [-32.7497, -70.7258] },
+    { nombre: "Los Andes", coords: [-32.8337, -70.5984] },
+    { nombre: "Valparaíso", coords: [-33.0458, -71.6197] }
   ];
 
   function initMap() {
@@ -47,9 +47,9 @@
     ).addTo(map);
 
     const group = [];
-    comunas.forEach((c) => {
+    provincias.forEach((c) => {
       const m = L.circleMarker(c.coords, {
-        radius: 10,
+        radius: 11,
         color: "#ffffff",
         weight: 3,
         fillColor: "#34bf49",
