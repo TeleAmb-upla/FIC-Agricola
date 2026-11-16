@@ -255,7 +255,7 @@ img { max-width: 100%; }
 .stat-card:hover .stat-icon { transform: rotate(-6deg) scale(1.08); background: var(--green); color: #fff; }
 .stat-value { display: flex; align-items: baseline; gap: 6px; font-family: "Lato", sans-serif; font-weight: 900; color: var(--navy); line-height: 1; font-size: clamp(2.6rem, 4.6vw, 3.6rem); }
 .stat-value small { font-size: .4em; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
-.stat-label { margin: 10px 0 18px; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+.stat-label { margin: 10px 0 18px; font-size: 1.05rem; font-weight: 700; color: var(--ink); min-height: 2.6em; }
 .stat-more { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; font-weight: 700; color: var(--green-d); }
 .stat-more i { transition: transform .3s var(--ease); }
 .stat-card:hover .stat-more i { transform: translateX(5px); }
@@ -297,8 +297,10 @@ img { max-width: 100%; }
   background: repeating-linear-gradient(135deg, #f8fafc, #f8fafc 12px, #f1f5f8 12px, #f1f5f8 24px);
 }
 .gallery-ph i { font-size: 1.8rem; color: var(--navy-2); }
+.modal-lead { margin: 0; color: #34414f; font-size: 1.05rem; line-height: 1.7; }
 .modal-note { margin: 18px 0 0; color: var(--muted); font-size: .88rem; line-height: 1.6; }
-#mapSuperficie { height: 380px; border-radius: 16px; border: 1px solid var(--line); z-index: 1; }
+.province-list { margin-bottom: 18px; }
+#mapSuperficie { height: 380px; border-radius: 16px; border: 1px solid var(--line); z-index: 1; margin-top: 4px; }
 
 /* ---------- Instituciones ---------- */
 .partners { background: #fff; border-top: 1px solid var(--line); }

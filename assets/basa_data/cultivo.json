@@ -1,10 +1,11 @@
 {
   "1": { "nombre": "Palto" },
   "2": { "nombre": "Limonero" },
-  "3": { "nombre": "Nogal" },
-  "4": { "nombre": "Uva De Mesa" },
-  "5": { "nombre": "Durazno Tipo Conservero" },
-  "6": { "nombre": "Naranjo" },
-  "7": { "nombre": "Uva Vinífera" },
-  "8": { "nombre": "Manzano" }
+  "3": { "nombre": "Lúcumo" },
+  "4": { "nombre": "Níspero" },
+  "5": { "nombre": "Nogal" },
+  "6": { "nombre": "Duraznero" },
+  "7": { "nombre": "Uva de mesa" },
+  "8": { "nombre": "Uva vinífera" },
+  "9": { "nombre": "Alfalfa" }
 }

@@ -125,39 +125,64 @@
         <div class="sx-head" data-aos="fade-up">
           <span class="eyebrow"><i class="bi bi-bar-chart-line"></i> Resultados</span>
           <h2>El proyecto en números</h2>
-          <p>Haz clic en cada cuadro para conocer más detalles del monitoreo.</p>
+          <p>Haz clic en cada cuadro para conocer más detalles del proyecto.</p>
         </div>
 
         <div class="row g-4 justify-content-center">
           <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="50">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalAgricultores">
+              <span class="stat-icon"><i class="bi bi-people"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1.6">0</span></div>
+              <div class="stat-label">Agricultores seleccionados para validación</div>
+              <span class="stat-more">Más detalles <i class="bi bi-arrow-right"></i></span>
+            </button>
+          </div>
+
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalDron">
+              <span class="stat-icon"><i class="bi bi-airplane"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="430" data-purecounter-duration="1.8">0</span><small>ha</small></div>
+              <div class="stat-label">Levantadas con dron</div>
+              <span class="stat-more">Más detalles <i class="bi bi-arrow-right"></i></span>
+            </button>
+          </div>
+
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
             <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalCultivos">
               <span class="stat-icon"><i class="bi bi-flower1"></i></span>
-              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="8" data-purecounter-duration="1.6">0</span></div>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="9" data-purecounter-duration="1.6">0</span></div>
               <div class="stat-label">Cultivos monitoreados</div>
               <span class="stat-more">Ver lista de cultivos <i class="bi bi-arrow-right"></i></span>
             </button>
           </div>
 
-          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
-            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalAgricultores">
-              <span class="stat-icon"><i class="bi bi-people"></i></span>
-              <!-- Reemplazar XXX por la cifra definitiva de agricultores participantes -->
-              <div class="stat-value" id="statAgricultores">XXX</div>
-              <div class="stat-label">Agricultores participantes</div>
-              <span class="stat-more">Ver imágenes de monitoreo <i class="bi bi-arrow-right"></i></span>
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalCapacitaciones">
+              <span class="stat-icon"><i class="bi bi-mortarboard"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="2" data-purecounter-duration="1.4">0</span></div>
+              <div class="stat-label">Capacitaciones</div>
+              <span class="stat-more">Más detalles <i class="bi bi-arrow-right"></i></span>
             </button>
           </div>
 
           <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
-            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalSuperficie">
-              <span class="stat-icon"><i class="bi bi-bounding-box-circles"></i></span>
-              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1.8">0</span><small>ha</small></div>
-              <div class="stat-label">Superficie monitoreada</div>
-              <span class="stat-more">Ver mapa de la zona <i class="bi bi-arrow-right"></i></span>
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalSeminarios">
+              <span class="stat-icon"><i class="bi bi-mic"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="3" data-purecounter-duration="1.4">0</span></div>
+              <div class="stat-label">Seminarios</div>
+              <span class="stat-more">Más detalles <i class="bi bi-arrow-right"></i></span>
             </button>
           </div>
-        </div>
-      </div>
+
+          <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <button type="button" class="stat-card" data-bs-toggle="modal" data-bs-target="#modalProvincias">
+              <span class="stat-icon"><i class="bi bi-geo-alt"></i></span>
+              <div class="stat-value"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="6" data-purecounter-duration="1.5">0</span></div>
+              <div class="stat-label">Provincias con alcance</div>
+              <span class="stat-more">Ver mapa <i class="bi bi-arrow-right"></i></span>
+            </button>
+          </div>
+        </div></div>
     </section><!-- /Números -->
 
     <!-- Instituciones -->
@@ -184,6 +209,46 @@
 
   </main>
 
+  <!-- Modal: agricultores -->
+  <div class="modal fade" id="modalAgricultores" tabindex="-1" aria-labelledby="modalAgricultoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-people"></i></span>
+          <div>
+            <h3 id="modalAgricultoresLabel">Agricultores para validación</h3>
+            <p>15 agricultores seleccionados</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <p class="modal-lead">Se seleccionaron <strong>15 agricultores</strong> para validar en terreno la información satelital de la plataforma, contrastando los indicadores con la realidad de sus predios.</p>
+          <p class="modal-note">La validación permite ajustar interpretaciones, contrastar índices espectrales y fortalecer el uso de la plataforma como apoyo a la toma de decisiones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: levantamiento con dron -->
+  <div class="modal fade" id="modalDron" tabindex="-1" aria-labelledby="modalDronLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-airplane"></i></span>
+          <div>
+            <h3 id="modalDronLabel">Levantamiento con dron</h3>
+            <p>430 hectáreas</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <p class="modal-lead">Se levantaron <strong>430 hectáreas</strong> con dron para complementar el monitoreo satelital con información de mayor detalle sobre los predios y cuarteles.</p>
+          <p class="modal-note">El levantamiento aéreo aporta contexto espacial de alta resolución para orientar visitas a terreno y apoyar la interpretación de los índices espectrales.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: cultivos -->
   <div class="modal fade" id="modalCultivos" tabindex="-1" aria-labelledby="modalCultivosLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -192,21 +257,21 @@
           <span class="stat-icon"><i class="bi bi-flower1"></i></span>
           <div>
             <h3 id="modalCultivosLabel">Cultivos monitoreados</h3>
-            <p>8 cultivos presentes en la plataforma</p>
+            <p>9 cultivos presentes en la plataforma</p>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="sx-modal-body">
           <div class="crop-grid" id="cropGrid">
-            <!-- Se completa desde assets/basa_data/cultivo.json (con respaldo local) -->
             <div class="crop-chip"><i class="bi bi-flower2"></i> Palto</div>
             <div class="crop-chip"><i class="bi bi-flower2"></i> Limonero</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Lúcumo</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Níspero</div>
             <div class="crop-chip"><i class="bi bi-flower2"></i> Nogal</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Duraznero</div>
             <div class="crop-chip"><i class="bi bi-flower2"></i> Uva de mesa</div>
-            <div class="crop-chip"><i class="bi bi-flower2"></i> Durazno tipo conservero</div>
-            <div class="crop-chip"><i class="bi bi-flower2"></i> Naranjo</div>
             <div class="crop-chip"><i class="bi bi-flower2"></i> Uva vinífera</div>
-            <div class="crop-chip"><i class="bi bi-flower2"></i> Manzano</div>
+            <div class="crop-chip"><i class="bi bi-flower2"></i> Alfalfa</div>
           </div>
           <p class="modal-note">Los cultivos se monitorean semanalmente a nivel de agricultor, predio y cuartel.</p>
         </div>
@@ -214,52 +279,75 @@
     </div>
   </div>
 
-  <!-- Modal: agricultores -->
-  <div class="modal fade" id="modalAgricultores" tabindex="-1" aria-labelledby="modalAgricultoresLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+  <!-- Modal: capacitaciones -->
+  <div class="modal fade" id="modalCapacitaciones" tabindex="-1" aria-labelledby="modalCapacitacionesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="sx-modal-head">
-          <span class="stat-icon"><i class="bi bi-people"></i></span>
+          <span class="stat-icon"><i class="bi bi-mortarboard"></i></span>
           <div>
-            <h3 id="modalAgricultoresLabel">Agricultores participantes</h3>
-            <p>Imágenes de los monitoreos</p>
+            <h3 id="modalCapacitacionesLabel">Capacitaciones</h3>
+            <p>2 instancias realizadas</p>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="sx-modal-body">
-          <!-- Reemplazar cada .gallery-ph por: <a class="glightbox" href="ruta.jpg"><img src="ruta.jpg" alt="..."></a> -->
-          <div class="gallery-grid" id="farmerGallery">
-            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
-            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
-            <div class="gallery-ph"><i class="bi bi-image"></i><span>Imagen de monitoreo<br>(por incorporar)</span></div>
-          </div>
-          <p class="modal-note">Aquí se mostrarán las imágenes de seguimiento de los predios de los agricultores participantes.</p>
+          <p class="modal-lead">Se realizaron <strong>2 capacitaciones</strong> orientadas a que agricultores y asesores puedan interpretar la información satelital y aprovechar la plataforma en su trabajo diario.</p>
+          <p class="modal-note">Las capacitaciones refuerzan el uso de gráficos, mapas e índices espectrales para el seguimiento de cultivos.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal: superficie -->
-  <div class="modal fade" id="modalSuperficie" tabindex="-1" aria-labelledby="modalSuperficieLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+  <!-- Modal: seminarios -->
+  <div class="modal fade" id="modalSeminarios" tabindex="-1" aria-labelledby="modalSeminariosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="sx-modal-head">
-          <span class="stat-icon"><i class="bi bi-bounding-box-circles"></i></span>
+          <span class="stat-icon"><i class="bi bi-mic"></i></span>
           <div>
-            <h3 id="modalSuperficieLabel">Superficie monitoreada</h3>
-            <p>300 hectáreas · 5 provincias de Valparaíso</p>
+            <h3 id="modalSeminariosLabel">Seminarios</h3>
+            <p>3 instancias realizadas</p>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="sx-modal-body">
-          <div id="mapSuperficie" role="img" aria-label="Mapa de las provincias con superficie monitoreada"></div>
-          <p class="modal-note">Provincias de la Región de Valparaíso con predios monitoreados: Petorca, Quillota, San Felipe de Aconcagua, Los Andes y Valparaíso.</p>
+          <p class="modal-lead">Se desarrollaron <strong>3 seminarios</strong> para difundir el proyecto, compartir avances y abrir un espacio de diálogo sobre el monitoreo satelital agrícola en la Región de Valparaíso.</p>
+          <p class="modal-note">Estas instancias permiten acercar la teledetección a agricultores, asesores e instituciones del territorio.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <footer id="footer" class="footer light-background">
+  <!-- Modal: provincias -->
+  <div class="modal fade" id="modalProvincias" tabindex="-1" aria-labelledby="modalProvinciasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="sx-modal-head">
+          <span class="stat-icon"><i class="bi bi-geo-alt"></i></span>
+          <div>
+            <h3 id="modalProvinciasLabel">Alcance territorial</h3>
+            <p>6 provincias de la Región de Valparaíso</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="sx-modal-body">
+          <div class="crop-grid province-list" id="provinceList">
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> Los Andes</div>
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> San Felipe de Aconcagua</div>
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> Petorca</div>
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> Quillota</div>
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> Marga-Marga</div>
+            <div class="crop-chip"><i class="bi bi-geo-alt-fill"></i> San Antonio</div>
+          </div>
+          <div id="mapSuperficie" role="img" aria-label="Mapa de las provincias con alcance del proyecto"></div>
+          <p class="modal-note">Provincias con alcance del proyecto: Los Andes, San Felipe de Aconcagua, Petorca, Quillota, Marga-Marga y San Antonio.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer id="footer" class="footer light-background">
     <div class="container">
       <div class="row g-4">
         <div class="col-md-6 col-lg-3 mb-3 mb-md-0">
