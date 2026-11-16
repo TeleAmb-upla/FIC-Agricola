@@ -9,7 +9,7 @@
   /* ---------- Cultivos ---------- */
   const cropGrid = document.getElementById("cropGrid");
   if (cropGrid && window.fetch) {
-    fetch("./assets/basa_data/cultivo.json")
+    fetch("./assets/basa_data/cultivo.json?v=20261116")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data) => {
         const nombres = Object.values(data).map((c) => c.nombre);
