@@ -6,67 +6,6 @@
 (function () {
   "use strict";
 
-  /* ---------- Fotos rotativas del hero ---------- */
-  (function heroRotator() {
-    const root = document.getElementById("heroVisual");
-    if (!root) return;
-    const slides = Array.from(root.querySelectorAll(".hero-slide"));
-    const dotsBox = document.getElementById("heroDots");
-    const capBox = root.querySelector(".hero-caption");
-    const capTitle = document.getElementById("heroCapTitle");
-    const capSub = document.getElementById("heroCapSub");
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const INTERVAL = 6500;
-    let cur = 0, timer = null, paused = false;
-
-    const dots = slides.map(function (s, i) {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "hero-dot";
-      b.setAttribute("aria-label", "Foto " + (i + 1) + " de " + slides.length);
-      b.addEventListener("click", function () { go(i, true); });
-      dotsBox.appendChild(b);
-      return b;
-    });
-
-    function go(i, user) {
-      i = (i + slides.length) % slides.length;
-      if (i === cur && slides[i].classList.contains("is-active")) return;
-      slides[cur].classList.remove("is-active");
-      cur = i;
-      slides[cur].classList.add("is-active");
-      dots.forEach(function (d, k) { d.classList.toggle("is-active", k === cur); });
-      capBox.classList.add("swap");
-      setTimeout(function () {
-        capTitle.textContent = slides[cur].dataset.title || "";
-        capSub.textContent = slides[cur].dataset.sub || "";
-        capBox.classList.remove("swap");
-      }, 280);
-      if (user) restart();
-    }
-    function stop() { if (timer) { clearInterval(timer); timer = null; } }
-    function start() { if (reduce || paused || timer || document.hidden) return; timer = setInterval(function () { go(cur + 1); }, INTERVAL); }
-    function restart() { stop(); start(); }
-
-    document.getElementById("heroPrev").addEventListener("click", function () { go(cur - 1, true); });
-    document.getElementById("heroNext").addEventListener("click", function () { go(cur + 1, true); });
-    root.addEventListener("mouseenter", function () { paused = true; stop(); });
-    root.addEventListener("mouseleave", function () { paused = false; start(); });
-    root.addEventListener("focusin", function () { paused = true; stop(); });
-    root.addEventListener("focusout", function () { paused = false; start(); });
-    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
-    // Gesto táctil: deslizar para cambiar de foto
-    let x0 = null;
-    root.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
-    root.addEventListener("touchend", function (e) {
-      if (x0 === null) return;
-      const dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1), true);
-    });
-
-    dots[0].classList.add("is-active");
-    start();
-  })();
-
   /* ---------- Cultivos ---------- */
   const cropGrid = document.getElementById("cropGrid");
   if (cropGrid && window.fetch) {
