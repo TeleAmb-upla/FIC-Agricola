@@ -317,8 +317,12 @@ img { max-width: 100%; }
 
 /* ---------- Equipo ---------- */
 .team-section { background: #fff; }
-.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 28px; max-width: 1040px; margin: 0 auto; }
+.team-grid {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 28px; max-width: 1040px; margin: 0 auto;
+}
 .team-card {
+  flex: 1 1 220px; max-width: 250px;
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 18px 18px 26px; text-align: center;
   box-shadow: var(--shadow-sm);
