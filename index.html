@@ -80,8 +80,8 @@
     <!-- Hero / Presentación -->
     <section id="about" class="hero">
       <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-7" data-aos="fade-right">
+        <div class="row align-items-center">
+          <div class="col-lg-7 hero-text" data-aos="fade-right">
             <h1>Plataforma de <span>Monitoreo Satelital Agrícola</span> para la Adaptación al Cambio Climático</h1>
             <p>
               La <strong>Plataforma de Monitoreo Satelital Agrícola para la Adaptación al Cambio Climático</strong> pone la tecnología satelital al servicio de agricultores y asesores agrícolas de la Región de Valparaíso. A través de indicadores espectrales, gráficos y mapas, permite conocer el comportamiento de los cultivos, observar su evolución semanal y reconocer diferencias dentro de cada predio.
@@ -105,58 +105,49 @@
             </div>
           </div>
 
-          <div class="col-lg-5" data-aos="fade-left" data-aos-delay="150">
-            <div class="hero-media">
-              <figure class="hero-fig">
-                <img src="./assets/img/hero_terreno.jpg" alt="Vista aérea de un parronal de uva de mesa en Rinconada de Los Andes, capturada con dron" width="595" height="380" fetchpriority="high" decoding="async">
-                <figcaption><i class="bi bi-geo-alt-fill"></i><span><strong>Uva de mesa</strong> · Rinconada de Los Andes</span></figcaption>
-              </figure>
-              <div class="hero-chip" aria-hidden="true">
-                <i class="bi bi-calendar-week"></i>
-                <div><strong>Imágenes semanales</strong><span>Seguimiento continuo</span></div>
-              </div>
-            </div>
+        </div>
+      </div>
+
+      <!-- Fotos rotativas (mitad derecha) -->
+      <div class="hero-visual" id="heroVisual" role="region" aria-roledescription="carrusel" aria-label="Fotografías aéreas del proyecto">
+        <div class="hero-slides">
+          <figure class="hero-slide is-active" data-title="Uva de mesa" data-sub="Rinconada de Los Andes">
+            <img src="./assets/img/vuelos/hero_rinconada.jpg" alt="Vista aérea de un parronal de uva de mesa en Rinconada de Los Andes, capturada con dron" width="1500" height="958" fetchpriority="high" decoding="async" style="object-position:78% 50%">
+          </figure>
+          <figure class="hero-slide" data-title="Cuarteles frutales y zona de proceso" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_01_palto_bodega.jpg" alt="Vista aérea de cuarteles frutales, caminos y una planta de proceso" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+          <figure class="hero-slide" data-title="Tranque de riego entre cuarteles de vid" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_02_tranque_vina.jpg" alt="Vista aérea de un tranque de riego rodeado de cuarteles de vid" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+          <figure class="hero-slide" data-title="Cuarteles en distinto estado de desarrollo" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_03_cuarteles.jpg" alt="Vista aérea de cuarteles en distinto estado de desarrollo" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+          <figure class="hero-slide" data-title="Hileras y diferencias de vigor dentro del predio" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_04_hileras.jpg" alt="Vista aérea de hileras de cultivo con diferencias de vigor" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+          <figure class="hero-slide" data-title="Parronal, riego y paneles solares" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_05_contraste.jpg" alt="Vista aérea de un parronal con pozo de riego y paneles solares" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+          <figure class="hero-slide" data-title="Viñedo, bodega y paneles solares" data-sub="Vuelo con dron y sensor LiDAR">
+            <img src="./assets/img/vuelos/lidar_06_solar.jpg" alt="Vista aérea de un viñedo, una bodega y paneles solares" width="1400" height="1050" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <div class="hero-bar">
+          <div class="hero-caption" aria-live="polite">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span><strong id="heroCapTitle">Uva de mesa</strong><small id="heroCapSub">Rinconada de Los Andes</small></span>
+          </div>
+          <div class="hero-ctrl">
+            <button type="button" class="hero-arrow" id="heroPrev" aria-label="Foto anterior"><i class="bi bi-chevron-left"></i></button>
+            <div class="hero-dots" id="heroDots" role="tablist" aria-label="Seleccionar foto"></div>
+            <button type="button" class="hero-arrow" id="heroNext" aria-label="Foto siguiente"><i class="bi bi-chevron-right"></i></button>
           </div>
         </div>
       </div>
     </section><!-- /Hero -->
 
-    <!-- Mirada desde el aire -->
-    <section id="vuelos" class="sx-section">
-      <div class="container">
-        <div class="sx-head" data-aos="fade-up">
-          <h2>El territorio desde el aire</h2>
-          <p>Vuelos con dron y sensor LiDAR sobre predios del proyecto: una mirada de detalle que complementa el seguimiento satelital semanal.</p>
-        </div>
-
-        <div class="aerial-grid" data-aos="fade-up">
-          <a class="aerial a1 glightbox" href="./assets/img/vuelos/lidar_01_palto_bodega.jpg" data-gallery="vuelos" data-title="Cuarteles frutales y zona de proceso">
-            <img src="./assets/img/vuelos/lidar_01_palto_bodega.jpg" alt="Vista aérea de cuarteles frutales, caminos y una planta de proceso" loading="lazy" decoding="async">
-            <span class="cap">Cuarteles frutales y zona de proceso</span>
-          </a>
-          <a class="aerial a2 glightbox" href="./assets/img/vuelos/lidar_02_tranque_vina.jpg" data-gallery="vuelos" data-title="Tranque de riego entre cuarteles de vid">
-            <img src="./assets/img/vuelos/lidar_02_tranque_vina.jpg" alt="Vista aérea de un tranque de riego rodeado de cuarteles de vid" loading="lazy" decoding="async">
-            <span class="cap">Tranque de riego entre cuarteles de vid</span>
-          </a>
-          <a class="aerial a3 glightbox" href="./assets/img/vuelos/lidar_03_cuarteles.jpg" data-gallery="vuelos" data-title="Cuarteles en distinto estado de desarrollo">
-            <img src="./assets/img/vuelos/lidar_03_cuarteles.jpg" alt="Vista aérea de cuarteles en distinto estado de desarrollo" loading="lazy" decoding="async">
-            <span class="cap">Cuarteles en distinto estado</span>
-          </a>
-          <a class="aerial a4 glightbox" href="./assets/img/vuelos/lidar_04_hileras.jpg" data-gallery="vuelos" data-title="Hileras de cultivo y diferencias dentro del predio">
-            <img src="./assets/img/vuelos/lidar_04_hileras.jpg" alt="Vista aérea de hileras de cultivo con diferencias de vigor dentro del predio" loading="lazy" decoding="async">
-            <span class="cap">Hileras y diferencias de vigor</span>
-          </a>
-          <a class="aerial a5 glightbox" href="./assets/img/vuelos/lidar_05_contraste.jpg" data-gallery="vuelos" data-title="Parronal, riego y paneles solares">
-            <img src="./assets/img/vuelos/lidar_05_contraste.jpg" alt="Vista aérea de un parronal con pozo de riego y paneles solares" loading="lazy" decoding="async">
-            <span class="cap">Parronal, riego y paneles solares</span>
-          </a>
-          <a class="aerial a6 glightbox" href="./assets/img/vuelos/lidar_06_solar.jpg" data-gallery="vuelos" data-title="Viñedo, bodega y paneles solares">
-            <img src="./assets/img/vuelos/lidar_06_solar.jpg" alt="Vista aérea de un viñedo, una bodega y paneles solares" loading="lazy" decoding="async">
-            <span class="cap">Viñedo, bodega y paneles solares</span>
-          </a>
-        </div>
-      </div>
-    </section><!-- /Vuelos -->
     <!-- El proyecto en números -->
     <section id="numeros" class="sx-section sky">
       <div class="container">
@@ -449,7 +440,7 @@
 
   <!-- Main JS Files -->
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/site.js?v=20261116b"></script>
+  <script src="assets/js/site.js?v=20261117a"></script>
 
 </body>
 
