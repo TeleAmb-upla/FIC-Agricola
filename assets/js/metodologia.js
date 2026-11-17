@@ -262,14 +262,21 @@
     if (bsModal) bsModal.show();
   });
 
-  // "Conocer más / Mostrar menos"
+  // "Conocer más / Mostrar menos" — al abrir, baja el scroll para leer el texto nuevo
   modalContent.addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-more");
     if (!btn) return;
     const more = modalContent.querySelector("#idxMore");
+    const body = modalContent.querySelector(".idx-body");
     const open = more.classList.toggle("open");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
     btn.querySelector(".lbl").textContent = open ? "Mostrar menos" : "Conocer más";
+    if (open && body) {
+      window.setTimeout(function () {
+        const top = btn.offsetTop - 12;
+        body.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      }, 320);
+    }
   });
 
   /* ---------- Subnavegación pegajosa bajo el header ---------- */
